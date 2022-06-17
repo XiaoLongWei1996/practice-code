@@ -1,7 +1,7 @@
 package org.test.design.bulider;
 
 /**
- * 指挥者，调用bulider完成复杂对象的构建
+ * 指挥者，具体的构建流程调用类,调用bulider完成复杂对象的构建
  * @author 肖龙威
  * @date 2021/04/20 9:15
  */
