@@ -23,7 +23,7 @@ public class People implements Cloneable, Serializable {
     private Animal animal;
 
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    protected People clone() throws CloneNotSupportedException {
+        return (People) super.clone();
     }
 }

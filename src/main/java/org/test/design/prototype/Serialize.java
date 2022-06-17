@@ -27,7 +27,6 @@ public class Serialize {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         return o;
     }
 }
