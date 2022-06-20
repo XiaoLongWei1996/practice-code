@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 树节点
  * @author 肖龙威
  * @date 2021/05/17 9:04
  */

@@ -1,6 +1,7 @@
 package org.test.design.composite;
 
 /**
+ * 叶子节点
  * @author 肖龙威
  * @date 2021/05/17 9:00
  */
