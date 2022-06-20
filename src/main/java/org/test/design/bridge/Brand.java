@@ -16,6 +16,6 @@ public abstract class Brand{
     }
 
     public void call(){
-        System.out.println(brand);
+        System.out.print(brand);
     }
 }
