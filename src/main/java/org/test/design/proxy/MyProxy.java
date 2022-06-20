@@ -12,17 +12,16 @@ import java.lang.reflect.Proxy;
 @AllArgsConstructor
 public class MyProxy{
 
-    private final Target target;
+    private final Subject target;
 
-    private final Class interfaceClass;
+    private final Class[] interfaceClass;
 
     public Object proxyTarget () {
-        //Class<? extends Target> clazz = target.getClass();
-        Object object = Proxy.newProxyInstance(interfaceClass.getClassLoader(), new Class[]{interfaceClass}/*clazz.getInterfaces()*/, (proxy1, method, args) -> {
+        Object object = Proxy.newProxyInstance(target.getClass().getClassLoader(), interfaceClass, (proxy1, method, args) -> {
             System.out.println("proxy方法执行前");
-            //Object o = method.invoke(target, args);
+            Object o = method.invoke(target, args);
             System.out.println("proxy方法执行后");
-            return this.excute001();
+            return o;
         });
         return object;
     }
