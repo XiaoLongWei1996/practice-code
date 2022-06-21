@@ -13,7 +13,7 @@ public class HttpGetServlet extends Servlet{
 
     @Override
     public void doPost() {
-        System.out.println("post执行");
+        throw new RuntimeException("该类不支持post方法");
     }
 
     @Override

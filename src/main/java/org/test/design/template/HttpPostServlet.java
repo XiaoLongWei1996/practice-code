@@ -18,6 +18,6 @@ public class HttpPostServlet extends Servlet {
 
     @Override
     public void doGet() {
-        System.out.println("get执行");
+        throw new RuntimeException("该类不支持get");
     }
 }
