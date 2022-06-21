@@ -1,7 +1,7 @@
 package org.test.design.command;
 
 /**
- * 调用者
+ * 调用者,调用命令
  * @author 肖龙威
  * @date 2021/05/18 9:15
  */
