@@ -1,6 +1,7 @@
 package org.test.design.observer;
 
 /**
+ * 具体的观察者
  * @author 肖龙威
  * @date 2021/05/18 16:42
  */

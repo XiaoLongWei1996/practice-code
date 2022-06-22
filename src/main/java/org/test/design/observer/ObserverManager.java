@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 管理观察者
+ * 观察者管理类,可以把事件的执行分发给多个观察者
  * @author 肖龙威
  * @date 2021/05/18 16:02
  */
