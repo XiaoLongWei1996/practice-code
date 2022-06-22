@@ -1,7 +1,6 @@
 package org.test.design.iterator;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * 迭代器模式:提供一个迭代器类来访问储存顺序
@@ -10,17 +9,20 @@ import java.util.List;
  */
 public class DeptIterator implements Iterator<String> {
 
-    private List<String> list;
+    private String[] depts = null;
+
+    private int remain;
 
     private int index = -1;
 
-    public DeptIterator(List<String> list) {
-        this.list = list;
+    public DeptIterator(String[] depts, int remain) {
+        this.depts = depts;
+        this.remain = remain;
     }
 
     @Override
     public boolean hasNext() {
-        if (index < list.size() -1) {
+        if (index < remain) {
             return true;
         }
         return false;
@@ -28,10 +30,10 @@ public class DeptIterator implements Iterator<String> {
 
     @Override
     public String next() {
-        String dept = null;
-        if (hasNext()) {
-            dept = list.get(++index);
+        if (index > remain) {
+            throw new IndexOutOfBoundsException();
         }
+        String dept = depts[++index];
         return dept;
     }
 }

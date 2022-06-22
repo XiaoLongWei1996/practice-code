@@ -1,7 +1,5 @@
 package org.test.design.iterator;
 
-import java.util.Iterator;
-
 /**
  *
  * @author 肖龙威
@@ -13,5 +11,5 @@ public interface Company {
 
     void remove(String dept);
 
-    Iterator getIterator();
+    DeptIterator getIterator();
 }

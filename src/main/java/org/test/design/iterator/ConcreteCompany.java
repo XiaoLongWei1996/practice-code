@@ -1,29 +1,40 @@
 package org.test.design.iterator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * @author 肖龙威
  * @date 2021/05/20 14:53
  */
 public class ConcreteCompany implements Company {
 
-    private List<String> depts = new ArrayList<>();
+    private int capacity;
+
+    private String[] depts = null;
+
+    private int index = -1;
+
+    public ConcreteCompany(int capacity){
+        this.capacity = capacity;
+        this.depts = new String[capacity];
+    }
 
     @Override
     public void add(String dept) {
-        depts.add(dept);
+        if (index >= capacity) {
+            throw new IndexOutOfBoundsException();
+        }
+        depts[++index] = dept;
     }
 
     @Override
     public void remove(String dept) {
-        depts.remove(dept);
+        if (index < 0) {
+            throw new IndexOutOfBoundsException();
+        }
+        index--;
     }
 
     @Override
-    public Iterator getIterator() {
-        return new DeptIterator(depts);
+    public DeptIterator getIterator() {
+        return new DeptIterator(depts, index);
     }
 }

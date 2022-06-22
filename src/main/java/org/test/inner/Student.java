@@ -1,4 +1,4 @@
-package org.test.design.inner;
+package org.test.inner;
 
 /**
  * @author 肖龙威
