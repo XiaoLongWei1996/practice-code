@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 具体中介对象,管理对象
  * @author 肖龙威
  * @date 2021/05/20 13:57
  */

@@ -1,6 +1,7 @@
 package org.test.design.mediator;
 
 /**
+ * 具体客户
  * @author 肖龙威
  * @date 2021/05/20 14:17
  */
@@ -13,7 +14,8 @@ public class Buyer extends Customer {
     @Override
     public void send(String text) {
         System.out.println(name + "("+ role +")发送:" + text);
-        mediator.relay(this, text);
+        //原本应该是调用seller.receive()
+        mediator.relay(this, text); //用中介对象来调用跟该对象相关的对象
     }
 
     @Override

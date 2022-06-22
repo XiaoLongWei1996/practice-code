@@ -1,6 +1,7 @@
 package org.test.design.mediator;
 
 /**
+ * 具体客户
  * @author 肖龙威
  * @date 2021/05/20 13:56
  */
