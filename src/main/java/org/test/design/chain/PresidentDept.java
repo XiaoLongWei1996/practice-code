@@ -16,9 +16,9 @@ public class PresidentDept extends Dept {
     @Override
     public void handle(Integer count) {
         if (count >= 1000) {
-            System.out.println(getName() + "处理");
+            System.out.println(getName() + "处理");  //当前对象处理
         } else {
-            getNext().handle(count);
+            getNext().handle(count);   //传递下一个对象处理
         }
     }
 }

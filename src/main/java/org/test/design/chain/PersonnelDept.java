@@ -17,9 +17,9 @@ public class PersonnelDept extends Dept{
     @Override
     public void handle(Integer count) {
         if (count < 500) {
-            System.out.println(getName() + "处理");
+            System.out.println(getName() + "处理"); //当前对象处理
         } else {
-            getNext().handle(count);
+            getNext().handle(count); //传递下一个对象去处理
         }
     }
 }
