@@ -3,6 +3,7 @@ package org.test.design.strategy;
 import java.util.Random;
 
 /**
+ * 具体策略
  * @author 肖龙威
  * @date 2021/05/17 16:53
  */

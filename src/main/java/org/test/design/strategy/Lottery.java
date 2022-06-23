@@ -10,13 +10,20 @@ public class Lottery {
 
     private Strategy strategy;
 
+    //构造器方式依赖策略对象
     public Lottery(Strategy strategy) {
         this.strategy = strategy;
     }
 
+    //set方式依赖策略对象
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
+    //需要用到不同策略的方法
     public void lottery() {
         for (int i = 0; i <= 50; i++) {
-            Integer n = this.strategy.strategy();
+            Integer n = this.strategy.strategy(); //不同策略的不同方法
             if (n.equals(1)) {
                 System.out.println("一等奖");
             }
