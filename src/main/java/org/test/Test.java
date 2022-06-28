@@ -18,10 +18,8 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        Date date = new Date();
-        LocalDate localDate = dateToLocalDate(date, 12);
-        LocalDate now = LocalDate.now();
-        System.out.println(now.compareTo(localDate));
+        String property = System.getProperty("os.name");
+        System.out.println(property);
     }
 
     private static LocalDate dateToLocalDate(Date date, long l) {
