@@ -15,6 +15,7 @@ public class Consumer {
     //推送到是队列名称
     private static final String QUEUE_NAME = "test";
 
+    @SuppressWarnings("all")
     public static void main(String[] args) throws IOException, TimeoutException {
         //创建连接工厂
         ConnectionFactory factory = new ConnectionFactory();
@@ -27,7 +28,9 @@ public class Consumer {
         //创建管道
         Channel channel = connection.createChannel();
         //成功消费的回调对象
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+        DeliverCallback deliverCallback = (consumerTag,  //消费者的tag信息(相当于消费者的id)
+                                           delivery      //信息的数据对象,包含数据和消息的tag信息
+        ) -> {
             //获得消息
             String message = new String(delivery.getBody());
             System.out.println(message);
@@ -40,6 +43,7 @@ public class Consumer {
         //从队列里面获取数据,阻塞消费
         channel.basicConsume(
                 QUEUE_NAME,  //队列名称
+                true,        //自动应答
                 deliverCallback,  //成功消费对象
                 cancelCallback    //失败消费对象
         );

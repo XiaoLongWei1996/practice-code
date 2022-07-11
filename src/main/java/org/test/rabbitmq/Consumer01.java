@@ -34,6 +34,7 @@ public class Consumer01 {
         //从队列里面获取数据
         channel.basicConsume(
                 QUEUE_NAME,  //队列名称
+                true,        //自动应答
                 deliverCallback,  //成功消费对象
                 cancelCallback    //失败消费对象
         );
