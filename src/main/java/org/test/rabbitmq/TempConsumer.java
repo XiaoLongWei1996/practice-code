@@ -1,5 +1,6 @@
 package org.test.rabbitmq;
 
+import com.rabbitmq.client.BuiltinExchangeType;
 import com.rabbitmq.client.Channel;
 
 import java.io.IOException;
@@ -12,10 +13,28 @@ import java.io.IOException;
  */
 public class TempConsumer {
 
-    private static final String EXCHANGE_NAME = "log";
+    private static final String EXCHANGE_NAME = "log01";
 
     @SuppressWarnings("all")
     public static void main(String[] args) throws IOException {
+
+    }
+
+    //direct交换机
+    private static void directExchange() throws IOException {
+        Channel channel = MQConnectionUtils.createChannel();
+        //创建direct交换机
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
+        String queueName = channel.queueDeclare().getQueue();
+        channel.queueBind(queueName, EXCHANGE_NAME, "info");
+        channel.basicConsume(queueName, true
+                , ((consumerTag, message) -> {
+                    String s = new String(message.getBody());
+                    System.out.println(s);
+                }), consumerTag -> {});
+    }
+
+    private static void fanoutExchange() throws IOException {
         Channel channel = MQConnectionUtils.createChannel();
         //创建具名的临时队列
         String queueName = channel.queueDeclare().getQueue();

@@ -44,7 +44,7 @@ public class Producer {
             //需要发送到队列中的消息
             String message = scanner.next();
             channel.basicPublish(
-                    "", //发送到那个交换机
+                    "", //发送到那个交换机,""空字符串默认交换机
                     QUEUE_NAME, //路由key(也就是队列名称)
                     null,  //其它参数信息
                     message.getBytes()  //发送的消息
