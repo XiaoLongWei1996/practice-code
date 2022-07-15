@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 public class TempConsumer {
 
-    private static final String EXCHANGE_NAME = "log01";
+    private static final String EXCHANGE_NAME = "log";
 
     @SuppressWarnings("all")
     public static void main(String[] args) throws IOException {
@@ -59,4 +59,19 @@ public class TempConsumer {
                     System.out.println("消费失败");
                 });
     }
+
+    //topic交换机
+    private static void topicExchange() throws IOException {
+        Channel channel = MQConnectionUtils.createChannel();
+        //创建direct交换机
+        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.TOPIC);
+        String queueName = channel.queueDeclare().getQueue();
+        channel.queueBind(queueName, EXCHANGE_NAME, "*.info");
+        channel.basicConsume(queueName, true
+                , ((consumerTag, message) -> {
+                    String s = new String(message.getBody());
+                    System.out.println(s);
+                }), consumerTag -> {});
+    }
+
 }

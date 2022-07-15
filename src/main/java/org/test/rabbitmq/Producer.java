@@ -46,7 +46,7 @@ public class Producer {
             channel.basicPublish(
                     "", //发送到那个交换机,""空字符串默认交换机
                     QUEUE_NAME, //路由key(也就是队列名称)
-                    null,  //其它参数信息
+                    null,  //设置消息属性
                     message.getBytes()  //发送的消息
             );
         }
