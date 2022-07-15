@@ -33,7 +33,6 @@ public class DeadQueue {
     @SuppressWarnings("all")
     public static void main(String[] args) throws IOException {
         Channel channel = MQConnectionUtils.createChannel();
-
         //创建死信队列交换机
         channel.exchangeDeclare(DEAD_EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
         //创建普通交换机
