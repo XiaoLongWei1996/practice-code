@@ -1,8 +1,9 @@
 package testspringboot.testspringboot.domain;
 
-import lombok.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * @author 肖龙威
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Component;
 @Setter
 @Getter
 @ConfigurationProperties(prefix = "hello")
-@Component
 public class Hello {
 
     public Hello(){

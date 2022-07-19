@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import testspringboot.testspringboot.listener.MyEvent;
+import testspringboot.testspringboot.rabbitmq.Producer;
 
 /**
  * @author 肖龙威
@@ -21,11 +21,12 @@ public class MessageController {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private Producer producer;
+
     @GetMapping("/test")
-    public ResponseEntity<String> test(String message) {
-        MyEvent event = new MyEvent(message);
-        applicationContext.publishEvent(event);
-        System.out.println("执行结束");
-        return ResponseEntity.ok("ok");
+    public ResponseEntity<Object> test(String message) {
+        producer.send(message, 1000);
+        return ResponseEntity.ok(200);
     }
 }

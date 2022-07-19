@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.*;
+import testspringboot.testspringboot.domain.Hello;
 import testspringboot.testspringboot.domain.Student;
 
 /**
@@ -22,6 +23,13 @@ public class MyMVCConfig {
         Student student = new Student();
         student.setName("大米");
         return student;
+    }
+
+    @Bean
+    public Hello hello(Student s){
+        Hello h = new Hello();
+        h.setName(s.getName());
+        return h;
     }
 
     @Bean

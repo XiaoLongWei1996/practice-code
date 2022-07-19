@@ -2,6 +2,21 @@ server:
   port: 9091
 
 spring:
+  #整合rabbitmq
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: 123456
+    #设置消息确认成功确认后进行回调
+    #NONE值是禁用发布确认模式，是默认值
+    #CORRELATED值是发布消息成功到交换器后会触发回调方法，如1示例
+    #SIMPLE值经测试有两种效果，其一效果和CORRELATED值一样会触发回调方法，
+    #其二在发布消息成功后使用rabbitTemplate调用waitForConfirms或waitForConfirmsOrDie
+    #方法等待broker节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie
+    #方法如果返回false则会关闭channel，则接下来无法发送消息到broker;
+    #调用confirmCallback接口
+    publisher-confirm-type: correlated
 #  datasource:
 #    druid:
 #      driver-class-name: com.mysql.jdbc.Driver
@@ -64,5 +79,12 @@ spring:
       max-request-size: 100MB
 
 temp-dir: D:\img\
+
+rmq:
+  exchange-name: ex-delayed
+  queue-name: qu-delayed
+  routing-key: delay
+  back-exchange-name: ex-back
+  back-queue-name: qu-back
 
 
