@@ -63,7 +63,12 @@ public class RabbitmqConfig {
      */
     @Bean
     public Queue delayedQueue() {
-        return new Queue(properties.getQueueName(), false, false, false, null);
+        Map<String, Object> property = new HashMap<>();
+        //设置队列的优先级,该队列可以优先被消费
+        property.put("x-max-priority", 10);
+        //设置惰性队列,惰性队列会尽可能的将消息存入磁盘中，而在消费者消费到相应的消息时才会被加载到内存中,节省内存资源
+        property.put("x-queue-mode", "lazy");
+        return new Queue(properties.getQueueName(), false, false, false, property);
     }
 
 //    /**

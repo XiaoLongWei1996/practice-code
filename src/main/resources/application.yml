@@ -17,7 +17,16 @@ spring:
     #方法如果返回false则会关闭channel，则接下来无法发送消息到broker;
     #调用confirmCallback接口
     publisher-confirm-type: correlated
-#  datasource:
+    cache:
+      channel:
+        #缓存中管道的数量5个
+        size: 5
+    listener:
+      #direct模式的交换机手动应答
+      direct:
+        acknowledge-mode: manual
+        default-requeue-rejected: true
+  #  datasource:
 #    druid:
 #      driver-class-name: com.mysql.jdbc.Driver
 #      url: jdbc:mysql://192.168.0.97:3306/test03?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false

@@ -26,7 +26,7 @@ public class MessageController {
 
     @GetMapping("/test")
     public ResponseEntity<Object> test(String message) {
-        producer.send(message, 1000);
+        producer.send(message, 5000);
         return ResponseEntity.ok(200);
     }
 }

@@ -35,12 +35,15 @@ public class Producer {
                 //交换机名称
                 properties.getExchangeName()
                 //路由
-                , "aaaa"
+                , properties.getRoutingKey()
                 //消息
                 , message
                 //设置消息的属性
                 , (properties) -> {
-                    properties.getMessageProperties().setDelay(delay);
+                    //设置延迟发送,必须配合延迟队列插件
+                    //properties.getMessageProperties().setDelay(delay);
+                    //设置优先级
+                    properties.getMessageProperties().setPriority(5);
                     return properties;
                 }
                 //相关的数据,相当于设置数据的元数据
