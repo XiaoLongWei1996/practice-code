@@ -1,7 +1,11 @@
 package testspringboot.testspringboot.rabbitmq;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +59,30 @@ public class RabbitmqConfig {
         rabbitTemplate.setReturnsCallback((returnedMessage) -> {
             System.out.println("消息:" + new String(returnedMessage.getMessage().getBody()) + "被路由:" + returnedMessage.getExchange() + "退回" + "原因:" + returnedMessage.getReplyText());
         });
+
+        //设置生产者发送消息序列化方式为json
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+    }
+
+    /**
+     * 设置消费者反序列化方式json
+     * @param connectionFactory
+     * @return
+     */
+    @Bean
+    public RabbitListenerContainerFactory myRabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        //设置连接工厂
+        factory.setConnectionFactory(connectionFactory);
+        //设置信息转换器
+        factory.setMessageConverter(new Jackson2JsonMessageConverter());
+        //设置手动签收
+        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        //设置预取数
+        factory.setPrefetchCount(5);
+        //设置拒绝重回队列
+        factory.setDefaultRequeueRejected(true);
+        return factory;
     }
 
     /**

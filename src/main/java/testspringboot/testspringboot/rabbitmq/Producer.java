@@ -4,6 +4,7 @@ import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import testspringboot.testspringboot.domain.MyMessage;
 
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class Producer {
      *
      * @param message
      */
-    public void send(String message, Integer delay) {
+    public void send(MyMessage message, Integer delay) {
         CorrelationData correlationData = new CorrelationData();
         correlationData.setId(UUID.randomUUID().toString() + "xlw");
         rabbitTemplate.convertAndSend(
