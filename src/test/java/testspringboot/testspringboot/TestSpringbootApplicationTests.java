@@ -27,18 +27,14 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.ResourceUtils;
 import testspringboot.testspringboot.domain.Student;
+import testspringboot.testspringboot.mongo.StudentMdbService;
 import testspringboot.testspringboot.mongo.StudentOperate;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TestSpringbootApplicationTests {
 
     @Autowired
@@ -49,6 +45,9 @@ class TestSpringbootApplicationTests {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private StudentMdbService studentMdbService;
 
     @Test
     void contextLoads() throws IOException {
@@ -378,8 +377,9 @@ class TestSpringbootApplicationTests {
     }
 
     @Test
-    void test27() throws IOException {
-        File f = ResourceUtils.getFile("classpath:static/5.mp3");
-        System.out.println(f.exists());
+    void test27() throws IOException, IllegalAccessException {
+        Date date = new Date(2022, 6, 1);
+        List<Student> list = studentMdbService.queryByDate(date, new Date());
+        System.out.println(list);
     }
 }

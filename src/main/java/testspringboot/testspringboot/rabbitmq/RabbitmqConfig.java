@@ -8,7 +8,6 @@ import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import java.util.Map;
  * @author 肖龙威
  * @date 2022/07/18 14:58
  */
-@Configuration
+//@Configuration
 /**
  * 把RabbitmqProperties加入到容器
  */

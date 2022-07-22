@@ -3,7 +3,6 @@ package testspringboot.testspringboot.rabbitmq;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import testspringboot.testspringboot.domain.MyMessage;
 
 import java.util.UUID;
@@ -15,7 +14,7 @@ import java.util.UUID;
  * @author 肖龙威
  * @date 2022/07/18 16:18
  */
-@Component
+//@Component
 public class Producer {
 
     @Autowired

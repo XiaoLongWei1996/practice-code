@@ -7,8 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import testspringboot.testspringboot.domain.MyMessage;
-import testspringboot.testspringboot.rabbitmq.Producer;
+import testspringboot.testspringboot.websocket.WebScoketServer;
 
 /**
  * @author 肖龙威
@@ -22,15 +21,10 @@ public class MessageController {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    private Producer producer;
 
     @GetMapping("/test")
     public ResponseEntity<Object> test(String message) {
-        MyMessage m = new MyMessage();
-        m.setBody(message);
-        m.setCode(200);
-        producer.send(m, 5000);
+        WebScoketServer.sendMessage(message, "0001");
         return ResponseEntity.ok(200);
     }
 }
