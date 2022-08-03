@@ -378,8 +378,6 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test27() throws IOException, IllegalAccessException {
-        Date date = new Date(2022, 6, 1);
-        List<Student> list = studentMdbService.queryByDate(date, new Date());
-        System.out.println(list);
+
     }
 }
