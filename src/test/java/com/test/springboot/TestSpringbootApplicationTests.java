@@ -17,8 +17,6 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.test.springboot.domain.Clazz;
 import com.test.springboot.domain.Student;
 import com.test.springboot.mapper.ClazzMapper;
 import com.test.springboot.mapper.StudentMapper;
@@ -391,10 +389,6 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test27() throws IOException, IllegalAccessException {
-        UpdateWrapper<Clazz> wrapper = new UpdateWrapper();
-        wrapper.eq("name", "二班").set("code", "002");
-        Clazz clazz = new Clazz();
-        clazz.setName("二班");
-        clazzMapper.update(null, wrapper);
+        studentMapper.deleteById(2);
     }
 }

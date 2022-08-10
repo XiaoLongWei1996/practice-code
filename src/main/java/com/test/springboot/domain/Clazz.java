@@ -39,6 +39,6 @@ public class Clazz {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date updateDt;
 
-    @TableLogic()
+    @TableLogic(value = "0", delval = "1")
     private Integer isDelete;
 }
