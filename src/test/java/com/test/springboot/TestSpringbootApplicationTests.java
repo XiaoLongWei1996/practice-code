@@ -17,8 +17,13 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
-import com.test.springboot.domain.Student01;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.test.springboot.domain.Clazz;
+import com.test.springboot.domain.Student;
+import com.test.springboot.mapper.ClazzMapper;
 import com.test.springboot.mapper.StudentMapper;
+import com.test.springboot.mongo.StudentMdbService;
+import com.test.springboot.mongo.StudentOperate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,12 +34,12 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import com.test.springboot.domain.Student;
-import com.test.springboot.mongo.StudentMdbService;
-import com.test.springboot.mongo.StudentOperate;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TestSpringbootApplicationTests {
@@ -53,6 +58,9 @@ class TestSpringbootApplicationTests {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    private ClazzMapper clazzMapper;
 
     @Test
     void contextLoads() throws IOException {
@@ -383,12 +391,10 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test27() throws IOException, IllegalAccessException {
-        Student01 student = new Student01();
-        student.setName("小明");
-        student.setAge(12);
-        student.setCreateDt(new Date());
-        student.setUpdateDt(new Date());
-        studentMapper.insert(student);
-        System.out.println(student.getId());
+        UpdateWrapper<Clazz> wrapper = new UpdateWrapper();
+        wrapper.eq("name", "二班").set("code", "002");
+        Clazz clazz = new Clazz();
+        clazz.setName("二班");
+        clazzMapper.update(null, wrapper);
     }
 }
