@@ -2,81 +2,72 @@ server:
   port: 9091
 
 spring:
-#  #整合rabbitmq
-#  rabbitmq:
-#    host: localhost
-#    port: 5672
-#    username: admin
-#    password: 123456
-#    #设置消息确认成功确认后进行回调
-#    #NONE值是禁用发布确认模式，是默认值
-#    #CORRELATED值是发布消息成功到交换器后会触发回调方法，如1示例
-#    #SIMPLE值经测试有两种效果，其一效果和CORRELATED值一样会触发回调方法，
-#    #其二在发布消息成功后使用rabbitTemplate调用waitForConfirms或waitForConfirmsOrDie
-#    #方法等待broker节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie
-#    #方法如果返回false则会关闭channel，则接下来无法发送消息到broker;
-#    #调用confirmCallback接口
-#    publisher-confirm-type: correlated
-#    cache:
-#      channel:
-#        #缓存中管道的数量5个
-#        size: 5
-#    #设置消费者
-#    listener:
-#      simple:
-#        acknowledge-mode: manual #手动应答
-#        default-requeue-rejected: true #拒绝后重回队列
-#        prefetch: 5    #预获取
+  #  #整合rabbitmq
+  #  rabbitmq:
+  #    host: localhost
+  #    port: 5672
+  #    username: admin
+  #    password: 123456
+  #    #设置消息确认成功确认后进行回调
+  #    #NONE值是禁用发布确认模式，是默认值
+  #    #CORRELATED值是发布消息成功到交换器后会触发回调方法，如1示例
+  #    #SIMPLE值经测试有两种效果，其一效果和CORRELATED值一样会触发回调方法，
+  #    #其二在发布消息成功后使用rabbitTemplate调用waitForConfirms或waitForConfirmsOrDie
+  #    #方法等待broker节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie
+  #    #方法如果返回false则会关闭channel，则接下来无法发送消息到broker;
+  #    #调用confirmCallback接口
+  #    publisher-confirm-type: correlated
+  #    cache:
+  #      channel:
+  #        #缓存中管道的数量5个
+  #        size: 5
+  #    #设置消费者
+  #    listener:
+  #      simple:
+  #        acknowledge-mode: manual #手动应答
+  #        default-requeue-rejected: true #拒绝后重回队列
+  #        prefetch: 5    #预获取
 
-  #  datasource:
-#    druid:
-#      driver-class-name: com.mysql.jdbc.Driver
-#      url: jdbc:mysql://192.168.0.97:3306/test03?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
-#      username: passis
-#      password: Zzlc_1qaz789
-#      #初始化连接数量，最大最小连接数
-#      initial-size: 5
-#      max-active: 10
-#      min-idle: 3
-#      #获取连接等待超时的时间
-#      max-wait: 600000
-#      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
-#      time-between-eviction-runs-millis: 600000
-#      #配置一个连接在池中最小生存的时间，单位是毫秒
-#      min-evictable-idle-time-millis: 1000000 #300000
-#      #用来检测连接是否有效的sql，要求是一个查询语句
-#      validation-query: SELECT 1
-#      #申请连接的时候检测
-#      test-while-idle: true
-#      #申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
-#      test-on-borrow: false
-#      #归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
-#      test-on-return: false
-#      #打开PSCache，并且指定每个连接上PSCache的大小
-#      pool-prepared-statements: true
-#      max-pool-prepared-statement-per-connection-size: 50
-#      #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
-#      #监控统计用的filter:stat 日志用的filter:log4j 防御SQL注入的filter:wall
-#      filters: stat
-#      stat-view-servlet:
-#        #allow: '*'
-#        #deny: 172.16.0.117
-#        login-username: druid
-#        login-password: druidzzlc123
-#        reset-enable: false
-#        url-pattern: '/druid/*'
-#      web-stat-filter:
-#        url-pattern: '/*'
-#        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
-#  activiti:
-#    database-schema: activiti
-#    #      job-executor-activate: true # asyncExecutorEnabled属性设置设置true后将代替那些老的Job executor
-#    database-schema-update: true #表示启动时检查数据库表，不存在则创建
-#    check-process-definitions: false # 自动部署验证设置:true-开启（默认）、false-关闭
-#    #      process-definition-location-prefix: classpath:/processes/  #activiti7 不需要，使用bmpn.js，前端绘制
-#    history-level: full #表示哪种情况下使用历史表，这里配置为full表示全部记录历史，方便绘制流程图
-#    db-history-used: true #为true表示使用历史表，如果不配置，则工程启动后可以检查数据库，只建立了17张表，历史表没有建立，则流程图及运行节点无法展示
-
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://192.168.0.97:3306/test03?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false
+      username: passis
+      password: Zzlc_1qaz789
+      #初始化连接数量，最大最小连接数
+      initial-size: 5
+      max-active: 10
+      min-idle: 3
+      #获取连接等待超时的时间
+      max-wait: 600000
+      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 600000
+      #配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 1000000 #300000
+      #用来检测连接是否有效的sql，要求是一个查询语句
+      validation-query: SELECT 1
+      #申请连接的时候检测
+      test-while-idle: true
+      #申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+      test-on-borrow: false
+      #归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+      test-on-return: false
+      #打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 50
+      #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
+      #监控统计用的filter:stat 日志用的filter:log4j 防御SQL注入的filter:wall
+      filters: stat
+      stat-view-servlet:
+        #allow: '*'
+        #deny: 172.16.0.117
+        login-username: druid
+        login-password: druidzzlc123
+        reset-enable: false
+        url-pattern: '/druid/*'
+      web-stat-filter:
+        url-pattern: '/*'
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
   data:
     mongodb:
       host: localhost
@@ -100,4 +91,37 @@ rmq:
   back-exchange-name: ex-back
   back-queue-name: qu-back
 
+#xxl-job配置
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:8080/xxl-job-admin
+    executor:
+      appname: xxl-job-executor-sample
+      port: 9999
+      logretentiondays: 30
+    accessToken: default_token
+
+#mybatis:
+#  mapper-locations: classpath:mappers/*.xml
+#  type-aliases-package: com.test.springboot.domain
+#  configuration:
+#    lazy-loading-enabled: true
+#    aggressive-lazy-loading: false
+#    map-underscore-to-camel-case: true
+#    default-fetch-size: 100
+#    default-statement-timeout: 1000 #30
+#    call-setters-on-nulls: true
+
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.test.springboot.domain
+  configuration:
+    default-fetch-size: 100
+    map-underscore-to-camel-case: true
+    default-statement-timeout: 1000
+    call-setters-on-nulls: true
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
