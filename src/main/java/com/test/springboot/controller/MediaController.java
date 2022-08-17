@@ -216,7 +216,16 @@ public class MediaController {
     @PostMapping("/clipVideo")
     private void clipVideo(MultipartFile video, Integer start, Integer end, HttpServletResponse response) {
         try {
-            mediaService.videoClip(video.getInputStream(), response.getOutputStream(), start, end);
+            mediaService.videoClip(video, response.getOutputStream(), start, end);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @PostMapping("/clipAudio")
+    private void clipAudio(MultipartFile audio, Integer start, Integer end, HttpServletResponse response) {
+        try {
+            mediaService.audioClip(audio, response.getOutputStream(), start, end);
         } catch (Exception e) {
             e.printStackTrace();
         }

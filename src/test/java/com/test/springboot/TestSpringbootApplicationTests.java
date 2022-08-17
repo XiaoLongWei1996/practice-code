@@ -17,11 +17,15 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.test.springboot.domain.Clazz;
+import com.test.springboot.domain.Hero;
 import com.test.springboot.domain.Student;
 import com.test.springboot.mapper.ClazzMapper;
-import com.test.springboot.mapper.StudentMapper;
+import com.test.springboot.mapper.HeroMapper;
 import com.test.springboot.mongo.StudentMdbService;
 import com.test.springboot.mongo.StudentOperate;
+import com.test.springboot.service.HeroService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,7 +59,10 @@ class TestSpringbootApplicationTests {
     private StudentMdbService studentMdbService;
 
     @Autowired
-    private StudentMapper studentMapper;
+    private HeroService heroService;
+
+    @Autowired
+    private HeroMapper heroMapper;
 
     @Autowired
     private ClazzMapper clazzMapper;
@@ -388,7 +395,15 @@ class TestSpringbootApplicationTests {
     }
 
     @Test
+    //@Transactional(rollbackFor = Exception.class)
     void test27() throws IOException, IllegalAccessException {
-        studentMapper.deleteById(2);
+        List<Hero> list = heroMapper.selectJoinList(Hero.class, new MPJLambdaWrapper<Hero>()
+                .selectAll(Hero.class)
+                .selectAs(Clazz::getName, Hero::getClassName)
+                .innerJoin(Clazz.class, Clazz::getId, Hero::getClassId)
+        );
+
+        System.out.println(list);
     }
+
 }

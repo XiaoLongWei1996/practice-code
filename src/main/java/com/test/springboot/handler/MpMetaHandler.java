@@ -16,7 +16,8 @@ public class MpMetaHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         this.strictInsertFill(metaObject, "createDt", Date.class, new Date());
-        this.strictUpdateFill(metaObject, "updateDt", Date.class, new Date());
+        this.strictInsertFill(metaObject, "updateDt", Date.class, new Date());
+        this.setFieldValByName("isDelete", 0, metaObject);
     }
 
     @Override

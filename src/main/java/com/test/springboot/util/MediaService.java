@@ -305,58 +305,16 @@ public class MediaService {
      * @param end    结束时间
      * @throws IOException
      */
-    public void videoClip(InputStream video, OutputStream target, Integer start, Integer end) throws IOException {
-        FrameRecorder recorder = null;
-        FFmpegFrameGrabber vGrabber = null;
-        try {
-            vGrabber = new FFmpegFrameGrabber(video);
-            vGrabber.start();
-            File file = new File("D:\\v01.mp4");
-            recorder = new FFmpegFrameRecorder(file, vGrabber.getImageWidth(), vGrabber.getImageHeight(), vGrabber.getAudioChannels());
-            //设置视频编码层模式
-            recorder.setVideoCodec(vGrabber.getVideoCodec());
-            //设置视频为25帧每秒
-            recorder.setFrameRate(vGrabber.getFrameRate());
-            //设置视频图像数据格式
-            //recorder.setPixelFormat(vGrabber.getPixelFormat());//avutil.AV_PIX_FMT_YUV420P
-            //System.out.println(vGrabber.getPixelFormat());
-            //设置视频的输出格式
-            recorder.setFormat(vGrabber.getFormat());
-            //设置清晰度25-30最清晰,范围是0-40
-            recorder.setVideoQuality(25);
-            //8000kb/s 这个说明视频每秒大小，值越大图片转过来的压缩率就越小质量就会越高
-            recorder.setVideoBitrate(vGrabber.getVideoBitrate());
-            //录制视频
-            recorder.start();
-            //帧对象
-            Frame frame = null;
-            //获取结束执行时间的帧率
-//            vGrabber.setVideoTimestamp(end * 1000 * 1000);
-//            int endNumber = vGrabber.getFrameNumber();
-//            System.out.println(endNumber);
-            //开始设置截取时间
-            //vGrabber.setTimestamp(start * 1000 * 1000);
-            vGrabber.setVideoTimestamp(start * 1000 * 1000);
-            //记录当前帧的时间
-            long time = 0;
-            while ((frame = vGrabber.grabFrame()) != null) {
-                time = vGrabber.getTimestamp();
-                if (ObjectUtils.isNotEmpty(end)) {
-                    if (time <= end * 1000 * 1000) {
-                        recorder.record(frame);
-                    } else {
-                        break;
-                    }
-                } else {
-                    recorder.record(frame);
-                }
-            }
-        } finally {
-            closeGrabber(vGrabber);
-            closeRecorder(recorder);
-            IOUtils.closeQuietly(video);
-            IOUtils.closeQuietly(target);
-        }
+    public void videoClip(MultipartFile video, OutputStream target, Integer start, Integer end) throws Exception {
+        File file = storeLocalTempDir(video);
+        File file1 = clipVideo(file, start, end - start);
+        target.close();
+    }
+
+    public void audioClip(MultipartFile audio, OutputStream target, Integer start, Integer end) throws Exception {
+        File file = storeLocalTempDir(audio);
+        File file1 = clipAudio(file, start, end - start);
+        target.close();
     }
 
     /**
@@ -725,10 +683,59 @@ public class MediaService {
         return file;
     }
 
+    /**
+     * 改变视频帧率
+     * @param file
+     * @param rate
+     * @return
+     * @throws Exception
+     */
     private File changeVideoFrameRate(File file, Integer rate) throws Exception {
         String fileName = tempDir + UUID.randomUUID() + ".mp4";
         String ffmpeg = "ffmpeg -i " + file.getAbsolutePath() + " -qscale 0 -r " + rate + " -y " + fileName;
         PhotoUtils.ffmpegExecute(ffmpeg);
+        file = new File(fileName);
+        return file;
+    }
+
+    /**
+     *
+     * @param file
+     * @param start
+     * @param duration
+     * @return
+     * @throws Exception
+     */
+    private File clipVideo(File file, Integer start, Integer duration) throws Exception {
+        String fileName = tempDir + UUID.randomUUID() + ".mp4";
+        String ffmpeg = "ffmpeg -ss " + start + " -t " + duration + " -accurate_seek -i " + file.getAbsolutePath() + " -codec copy " + fileName;
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            PhotoUtils.ffmpegExecute(ffmpeg);
+        } else {
+            PhotoUtils.linuxffmpegExecute(ffmpeg);
+        }
+        file = new File(fileName);
+        return file;
+    }
+
+    /**
+     *
+     * @param file
+     * @param start
+     * @param duration
+     * @return
+     * @throws Exception
+     */
+    private File clipAudio(File file, Integer start, Integer duration) throws Exception {
+        String fileName = tempDir + UUID.randomUUID() + ".mp3";
+        String ffmpeg = "ffmpeg -i " + file.getAbsolutePath() + " -ss " + start + " -t " + duration + " " + fileName;
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            PhotoUtils.ffmpegExecute(ffmpeg);
+        } else {
+            PhotoUtils.linuxffmpegExecute(ffmpeg);
+        }
         file = new File(fileName);
         return file;
     }

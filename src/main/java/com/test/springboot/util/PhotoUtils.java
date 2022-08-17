@@ -5,10 +5,7 @@ import org.bytedeco.javacpp.Loader;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * 操作图片工具类
@@ -39,6 +36,11 @@ public class PhotoUtils {
         return inputStream;
     }
 
+    /**
+     * windows执行ffmpeg命令
+     * @param command
+     * @throws Exception
+     */
     public static void ffmpegExecute(String command) throws Exception {
         String ffmpeg = Loader.load(org.bytedeco.ffmpeg.ffmpeg.class);
         String[] commands = command.trim().split(" ");
@@ -56,4 +58,73 @@ public class PhotoUtils {
         process.destroy();
     }
 
+    /**
+     * linux执行ffmpeg命令
+     * @param command
+     */
+    public static void linuxffmpegExecute(String command) {
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR");
+            errorGobbler.start();//  kick  off  stderr
+            StreamGobbler outGobbler = new StreamGobbler(process.getInputStream(), "STDOUT");
+            outGobbler.start();//  kick  off  stdout
+            process.waitFor();
+        } catch (Exception e) {
+            //do some thing
+            e.printStackTrace();
+        }
+    }
+
+}
+
+class StreamGobbler extends Thread {
+    InputStream is;
+    String type;
+    OutputStream os;
+
+    public StreamGobbler(InputStream is, String type) {
+        this(is, type, null);
+    }
+
+    public StreamGobbler(InputStream is, String type, OutputStream redirect) {
+        this.is = is;
+        this.type = type;
+        this.os = redirect;
+    }
+
+    @Override
+    public void run() {
+        PrintWriter pw = null;
+        try {
+            if (os != null)
+                pw = new PrintWriter(os);
+
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                if (pw != null)
+                    pw.println(line);
+                System.out.println(type + ">" + line);
+            }
+            if (pw != null)
+                pw.flush();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                os.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            pw.close();
+        }
+    }
 }
