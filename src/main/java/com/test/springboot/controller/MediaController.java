@@ -296,4 +296,11 @@ public class MediaController {
         return new RestResponse<>("ok");
     }
 
+    @PostMapping("/videoTime")
+    public RestResponse<Object> getVideoTime(MultipartFile video) throws Exception {
+        File file = mediaService.storeLocalTempDir(video);
+        List<File> files = mediaService.parseThumbnails(file);
+        return new RestResponse<>("ok");
+    }
+
 }

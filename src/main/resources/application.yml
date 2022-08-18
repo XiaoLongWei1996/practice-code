@@ -218,7 +218,7 @@ spring:
       max-file-size: 15MB
       max-request-size: 100MB
 
-temp-dir: D:\img\
+temp-dir: D:\tem\
 
 rmq:
   exchange-name: ex-delayed

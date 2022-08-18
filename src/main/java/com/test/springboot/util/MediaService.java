@@ -26,6 +26,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -992,12 +993,12 @@ public class MediaService {
      * @param video 源视频文件
      * @return 时长（s）
      */
-    public long getVideoDuration(InputStream video) throws IOException {
-        long duration = 0L;
+    public int getVideoDuration(InputStream video) throws IOException {
+        int duration = 0;
         FFmpegFrameGrabber ff = new FFmpegFrameGrabber(video);
         try {
             ff.start();
-            duration = ff.getLengthInTime() / (1000 * 1000);
+            duration = (int)ff.getLengthInTime() / (1000 * 1000);
             ff.stop();
         } catch (FrameGrabber.Exception e) {
             e.printStackTrace();
@@ -1244,6 +1245,32 @@ public class MediaService {
             closeGrabber(vGrabber2);
         }
         return file;
+    }
+
+    public List<File> parseThumbnails(File video) throws IOException {
+        Assert.notNull(video, "视频为空");
+        List<File> list = new ArrayList<>();
+        FFmpegFrameGrabber grabber = null;
+        try {
+            grabber = new FFmpegFrameGrabber(video);
+            grabber.start();
+            //视频时长,秒
+            int time = (int) grabber.getLengthInTime() / (1000 * 1000);
+            //每一秒取一张图片
+            Frame frame = null;
+            for (int i = 1; i <= time; i++) {
+                grabber.setTimestamp(i * 1000 * 1000);
+                while (frame == null || frame.image == null) {
+                    frame = grabber.grabImage();
+                }
+                File file = storeFrameAsImg(frame, "jpg", 200, 100);
+                list.add(file);
+                frame = null;
+            }
+        } finally {
+            closeGrabber(grabber);
+        }
+        return list;
     }
 
 }
