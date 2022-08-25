@@ -1,5 +1,6 @@
 package com.test.springboot.util;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.bytedeco.javacpp.Loader;
 
 import javax.imageio.ImageIO;
@@ -77,6 +78,39 @@ public class PhotoUtils {
         }
     }
 
+    public static void execCommand(String command) {
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(new String[]{command});
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR");
+            errorGobbler.start();//  kick  off  stderr
+            StreamGobbler outGobbler = new StreamGobbler(process.getInputStream(), "STDOUT");
+            outGobbler.start();//  kick  off  stdout
+            process.waitFor();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 执行shell脚本
+     */
+    public static void executeShell(String shellUrl) {
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(shellUrl);
+            StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR");
+            errorGobbler.start();//  kick  off  stderr
+            StreamGobbler outGobbler = new StreamGobbler(process.getInputStream(), "STDOUT");
+            outGobbler.start();//  kick  off  stdout
+            process.waitFor();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 
 class StreamGobbler extends Thread {
@@ -115,16 +149,22 @@ class StreamGobbler extends Thread {
             ioe.printStackTrace();
         } finally {
             try {
-                is.close();
+                if (ObjectUtils.isNotEmpty(is)) {
+                    is.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                os.close();
+                if (ObjectUtils.isNotEmpty(os)) {
+                    os.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            pw.close();
+            if (ObjectUtils.isNotEmpty(pw)) {
+                pw.close();
+            }
         }
     }
 }

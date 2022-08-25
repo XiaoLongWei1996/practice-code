@@ -3,21 +3,24 @@ package com.test.springboot.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jhlabs.image.PointFilter;
+import com.test.springboot.domain.RestResponse;
 import com.test.springboot.exception.RequestException;
+import com.test.springboot.util.ImageFilterFactory;
+import com.test.springboot.util.MediaService;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import com.test.springboot.domain.RestResponse;
-import com.test.springboot.util.ImageFilterFactory;
-import com.test.springboot.util.MediaService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -300,6 +303,21 @@ public class MediaController {
     public RestResponse<Object> getVideoTime(MultipartFile video) throws Exception {
         File file = mediaService.storeLocalTempDir(video);
         List<File> files = mediaService.parseThumbnails(file);
+        return new RestResponse<>("ok");
+    }
+
+    @PostMapping("/test01")
+    public RestResponse<Object> test01(MultipartFile img, MultipartFile mark, Integer width, Integer heigth, Integer x, Integer y, HttpServletResponse response) throws Exception {
+        File f = mediaService.storeLocalTempDir(img);
+        File f2 = mediaService.storeLocalTempDir(mark);
+        f2 = mediaService.changeImg("jpg", width, 80, f2);
+        Font font = new Font("微软雅黑", Font.PLAIN, 12);
+        f2 = mediaService.fontMark(f2, "小明一般", font, new Color(0, 0, 0, 255), 100, 30);
+        f2 = mediaService.fontMark(f2, "小白", font, new Color(0, 0, 0, 255), 100, 60);
+        File file = mediaService.imgMark(f, f2, width, heigth);
+        OutputStream outputStream = response.getOutputStream();
+        InputStream inputStream = new FileInputStream(file);
+        IOUtils.copy(inputStream, outputStream);
         return new RestResponse<>("ok");
     }
 

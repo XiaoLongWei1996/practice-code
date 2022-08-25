@@ -2,6 +2,7 @@ package com.test.springboot.util;
 
 import com.jhlabs.image.PointFilter;
 import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -41,6 +42,30 @@ public class MediaService {
 
     @Value("${temp-dir}")
     private String tempDir;
+
+
+    public File fontMark(File file, String text, Font font, Color color, Integer w, Integer h) throws IOException {
+        File target = createFile("jpg");
+        Image image = ImageIO.read(file);
+        Assert.notNull(image, "文件不存在");
+        int height = image.getHeight(null);
+        int width = image.getWidth(null);
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        mark(bufferedImage, image, text, font, color, w, h);
+        ImageIO.write(bufferedImage, "jpg", target);
+        return target;
+    }
+
+    public File imgMark(File img, File markImg, int width, int heigth) throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(markImg);
+        File jpg = createFile("jpg");
+        Thumbnails.of(img)
+                .forceSize(width, heigth)
+                .watermark(Positions.BOTTOM_CENTER, bufferedImage, 0.8f)
+                .outputQuality(0.8f)
+                .toFile(jpg);
+        return jpg;
+    }
 
     /**
      * 添加文字水印
@@ -993,7 +1018,7 @@ public class MediaService {
      * @param video 源视频文件
      * @return 时长（s）
      */
-    public int getVideoDuration(InputStream video) throws IOException {
+    public int getVideoDuration(File video) throws IOException {
         int duration = 0;
         FFmpegFrameGrabber ff = new FFmpegFrameGrabber(video);
         try {
@@ -1004,7 +1029,7 @@ public class MediaService {
             e.printStackTrace();
         } finally {
             if (ObjectUtils.isNotEmpty(video)) {
-                video.close();
+                //video.close();
             }
         }
         return duration;
@@ -1263,12 +1288,50 @@ public class MediaService {
                 while (frame == null || frame.image == null) {
                     frame = grabber.grabImage();
                 }
-                File file = storeFrameAsImg(frame, "jpg", 200, 100);
+                File file = storeFrameAsImg(frame, "jpg", 160, 90);
                 list.add(file);
                 frame = null;
             }
         } finally {
             closeGrabber(grabber);
+        }
+        return list;
+    }
+
+    public File createFile(String format) {
+        String name = UUID.randomUUID() + "." + format;
+        File file = new File(tempDir + name);
+        return file;
+    }
+
+    public List<File> generateThumbnails(File video) throws Exception {
+        List<File> list = new ArrayList<>();
+        StringBuffer command = new StringBuffer();
+        String img = "D:\\img\\test" + UUID.randomUUID();
+        int videoDuration = getVideoDuration(video);
+        System.out.println("视频长度" + videoDuration);
+        command.append("ffmpeg -i");
+        command.append(" ");
+        command.append(video.getAbsolutePath());
+        command.append(" ");
+        command.append("-vf fps=1/1:round=zero:start_time=0,scale=160x90,tile=10x10");
+        command.append(" ");
+        command.append(img + "_%d.jpg");
+        System.out.println(command);
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            PhotoUtils.ffmpegExecute(command.toString());
+        } else {
+            PhotoUtils.linuxffmpegExecute(command.toString());
+        }
+        int count = videoDuration % 100 == 0 ? videoDuration / 100 : videoDuration / 100 + 1;
+        System.out.println("个数" + count);
+        File file = null;
+        for (int i = 1; i <= count; i++) {
+            file = new File(img + "_" + i + ".jpg");
+            if (file.exists()) {
+                list.add(file);
+            }
         }
         return list;
     }

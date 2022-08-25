@@ -17,18 +17,17 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
-import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.test.springboot.domain.Clazz;
-import com.test.springboot.domain.Hero;
 import com.test.springboot.domain.Student;
 import com.test.springboot.mapper.ClazzMapper;
 import com.test.springboot.mapper.HeroMapper;
 import com.test.springboot.mongo.StudentMdbService;
 import com.test.springboot.mongo.StudentOperate;
 import com.test.springboot.service.HeroService;
+import com.test.springboot.util.MediaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,6 +36,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,6 +66,12 @@ class TestSpringbootApplicationTests {
 
     @Autowired
     private ClazzMapper clazzMapper;
+
+    @Autowired
+    private MediaService mediaService;
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Test
     void contextLoads() throws IOException {
@@ -395,15 +401,15 @@ class TestSpringbootApplicationTests {
     }
 
     @Test
-    //@Transactional(rollbackFor = Exception.class)
-    void test27() throws IOException, IllegalAccessException {
-        List<Hero> list = heroMapper.selectJoinList(Hero.class, new MPJLambdaWrapper<Hero>()
-                .selectAll(Hero.class)
-                .selectAs(Clazz::getName, Hero::getClassName)
-                .innerJoin(Clazz.class, Clazz::getId, Hero::getClassId)
-        );
-
-        System.out.println(list);
+        //@Transactional(rollbackFor = Exception.class)
+    void test27() throws Exception {
+        File video = new File("D:\\img\\m5.mp4");
+        List<File> list = mediaService.generateThumbnails(video);
+        System.out.println(list.size());
+        System.out.println("--------------------");
+        for (File file : list) {
+            System.out.println(file.getName());
+        }
     }
 
 }
