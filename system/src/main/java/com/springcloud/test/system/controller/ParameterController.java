@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ParameterController {
 
     @GetMapping("queryParam")
-    public ResponseEntity<String> queryParam() {
-        return ResponseEntity.ok("hello world");
+    public ResponseEntity<Integer> queryParam() {
+        return ResponseEntity.ok(1);
     }
 }

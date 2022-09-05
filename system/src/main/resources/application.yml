@@ -15,7 +15,7 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://192.168.0.97:3306/test03?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://hzzzlc.tpddns.cn:13306/test03?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&nullCatalogMeansCurrent=true&serverTimezone=Asia/Shanghai
       username: passis
       password: Zzlc_1qaz789
       #初始化连接数量，最大最小连接数
