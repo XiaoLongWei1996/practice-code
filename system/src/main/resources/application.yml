@@ -1,2 +1,68 @@
 server:
   port: 9991
+
+spring:
+  application:
+    name: system
+
+  servlet:
+    #设置上传文件
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  #设置数据源
+  datasource:
+    druid:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://192.168.0.97:3306/test03?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&serverTimezone=Asia/Shanghai
+      username: passis
+      password: Zzlc_1qaz789
+      #初始化连接数量，最大最小连接数
+      initial-size: 5
+      max-active: 10
+      min-idle: 3
+      #获取连接等待超时的时间
+      max-wait: 600000
+
+      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 600000
+      #配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 1000000 #300000
+      #用来检测连接是否有效的sql，要求是一个查询语句
+      validation-query: SELECT 1
+      #申请连接的时候检测
+      test-while-idle: true
+      #申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+      test-on-borrow: false
+      #归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+      test-on-return: false
+      #打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 50
+      #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
+      #监控统计用的filter:stat 日志用的filter:log4j 防御SQL注入的filter:wall
+      filters: stat
+      stat-view-servlet:
+        #allow: '*'
+        #deny: 172.16.0.117
+        login-username: druid
+        login-password: druidzzlc123
+        reset-enable: false
+        url-pattern: '/druid/*'
+      web-stat-filter:
+        url-pattern: '/*'
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+
+
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.test.springboot.domain
+  configuration:
+    default-fetch-size: 100
+    map-underscore-to-camel-case: true
+    default-statement-timeout: 1000
+    call-setters-on-nulls: true
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
