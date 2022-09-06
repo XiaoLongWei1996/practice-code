@@ -2,6 +2,9 @@ server:
   port: 9991
 
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   application:
     name: system
 
@@ -56,8 +59,8 @@ spring:
 
 
 mybatis-plus:
-  mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: com.test.springboot.domain
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.springcloud.test.system.entity
   configuration:
     default-fetch-size: 100
     map-underscore-to-camel-case: true
@@ -66,3 +69,8 @@ mybatis-plus:
     lazy-loading-enabled: true
     aggressive-lazy-loading: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: isDelete
+      logic-delete-value: 1
+      logic-not-delete-value: 0

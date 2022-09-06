@@ -11,8 +11,8 @@
 
     <groupId>org.springcloud.test</groupId>
     <artifactId>common</artifactId>
+    <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,30 +35,17 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
-            <plugins>
-                <plugin>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.7.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <fork>true</fork>-->
+<!--                    <addResources>true</addResources>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
 
-    <reporting>
-        <plugins>
-            <plugin>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>
