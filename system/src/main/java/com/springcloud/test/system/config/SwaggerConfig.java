@@ -24,6 +24,7 @@ public class SwaggerConfig {
     Docket docket() {
         return new Docket(DocumentationType.OAS_30)
                 //配置网站的基本信息
+                .groupName("1")
                 .apiInfo(new ApiInfoBuilder()
                         //网站标题
                         .title("cloud测试接口文档")
