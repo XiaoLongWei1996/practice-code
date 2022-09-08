@@ -24,6 +24,7 @@
         <elasticsearch-version>7.17.2</elasticsearch-version>
         <elasticsearch.cli-version>7.17.2</elasticsearch.cli-version>
         <lombok-version>1.18.24</lombok-version>
+        <shiro-version>1.9.1</shiro-version>
     </properties>
 
     <dependencyManagement>
@@ -163,6 +164,12 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-spring-boot-starter</artifactId>
                 <version>3.0.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-spring-boot-starter</artifactId>
+                <version>${shiro-version}</version>
             </dependency>
 
         </dependencies>
