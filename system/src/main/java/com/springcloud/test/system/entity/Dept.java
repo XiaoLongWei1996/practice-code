@@ -1,6 +1,5 @@
 package com.springcloud.test.system.entity;
 
-import java.util.Date;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -11,7 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.Date;
 
 /**
  * 部门 表(Dept)表实体类
@@ -31,7 +31,7 @@ public class Dept {
     * 主键id
     */
     @TableId(value = "id", type = IdType.AUTO)
-    @ApiModelProperty(value = "id", hidden = true)
+    @ApiModelProperty(value = "id")
     private Integer id;
     
     /**
@@ -56,7 +56,7 @@ public class Dept {
     * 是否删除0否1是
     */
     @TableLogic
-    @ApiModelProperty(value = "是否删除0否1是", hidden = true)
+    @ApiModelProperty(value = "是否删除0否1是")
     private Integer isDelete;
     
     /**
@@ -66,7 +66,7 @@ public class Dept {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    @ApiModelProperty(value = "创建时间", hidden = true)
+    @ApiModelProperty(value = "创建时间")
     private Date createDt;
     
     /**
@@ -76,7 +76,7 @@ public class Dept {
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
-    @ApiModelProperty(value = "修改时间", hidden = true)
+    @ApiModelProperty(value = "修改时间")
     private Date updateDt;
 }
 
