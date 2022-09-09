@@ -12,8 +12,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,37 +43,59 @@ public class UsersController {
     @ApiOperation(value = "登录", notes = "登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String", dataTypeClass = String.class),
-            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", dataTypeClass = String.class)
+            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "rememberMe", value = "是否记住我", required = true, dataType = "boolean", dataTypeClass = boolean.class)
     })
     @PostMapping("login")
-    public ResponseEntity<String> login(String userName, String password) {
+    public ResponseEntity<String> login(String userName, String password, Boolean rememberMe) {
         if (StrUtil.isBlank(userName) || StrUtil.isBlank(password)) {
             throw new RuntimeException("用户名或者密码不能为空");
         }
-        //当前用户对象
-        Subject subject = SecurityUtils.getSubject();
-        subject.login(new UsernamePasswordToken(userName, password));
-        Users users = (Users) subject.getPrincipal();
-        if (ObjectUtil.isNotEmpty(users)) {
-            users.setState(1);
-            users.setLoginDt(new Date());
-            usersMapper.updateById(users);
+        try {
+            //当前用户对象
+            Subject subject = SecurityUtils.getSubject();
+            UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
+            token.setRememberMe(rememberMe);
+            subject.login(token);
+            Users users = (Users) subject.getPrincipal();
+            if (ObjectUtil.isNotEmpty(users)) {
+                users.setState(1);
+                users.setLoginDt(new Date());
+                usersMapper.updateById(users);
+            }
+        } catch (IncorrectCredentialsException ice) {
+            throw new RuntimeException("用户名或者密码错误");
+        } catch (UnknownAccountException uae) {
+            throw new RuntimeException("账号不存在");
+        } catch (LockedAccountException lae) {
+            throw new RuntimeException("账号已经锁定");
+        } catch (ExcessiveAttemptsException eae) {
+            throw new RuntimeException("账号超过登录错误次数");
+        } catch (AuthenticationException ae) {
+            throw new RuntimeException("用户名或密码不正确");
+        } catch (Exception e) {
+            throw new RuntimeException("登录异常:" + e.getMessage());
         }
         return ResponseEntity.ok("登录成功");
     }
 
     @ApiOperation(value = "登出", notes = "登出")
     @GetMapping("logout")
-    public ResponseEntity<String> logout(){
+    public ResponseEntity<String> logout() {
         Subject subject = SecurityUtils.getSubject();
-        subject.logout();
         Users users = (Users) subject.getPrincipal();
         if (ObjectUtil.isNotEmpty(users)) {
             users.setState(0);
             users.setLogoutDt(new Date());
             usersMapper.updateById(users);
         }
-        return ResponseEntity.ok("等出成功");
+        Session session = subject.getSession();
+        if (ObjectUtil.isNotEmpty(session)) {
+            //删除session
+            session.stop();
+        }
+        subject.logout();
+        return ResponseEntity.ok("登出成功");
     }
 
     /**

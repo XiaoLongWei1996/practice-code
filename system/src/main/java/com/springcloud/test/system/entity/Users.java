@@ -3,6 +3,7 @@ package com.springcloud.test.system.entity;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -49,12 +50,14 @@ public class Users {
     * 密码
     */
     @ApiModelProperty(value = "密码")
+    @JsonIgnore
     private String password;
     
     /**
     * 加盐加密
     */
     @ApiModelProperty(value = "加盐加密")
+    @JsonIgnore
     private String salt;
     
     /**
