@@ -1,0 +1,24 @@
+server:
+  port: 9992
+
+#management:
+#  server:
+#    port: 8081
+#  health:
+#    db:
+#      enabled: true
+#    mail:
+#      enabled: true
+
+#eureka:
+#  instance:
+#    hostname: localhost
+#  server:
+#    a-s-g-query-timeout-ms: 6000
+#    enable-self-preservation: false
+#  client:
+#    register-with-eureka: false
+#    fetch-registry: false
+#    service-url:
+#      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
