@@ -7,6 +7,29 @@ spring:
       matching-strategy: ant_path_matcher
   application:
     name: system
+  #配置cloud
+  cloud:
+    consul:
+      #配置consul主机
+      host: localhost
+      #配置consul端口
+      port: 8500
+      #配置服务发现
+      discovery:
+        #配置服务名称
+        service-name: ${spring.application.name}
+        #配置服务实例id
+        instance-id: ${spring.application.name}-${server.port}
+        #是否注册服务
+        register: false
+        #使用ip地址注册
+        prefer-ip-address: true
+        #本服务ip
+        ip-address: ${spring.cloud.client.ip-address}
+        #本服务的port
+        port: ${server.port}
+        #每隔15秒检查服务的健康状态
+        health-check-interval: 15s
 
   servlet:
     #设置上传文件

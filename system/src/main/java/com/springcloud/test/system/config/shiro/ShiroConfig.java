@@ -84,7 +84,7 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //自定义过滤器
         Map<String, Filter> customFilter = new HashMap();
-        customFilter.put("cauth",authFilter());
+        //customFilter.put("cauth",authFilter());
         shiroFilterFactoryBean.setFilters(customFilter);
         //设置认证界面路径
         shiroFilterFactoryBean.setLoginUrl("/users/login");
@@ -111,6 +111,7 @@ public class ShiroConfig {
         linkedHashMap.put("/plugins/**", "anon");//不需要验证
         linkedHashMap.put("/dist/**", "anon");//不需要验证
         linkedHashMap.put("/doc.html*/**", "anon");
+        linkedHashMap.put("/actuator/health", "anon");
         //linkedHashMap.put("/**", "cauth");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(linkedHashMap);
         //设置未授权页面
@@ -118,8 +119,4 @@ public class ShiroConfig {
         return shiroFilterFactoryBean;
     }
 
-    @Bean
-    public AuthFilter authFilter() {
-        return new AuthFilter();
-    }
 }

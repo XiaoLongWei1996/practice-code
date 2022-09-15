@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>eruka-server</module>
+        <module>home</module>
         <module>system</module>
         <module>common</module>
     </modules>

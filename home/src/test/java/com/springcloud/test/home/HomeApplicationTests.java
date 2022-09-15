@@ -1,10 +1,10 @@
-package com.springcloud.test.erukaserver;
+package com.springcloud.test.home;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ErukaServerApplicationTests {
+class HomeApplicationTests {
 
     @Test
     void contextLoads() {

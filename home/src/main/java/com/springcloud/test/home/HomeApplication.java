@@ -1,13 +1,13 @@
-package com.springcloud.test.erukaserver;
+package com.springcloud.test.home;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ErukaServerApplication {
+public class HomeApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ErukaServerApplication.class, args);
+        SpringApplication.run(HomeApplication.class, args);
     }
 
 }
