@@ -1,4 +1,4 @@
-package com.springcloud.test.home.controller;
+package com.springcloud.test.center.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import org.springframework.beans.factory.annotation.Value;

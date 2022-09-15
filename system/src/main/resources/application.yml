@@ -9,6 +9,7 @@ spring:
     name: system
   #配置cloud
   cloud:
+    #配置consul
     consul:
       #配置consul主机
       host: localhost
@@ -21,7 +22,7 @@ spring:
         #配置服务实例id
         instance-id: ${spring.application.name}-${server.port}
         #是否注册服务
-        register: false
+        register: true
         #使用ip地址注册
         prefer-ip-address: true
         #本服务ip
