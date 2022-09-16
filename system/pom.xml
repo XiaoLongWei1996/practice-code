@@ -13,6 +13,18 @@
     <artifactId>system</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <name>system</name>
     <description>system</description>
@@ -77,7 +89,7 @@
             <artifactId>shiro-spring-boot-starter</artifactId>
         </dependency>
 
-        <!-- consul组件 -->
+        <!-- consul服务注册中心组件 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-consul-discovery</artifactId>
@@ -89,6 +101,11 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- loadbalancer负载均衡组件,consul场景启动器依赖了该组件 -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-loadbalancer</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
 </project>

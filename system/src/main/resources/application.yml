@@ -31,6 +31,23 @@ spring:
         port: ${server.port}
         #每隔15秒检查服务的健康状态
         health-check-interval: 15s
+    #配置负载均衡
+    loadbalancer:
+      #配置健康检查
+      health-check:
+        #配置检查的时间间隔
+        initial-delay: 1s
+      #配置重试
+      retry:
+        #开启重试
+        enabled: true
+        # 其他实例的重试次数，多节点的情况下使用
+        max-retries-on-next-service-instance: 0
+        # 是否所有的请求都重试，false 表示只有 GET 请求才重试
+        retry-on-all-operations: true
+        # 同一个实例的重试次数，不包括第一次调用；比如填了 3，实际会调用 4 次
+        max-retries-on-same-service-instance: 1
+
 
   servlet:
     #设置上传文件
