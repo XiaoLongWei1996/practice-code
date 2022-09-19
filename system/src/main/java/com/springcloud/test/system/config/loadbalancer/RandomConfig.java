@@ -5,13 +5,12 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * @author 肖龙威
  * @date 2022/09/15 15:59
  */
-@Configuration
+//@Configuration
 public class RandomConfig {
 
     /**
@@ -23,6 +22,5 @@ public class RandomConfig {
     ReactorLoadBalancer<ServiceInstance> randomLoadBalancer(ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider) {
         return new RandomLoadBalancer(serviceInstanceListSupplierProvider);
     }
-
 
 }

@@ -1,5 +1,5 @@
 server:
-  port: 9993
+  port: 9994
 spring:
   mvc:
     pathmatch:

@@ -11,26 +11,26 @@ spring:
   cloud:
     #配置consul
     consul:
-      #配置consul主机
-      host: localhost
-      #配置consul端口
-      port: 8500
-      #配置服务发现
-      discovery:
-        #配置服务名称
-        service-name: ${spring.application.name}
-        #配置服务实例id
-        instance-id: ${spring.application.name}-${server.port}
-        #是否注册服务
-        register: true
-        #使用ip地址注册
-        prefer-ip-address: true
-        #本服务ip
-        ip-address: ${spring.cloud.client.ip-address}
-        #本服务的port
-        port: ${server.port}
-        #每隔15秒检查服务的健康状态
-        health-check-interval: 15s
+    #配置consul主机
+    host: localhost
+    #配置consul端口
+    port: 8500
+    #配置服务发现
+    discovery:
+      #配置服务名称
+      service-name: ${spring.application.name}
+      #配置服务实例id
+      instance-id: ${spring.application.name}-${server.port}
+      #是否注册服务
+      register: true
+      #使用ip地址注册
+      prefer-ip-address: true
+      #本服务ip
+      ip-address: ${spring.cloud.client.ip-address}
+      #本服务的port
+      port: ${server.port}
+      #每隔15秒检查服务的健康状态
+      health-check-interval: 15s
     #配置负载均衡
     loadbalancer:
       #配置健康检查
@@ -47,8 +47,6 @@ spring:
         retry-on-all-operations: true
         # 同一个实例的重试次数，不包括第一次调用；比如填了 3，实际会调用 4 次
         max-retries-on-same-service-instance: 1
-
-
   servlet:
     #设置上传文件
     multipart:
@@ -97,6 +95,29 @@ spring:
       web-stat-filter:
         url-pattern: '/*'
         exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+#配置feign请求接口,底层包装loadbalancer
+feign:
+  #配置客户端
+  client:
+    config:
+      default:
+        #连接超时
+        connectTimeout: 5000
+        #读超时
+        readTimeout: 5000
+        #日志级别
+        loggerLevel: full
+  #配置压缩
+  compression:
+    request:
+      #开启请求压缩
+      enabled: true
+      #压缩文件类型
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    #开启响应压缩
+    response:
+      enabled: true
 
 
 mybatis-plus:
@@ -115,3 +136,9 @@ mybatis-plus:
       logic-delete-field: isDelete
       logic-delete-value: 1
       logic-not-delete-value: 0
+
+logging:
+  level:
+    com.springcloud.test.system: debug
+
+
