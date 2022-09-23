@@ -14,6 +14,7 @@ public class AdviceController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> message(Exception e) {
-        return ResponseEntity.status(400).body(e.getMessage());
+        e.printStackTrace();
+        return ResponseEntity.status(400).body("请求出错");
     }
 }

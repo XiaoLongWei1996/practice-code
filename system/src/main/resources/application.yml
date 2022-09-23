@@ -119,6 +119,26 @@ feign:
     response:
       enabled: true
 
+resilience4j:
+  #配置重试
+  retry:
+    retry-aspect-order: 100
+    instances:
+      retryA:
+        # 重试次数
+        maxRetryAttempts: 4
+        # 重试等待
+        waitDuration: 1s
+        # 间隔乘数(场景: 正好每次间隔为1的时候卡顿 它就有用了 间隔就变了 例如 1 1.1 1.21....)
+        exponentialBackoffMultiplier: 1
+        retryExceptions:
+          - java.lang.RuntimeException
+  timelimiter:
+    instances:
+      timeA:
+        timeoutDuration: 2s
+        cancelRunningFuture: true
+
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
