@@ -26,6 +26,7 @@
         <elasticsearch.cli-version>7.17.2</elasticsearch.cli-version>
         <lombok-version>1.18.24</lombok-version>
         <shiro-version>1.9.1</shiro-version>
+        <resilience4j-version>1.7.1</resilience4j-version>
     </properties>
 
     <dependencyManagement>
@@ -171,6 +172,18 @@
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-spring-boot-starter</artifactId>
                 <version>${shiro-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bulkhead</artifactId>
+                <version>${resilience4j-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-timelimiter</artifactId>
+                <version>${resilience4j-version}</version>
             </dependency>
 
         </dependencies>

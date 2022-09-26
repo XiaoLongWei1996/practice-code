@@ -1,5 +1,6 @@
 package com.springcloud.test.system.controller;
 
+import com.springcloud.test.system.entity.Result;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class AdviceController {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> message(Exception e) {
+    public ResponseEntity<Result<String>> message(Exception e) {
         e.printStackTrace();
-        return ResponseEntity.status(400).body("请求出错");
+        return ResponseEntity.status(400).body(Result.fail(e.getMessage()));
     }
 }

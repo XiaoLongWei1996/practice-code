@@ -25,9 +25,9 @@ public class ToolController {
 
     @GetMapping("acquireToken")
     public ResponseEntity<String> acquireToken() throws InterruptedException {
-        count.incrementAndGet();
-        System.out.println("执行" + count.get());
-        Thread.sleep(11000);
+        Thread.sleep(2000);
+        int i = RandomUtil.randomInt(10);
+        System.out.println("执行" + count.incrementAndGet());
         String token = RandomUtil.randomString(8);
         return ResponseEntity.ok(token + port);
     }

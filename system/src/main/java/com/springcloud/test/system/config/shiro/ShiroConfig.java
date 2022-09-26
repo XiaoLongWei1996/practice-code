@@ -4,6 +4,7 @@ import cn.hutool.core.codec.Base64;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
@@ -12,10 +13,7 @@ import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.Filter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * @author 肖龙威
@@ -33,6 +31,7 @@ public class ShiroConfig {
         securityManager.setRealm(realm);
         securityManager.setSessionManager(sessionManager());
         securityManager.setRememberMeManager(rememberMeManager());
+        ThreadContext.bind(securityManager);
         return securityManager;
     }
 
@@ -83,9 +82,9 @@ public class ShiroConfig {
         //给ShiroFilter配置安全管理器
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //自定义过滤器
-        Map<String, Filter> customFilter = new HashMap();
+        //Map<String, Filter> customFilter = new HashMap();
         //customFilter.put("cauth",authFilter());
-        shiroFilterFactoryBean.setFilters(customFilter);
+        //shiroFilterFactoryBean.setFilters(customFilter);
         //设置认证界面路径
         shiroFilterFactoryBean.setLoginUrl("/users/login");
         //配置系统受限资源
