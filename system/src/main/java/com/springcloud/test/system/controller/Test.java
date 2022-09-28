@@ -5,6 +5,8 @@ import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.io.InputStream;
+import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -32,18 +34,15 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        Mono<Integer> just = Mono.create((x) -> {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            x.success(12);
-        });
+        Mono<Integer> just = Mono.empty();
 
+        just.subscribe(System.out::println);
+        just = Mono.just(12);
+        InputStream in = System.in;
+        Scanner scanner = new Scanner(in);
+        scanner.next();
 //        System.out.println(1111);
         //System.out.println(just.block());
-        System.out.println(just.hasElement());
         //just.subscribe(System.out::println);
 
     }

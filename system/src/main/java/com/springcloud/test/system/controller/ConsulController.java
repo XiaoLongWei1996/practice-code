@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -63,15 +62,14 @@ public class ConsulController {
     @ApiOperation(value = "测试同步请求", notes = "测试同步请求")
     @GetMapping("testSyn")
     public String testSyn() throws InterruptedException, ExecutionException {
-        CompletableFuture<String> token = test.getToken();
-        return token.get();
+        //CompletableFuture<String> token = test.getToken();
+        return Thread.currentThread().getName();
     }
 
     @ApiOperation(value = "测试异步请求", notes = "测试异步请求")
     @GetMapping("/testAsyn")
     public Mono<String> testAsyn() throws InterruptedException {
-        Thread.sleep(2000);
-        return Mono.just("ok");
+        return Mono.just(Thread.currentThread().getName());
     }
 
 }
