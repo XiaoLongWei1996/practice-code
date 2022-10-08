@@ -11,26 +11,26 @@ spring:
   cloud:
     #配置consul
     consul:
-    #配置consul主机
-    host: localhost
-    #配置consul端口
-    port: 8500
-    #配置服务发现
-    discovery:
-      #配置服务名称
-      service-name: ${spring.application.name}
-      #配置服务实例id
-      instance-id: ${spring.application.name}-${server.port}
-      #是否注册服务
-      register: true
-      #使用ip地址注册
-      prefer-ip-address: true
-      #本服务ip
-      ip-address: ${spring.cloud.client.ip-address}
-      #本服务的port
-      port: ${server.port}
-      #每隔15秒检查服务的健康状态
-      health-check-interval: 15s
+      #配置consul主机
+      host: localhost
+      #配置consul端口
+      port: 8500
+      #配置服务发现
+      discovery:
+        #配置服务名称
+        service-name: ${spring.application.name}
+        #配置服务实例id
+        instance-id: ${spring.application.name}-${server.port}
+        #是否注册服务
+        register: true
+        #使用ip地址注册
+        prefer-ip-address: true
+        #本服务ip
+        ip-address: ${spring.cloud.client.ip-address}
+        #本服务的port
+        port: ${server.port}
+        #每隔15秒检查服务的健康状态
+        health-check-interval: 15s
     #配置负载均衡
     loadbalancer:
       #配置健康检查
@@ -153,33 +153,59 @@ resilience4j:
         registerHealthIndicator: true
         #设置缓存
         eventConsumerBufferSize: 100
-  #设置舱壁
+  #设置信号量舱壁
   bulkhead:
+    #实例
     instances:
+      #实例A
       bluA:
+        #线程最大的等待时间
         maxWaitDuration: 10ms
+        #最大并发调用数量
         maxConcurrentCalls: 5
+  #设置线程池舱壁
   thread-pool-bulkhead:
+    #实例
     instances:
+      #实例B
       bluB:
+        #最大线程池大小
         maxThreadPoolSize: 2
+        #核心线程池大小
         coreThreadPoolSize: 2
+        #等待队列的大小
         queueCapacity: 1
+  #配置超时器
   timelimiter:
+    #实例
     instances:
+      #实例A
       timeA:
+        #超时时间
         timeoutDuration: 1s
+        #超时取消运行
         cancelRunningFuture: true
+  #配置熔断
   circuitbreaker:
+    #实例
     instances:
+      #实例A
       cirA:
+        #注册健康检查
         registerHealthIndicator: true
+        #滑动窗口的大小
         slidingWindowSize: 10
+        #half-open执行请求数
         permittedNumberOfCallsInHalfOpenState: 5
+        #滑动窗口的类型
         slidingWindowType: TIME_BASED
+        #最小的调用数量,只有达到10次才会计算滑动窗口的失败率
         minimumNumberOfCalls: 10
+        #open -> half-open的等待时间
         waitDurationInOpenState: 2s
+        #失败率,当失败率达到百分之50,熔断开启(open)
         failureRateThreshold: 50
+        #事件缓存大小
         eventConsumerBufferSize: 10
 
 mybatis-plus:
