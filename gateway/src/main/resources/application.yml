@@ -5,6 +5,39 @@ spring:
   application:
     name: gateway
   cloud:
+    gateway:
+      routes:
+        - id: system_route_1
+          uri: http://localhost:9991
+          predicates:
+            - Cookie=mytest,123
+        - id: system_route_2
+          uri: http://localhost:9991
+          predicates:
+            - Path=/dept/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: cirA
+                fallbackUri: forward:http://localhost:9991/error/info
+        - id: system_route_3
+          uri: http://localhost:9991
+          predicates:
+            - Header=token,123456
+            - Path=/users/**
+#        - id: home_route
+#          uri: lb://home
+#          predicates:
+#            - Path=/tool/**
+        - id: weight_route_1
+          uri: http://localhost:9992
+          predicates:
+            - Weight=group1,2
+        - id: weight_route_2
+          uri: http://localhost:9993
+          predicates:
+            - Weight=group1,8
+    #配置服务注册与发现
     consul:
       host: localhost
       port: 8500
@@ -23,3 +56,24 @@ spring:
         port: ${server.port}
         #每隔15秒检查服务的健康状态
         health-check-interval: 15s
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      cirA:
+        #注册健康检查
+        registerHealthIndicator: true
+        #滑动窗口的大小
+        slidingWindowSize: 5
+        #half-open执行请求数
+        permittedNumberOfCallsInHalfOpenState: 2
+        #滑动窗口的类型
+        slidingWindowType: TIME_BASED
+        #最小的调用数量,只有达到10次才会计算滑动窗口的失败率
+        minimumNumberOfCalls: 5
+        #open -> half-open的等待时间
+        waitDurationInOpenState: 2s
+        #失败率,当失败率达到百分之50,熔断开启(open)
+        failureRateThreshold: 50
+        #事件缓存大小
+        eventConsumerBufferSize: 10

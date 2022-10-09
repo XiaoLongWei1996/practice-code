@@ -94,6 +94,7 @@ public class DeptController {
     @ApiOperation(value = "查询所有部门", notes = "查询")
     @GetMapping("selectAll")
     public ResponseEntity<List<Dept>> selectAll() {
+        int i = 1/0;
         List<Dept> list = deptMapper.selectList(null);
         return ResponseEntity.ok(list);
     }
