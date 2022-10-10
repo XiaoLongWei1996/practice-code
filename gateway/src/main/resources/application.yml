@@ -6,11 +6,14 @@ spring:
     name: gateway
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 1000
+        response-timeout: 2s
       routes:
         - id: system_route_1
           uri: http://localhost:9991
           predicates:
-            - Cookie=mytest,123
+            - Path=/error/**
         - id: system_route_2
           uri: http://localhost:9991
           predicates:
@@ -19,24 +22,28 @@ spring:
             - name: CircuitBreaker
               args:
                 name: cirA
-                fallbackUri: forward:http://localhost:9991/error/info
-        - id: system_route_3
-          uri: http://localhost:9991
-          predicates:
-            - Header=token,123456
-            - Path=/users/**
+                fallbackUri: forward:/error/info
+                statusCodes:
+                  - 500
+                  - 404
+                  - "NOT_FOUND"
+#        - id: system_route_3
+#          uri: http://localhost:9991
+#          predicates:
+#            - Header=token,123456
+#            - Path=/users/**
 #        - id: home_route
 #          uri: lb://home
 #          predicates:
 #            - Path=/tool/**
-        - id: weight_route_1
-          uri: http://localhost:9992
-          predicates:
-            - Weight=group1,2
-        - id: weight_route_2
-          uri: http://localhost:9993
-          predicates:
-            - Weight=group1,8
+#        - id: weight_route_1
+#          uri: http://localhost:9992
+#          predicates:
+#            - Weight=group1,2
+#        - id: weight_route_2
+#          uri: http://localhost:9993
+#          predicates:
+#            - Weight=group1,8
     #配置服务注册与发现
     consul:
       host: localhost
@@ -74,6 +81,6 @@ resilience4j:
         #open -> half-open的等待时间
         waitDurationInOpenState: 2s
         #失败率,当失败率达到百分之50,熔断开启(open)
-        failureRateThreshold: 50
+        failureRateThreshold: 30
         #事件缓存大小
         eventConsumerBufferSize: 10
