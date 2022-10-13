@@ -74,7 +74,7 @@ public class DocUtils {
     private static void handleTitle(Paragraph paragraph, String text) {
         //处理标题
         if (!ReUtil.isMatch("^\\d\\.\\d.+$", text) || paragraph.getStyleName().contains("ARISTITLE")) {
-           return;
+            return;
         }
         //处理题目如:1.0xx
         String sequence = ReUtil.get("^(([\\d\\.]+).+)$", text, 2);
@@ -102,16 +102,16 @@ public class DocUtils {
 
     private static void handleItem(Paragraph paragraph, String text) {
         //处理小项,如1）、（1）
-        if (paragraph.getFormat().getOutlineLevel().getValue() == OutlineLevel.Body.getValue() || !ReUtil.isMatch("^\\(?\\w\\).*$", text)) {
+        if (!ReUtil.isMatch("^\\(?\\w\\).*$", text) || paragraph.getFormat().getOutlineLevel().getValue() == OutlineLevel.Body.getValue()) {
             return;
         }
-        setParagraph(paragraph, 6, OutlineLevel.Body, "ARISTITLE" + (paragraph.getFormat().getOutlineLevel().getValue() + 1));
+        System.out.println(text);
+        setParagraph(paragraph, 6, paragraph.getFormat().getOutlineLevel(), "ARISTITLE" + (paragraph.getFormat().getOutlineLevel().getValue() + 1));
         setCharacterFormat(paragraph, "宋体", 12, false);
     }
 
     private static void handleTextFormat(Paragraph paragraph) {
         //处理文本格式
-        //System.out.println(paragraph.getStyle().getParagraphFormat().setOutlineLevel());
         if (!"ARISTEXT".equals(paragraph.getStyleName())) {
             return;
         }
