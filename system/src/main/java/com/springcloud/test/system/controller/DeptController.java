@@ -1,7 +1,6 @@
 package com.springcloud.test.system.controller;
 
 
-import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.springcloud.test.system.dao.DeptMapper;
@@ -96,10 +95,6 @@ public class DeptController {
     @GetMapping("selectAll")
     public ResponseEntity<List<Dept>> selectAll() throws InterruptedException {
         //Thread.sleep(3000);
-        int i = RandomUtil.randomInt(10);
-        if (i % 2 == 0) {
-            i = i / 0;
-        }
         List<Dept> list = deptMapper.selectList(null);
         return ResponseEntity.ok(list);
     }

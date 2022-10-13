@@ -6,6 +6,22 @@ spring:
     name: gateway
   cloud:
     gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "http://localhost:9994/**"
+            allowed-headers: "*"
+            allow-credentials: true
+            allowed-methods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTION
       httpclient:
         connect-timeout: 1000
         response-timeout: 2s
@@ -27,6 +43,10 @@ spring:
                   - 500
                   - 404
                   - "NOT_FOUND"
+        - id: role_route
+          uri: lb://system
+          predicates:
+            - Path=/role/**
 #        - id: system_route_3
 #          uri: http://localhost:9991
 #          predicates:
