@@ -93,7 +93,8 @@ public class AppTest {
     public void Test() throws Exception {
         //doc();
         File file = new File("D:\\qq\\qq_data\\704926476\\FileRecv\\PI-FZ-210.01 管理制度、管理细则模板.doc");
-        DocUtils.formatDoc(file);
+        File template = new File("D:\\img\\template.doc");
+        DocUtils.formatDoc(file, template);
     }
 
     public void doc() {

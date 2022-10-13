@@ -28,13 +28,13 @@ import java.util.Objects;
  */
 public class DocUtils {
 
-    public static void formatDoc(File file) {
+    public static void formatDoc(File file, File template) {
         Assert.notNull(file, "file为空");
         Assert.isTrue(file.exists(), "文件不存在");
         Assert.isTrue("doc".equals(FileNameUtil.extName(file)) || "docx".equals(FileNameUtil.extName(file)), "文件格式不正确");
         BufferedInputStream inputStream = FileUtil.getInputStream(file);
         Document document = new Document(inputStream);
-        parseStyle(new File("D:\\img\\template.doc"), document);
+        parseStyle(template, document);
         SectionCollection sections = document.getSections();
         for (int i = 0; i < sections.getCount(); i++) {
             Section section = sections.get(i);
