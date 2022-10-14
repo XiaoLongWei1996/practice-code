@@ -26,6 +26,13 @@ spring:
         connect-timeout: 1000
         response-timeout: 2s
       routes:
+        - id: system_role
+          uri: lb://system
+          predicates:
+            - Path=/users/**
+            - BlackToken=abcd
+          filters:
+            - MyToken=true
         - id: system_route_1
           uri: http://localhost:9991
           predicates:
@@ -43,10 +50,6 @@ spring:
                   - 500
                   - 404
                   - "NOT_FOUND"
-        - id: role_route
-          uri: lb://system
-          predicates:
-            - Path=/role/**
 #        - id: system_route_3
 #          uri: http://localhost:9991
 #          predicates:

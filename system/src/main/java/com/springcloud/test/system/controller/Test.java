@@ -3,10 +3,7 @@ package com.springcloud.test.system.controller;
 import cn.hutool.core.util.RandomUtil;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
 
-import java.io.InputStream;
-import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -34,16 +31,12 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        Mono<Integer> just = Mono.empty();
-
-        just.subscribe(System.out::println);
-        just = Mono.just(12);
-        InputStream in = System.in;
-        Scanner scanner = new Scanner(in);
-        scanner.next();
-//        System.out.println(1111);
-        //System.out.println(just.block());
-        //just.subscribe(System.out::println);
-
+        try {
+            int i = 1/0;
+            System.out.println("执行");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("后执行");
     }
 }
