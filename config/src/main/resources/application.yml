@@ -1,0 +1,30 @@
+server:
+  port: 9995
+spring:
+  application:
+    name: config
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}-${server.port}
+        register: true
+        prefer-ip-address: true
+        ip-address: ${spring.cloud.client.ip-address}
+        port: ${server.port}
+        health-check-interval: 15s
+    config:
+      name: cloud-config-server
+      server:
+        git:
+          uri: https://gitee.com/xiao_long_wei/springcloud-config.git
+          username: 704926476@qq.com
+          password: xlw1996923XLW
+          skipSslValidation: true
+          timeout: 5
+          default-label: dev
+          search-paths:
+            - system
+
