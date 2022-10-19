@@ -39,8 +39,8 @@ public class ConsulController {
     @Value("${a}")
     private String a;
 
-//    @Value("${b}")
-//    private String b;
+    @Value("${b}")
+    private String b;
 
 //    @ApiOperation(value = "获取token", notes = "获取token")
 //    @GetMapping("getToken")
@@ -72,7 +72,7 @@ public class ConsulController {
     @GetMapping("testSyn")
     public String testSyn() throws InterruptedException, ExecutionException {
         System.out.println(a);
-//        System.out.println(b);
+        System.out.println(b);
         return a;
     }
 

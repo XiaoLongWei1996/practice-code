@@ -7,10 +7,20 @@ spring:
       uri: http://config
       profile: dev
       label: dev
-      name: system
+      name: system,common
+      username: admin
+      password: 123456
       fail-fast: true
       retry:
         max-attempts: 3
         max-interval: 1000
       request-read-timeout: 3000
       request-connect-timeout: 5000
+
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"

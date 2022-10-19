@@ -16,7 +16,6 @@ spring:
         port: ${server.port}
         health-check-interval: 15s
     config:
-      name: cloud-config-server
       server:
         git:
           uri: https://gitee.com/xiao_long_wei/springcloud-config.git
@@ -25,5 +24,8 @@ spring:
           skipSslValidation: true
           timeout: 5
           default-label: dev
-          search-paths:
-            - system
+          search-paths: '{application}'
+  security:
+    user:
+      name: admin
+      password: 123456
