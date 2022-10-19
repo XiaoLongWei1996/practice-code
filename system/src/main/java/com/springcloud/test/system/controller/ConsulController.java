@@ -5,6 +5,7 @@ import com.springcloud.test.system.entity.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +33,12 @@ public class ConsulController {
 
     @Autowired
     private Test test;
+
+    @Value("${a}")
+    private String a;
+
+//    @Value("${b}")
+//    private String b;
 
 //    @ApiOperation(value = "获取token", notes = "获取token")
 //    @GetMapping("getToken")
@@ -62,8 +69,9 @@ public class ConsulController {
     @ApiOperation(value = "测试同步请求", notes = "测试同步请求")
     @GetMapping("testSyn")
     public String testSyn() throws InterruptedException, ExecutionException {
-        //CompletableFuture<String> token = test.getToken();
-        return Thread.currentThread().getName();
+        System.out.println(a);
+//        System.out.println(b);
+        return a;
     }
 
     @ApiOperation(value = "测试异步请求", notes = "测试异步请求")

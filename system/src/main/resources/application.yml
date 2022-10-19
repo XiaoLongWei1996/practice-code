@@ -1,14 +1,23 @@
 server:
   port: 9991
 
+a: yyyy
+
 spring:
+  config:
+    import: optional:configserver:http://config
+  profiles:
+    active: dev
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   application:
     name: system
   #配置cloud
-  cloud:
+#  cloud:
+#    config:
+#      label: dev
+#      profile: dev
     #配置consul
     consul:
       #配置consul主机
@@ -66,7 +75,6 @@ spring:
       min-idle: 3
       #获取连接等待超时的时间
       max-wait: 600000
-
       #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
       time-between-eviction-runs-millis: 600000
       #配置一个连接在池中最小生存的时间，单位是毫秒

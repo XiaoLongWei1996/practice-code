@@ -27,4 +27,3 @@ spring:
           default-label: dev
           search-paths:
             - system
-
