@@ -1,24 +1,13 @@
 server:
   port: 9991
 
-a: yyyy
-
 spring:
-  config:
-    import: optional:configserver:http://config
-  profiles:
-    active: dev
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
   application:
     name: system
-  #配置cloud
-#  cloud:
-#    config:
-#      label: dev
-#      profile: dev
-    #配置consul
+  cloud:
     consul:
       #配置consul主机
       host: localhost
@@ -236,5 +225,4 @@ mybatis-plus:
 logging:
   level:
     com.springcloud.test.system: debug
-
 

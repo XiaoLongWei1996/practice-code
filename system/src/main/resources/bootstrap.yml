@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config
+      uri: http://config
+      profile: dev
+      label: dev
+      name: system
+      fail-fast: true
+      retry:
+        max-attempts: 3
+        max-interval: 1000
+      request-read-timeout: 3000
+      request-connect-timeout: 5000
