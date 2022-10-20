@@ -4,7 +4,7 @@ spring:
       discovery:
         enabled: true
         service-id: config
-      uri: http://config
+#      uri: http://config
       profile: dev
       label: dev
       name: system,common

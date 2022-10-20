@@ -2,11 +2,15 @@ server:
   port: 9991
 
 spring:
+#  config:
+#    import: optional:configserver:http://localhost:9995
+#  profiles:
+#    active: dev
+  application:
+    name: system
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  application:
-    name: system
   cloud:
     consul:
       #配置consul主机
