@@ -105,7 +105,6 @@ public class DocUtils {
         if (!ReUtil.isMatch("^\\(?\\w\\).*$", text) || paragraph.getFormat().getOutlineLevel().getValue() == OutlineLevel.Body.getValue()) {
             return;
         }
-        System.out.println(text);
         setParagraph(paragraph, 6, paragraph.getFormat().getOutlineLevel(), "ARISTITLE" + (paragraph.getFormat().getOutlineLevel().getValue() + 1));
         setCharacterFormat(paragraph, "宋体", 12, false);
     }
