@@ -6,6 +6,7 @@ import cn.hutool.core.io.file.FileNameUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
+import cn.hutool.core.util.StrUtil;
 import com.spire.doc.Document;
 import com.spire.doc.OutlineLevel;
 import com.spire.doc.Section;
@@ -21,6 +22,8 @@ import com.spire.doc.interfaces.IStyle;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author 肖龙威
@@ -65,24 +68,24 @@ public class DocUtils {
             //处理小项
             handleItem(paragraph, text);
             //处理正文
-            handleText(paragraph);
+            handleText(paragraph, text);
             //处理文本格式
             handleTextFormat(paragraph);
         }
     }
 
     private static void handleTitle(Paragraph paragraph, String text) {
-        OutlineLevel outlineLevel = paragraph.getStyle().getParagraphFormat().getOutlineLevel();
-        System.out.println(outlineLevel.getValue() + "---" + text);
         //处理标题
-        if (!ReUtil.isMatch("^\\d\\.\\d.+$", text) || paragraph.getStyleName().contains("ARISTITLE")) {
+        if (!ReUtil.isMatch("^\\d\\.\\d.+$", text) || text.contains("HYPERLINK") || StrUtil.isBlank(text)) {
             return;
         }
         //处理题目如:1.0xx
         String sequence = ReUtil.get("^(([\\d\\.]+).+)$", text, 2);
         String[] level = sequence.split("\\.");
         int l = level.length;
-        paragraph.getListFormat().removeList();
+        if (paragraph.getStyle().getParagraphFormat().getOutlineLevel().equals(OutlineLevel.Body)) {
+            paragraph.getListFormat().removeList();
+        }
         if (Objects.equals(level[l - 1], "0")) {
             l -= 1;
             setParagraph(paragraph, 6, OutlineLevel.Level_1, "ARISTITLE" + l);
@@ -93,20 +96,29 @@ public class DocUtils {
         }
     }
 
-    private static void handleText(Paragraph paragraph) {
+    private static void handleText(Paragraph paragraph, String text) {
+        String pattern = "^[\\u4e00-\\u9fa5]+";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(text);
+        if (m.find()) {
+            setParagraph(paragraph, 6, OutlineLevel.Body, "ARISTEXT");
+            setCharacterFormat(paragraph, "宋体", 12, false);
+        }
         //处理文本
-        if (!"程序正文".equals(paragraph.getStyleName())) {
+        if (!paragraph.getStyle().getParagraphFormat().getOutlineLevel().equals(OutlineLevel.Body) || text.contains("HYPERLINK") || StrUtil.isBlank(text)) {
             return;
         }
-        setParagraph(paragraph, 6, null, "ARISTEXT");
+
+        setParagraph(paragraph, 6, OutlineLevel.Body, "ARISTEXT");
         setCharacterFormat(paragraph, "宋体", 12, false);
     }
 
     private static void handleItem(Paragraph paragraph, String text) {
         //处理小项,如1）、（1）
-        if (!ReUtil.isMatch("^\\(?\\w\\).*$", text) || paragraph.getFormat().getOutlineLevel().getValue() == OutlineLevel.Body.getValue()) {
+        if (!ReUtil.isMatch("^\\(?\\w\\).*$", text) || paragraph.getFormat().getOutlineLevel().getValue() == OutlineLevel.Body.getValue() || StrUtil.isBlank(text)) {
             return;
         }
+        paragraph.getFormat().setLeftIndent(24);
         setParagraph(paragraph, 6, paragraph.getFormat().getOutlineLevel(), "ARISTITLE" + (paragraph.getFormat().getOutlineLevel().getValue() + 1));
         setCharacterFormat(paragraph, "宋体", 12, false);
     }
