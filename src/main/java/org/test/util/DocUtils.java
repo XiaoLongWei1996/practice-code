@@ -72,6 +72,8 @@ public class DocUtils {
     }
 
     private static void handleTitle(Paragraph paragraph, String text) {
+        OutlineLevel outlineLevel = paragraph.getStyle().getParagraphFormat().getOutlineLevel();
+        System.out.println(outlineLevel.getValue() + "---" + text);
         //处理标题
         if (!ReUtil.isMatch("^\\d\\.\\d.+$", text) || paragraph.getStyleName().contains("ARISTITLE")) {
             return;
