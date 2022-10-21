@@ -17,6 +17,7 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
+import com.test.springboot.domain.Hero;
 import com.test.springboot.domain.Student;
 import com.test.springboot.mapper.ClazzMapper;
 import com.test.springboot.mapper.HeroMapper;
@@ -36,7 +37,6 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -403,13 +403,13 @@ class TestSpringbootApplicationTests {
     @Test
         //@Transactional(rollbackFor = Exception.class)
     void test27() throws Exception {
-        File video = new File("D:\\img\\m5.mp4");
-        List<File> list = mediaService.generateThumbnails(video);
-        System.out.println(list.size());
-        System.out.println("--------------------");
-        for (File file : list) {
-            System.out.println(file.getName());
-        }
+        Hero hero = new Hero();
+        hero.setName("宋江");
+        hero.setPower(1001);
+        hero.setClassId(1l);
+        System.out.println(hero.getId());
+        long id = heroMapper.insert(hero);
+        System.out.println(hero.getId());
     }
 
 }
