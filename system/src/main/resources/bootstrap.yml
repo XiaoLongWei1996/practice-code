@@ -8,14 +8,23 @@ spring:
       profile: dev
       label: dev
       name: system,common
-      username: admin
-      password: 123456
+#      username: admin
+#      password: 123456
       fail-fast: true
       retry:
         max-attempts: 3
         max-interval: 1000
       request-read-timeout: 3000
       request-connect-timeout: 5000
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: 123456
+    cache:
+      channel:
+        checkout-timeout: 2000
+        size: 10
 
 management:
   security:

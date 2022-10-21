@@ -25,7 +25,24 @@ spring:
           timeout: 5
           default-label: dev
           search-paths: '{application}'
+#  security:
+#    user:
+#      name: admin
+#      password: 123456
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: 123456
+    cache:
+      channel:
+        checkout-timeout: 2000
+        size: 10
+
+management:
   security:
-    user:
-      name: admin
-      password: 123456
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: busrefresh
