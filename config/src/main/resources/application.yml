@@ -1,8 +1,9 @@
+#服务配置
 server:
   port: 9995
 spring:
   application:
-    name: config
+    name: config #配置应用名称
   cloud:
     consul:
       host: localhost
@@ -15,20 +16,20 @@ spring:
         ip-address: ${spring.cloud.client.ip-address}
         port: ${server.port}
         health-check-interval: 15s
-    config:
-      server:
+    config: #配置中心配置
+      server: #配置服务中心
         git:
-          uri: https://gitee.com/xiao_long_wei/springcloud-config.git
-          username: 704926476@qq.com
-          password: xlw1996923XLW
-          skipSslValidation: true
-          timeout: 5
-          default-label: dev
-          search-paths: '{application}'
-#  security:
-#    user:
-#      name: admin
-#      password: 123456
+          uri: https://gitee.com/xiao_long_wei/springcloud-config.git #github地址配置
+          username: 704926476@qq.com #用户名
+          password: xlw1996923XLW #密码
+          skipSslValidation: true #跳过ssl检查
+          timeout: 5              #超时配置
+          default-label: dev      #默认分支
+          search-paths: '{application}' #搜索目录'{application}'按照客户端应用名称搜索目录
+#  security:  #安全配置,由于客户端连接配置中心的用户名和密码
+#    user:    #配置用户
+#      name: admin #用户名
+#      password: 123456 #密码
   rabbitmq:
     host: localhost
     port: 5672
@@ -39,10 +40,11 @@ spring:
         checkout-timeout: 2000
         size: 10
 
+#消息总线配置
 management:
   security:
     enabled: false
   endpoints:
     web:
       exposure:
-        include: busrefresh
+        include: busrefresh  #暴露刷新配置端口,配置中心刷新配置,客户端都可以访问最新配置 /actuator/busrefresh

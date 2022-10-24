@@ -1,6 +1,6 @@
 spring:
   cloud:
-    #配置客户端
+    #配置客户端,配置了这个就不需要配置spring.config.import
     config:
       #注册中心配置发现
       discovery:
@@ -14,29 +14,41 @@ spring:
       profile: dev
       #git分支
       label: dev
+      #应用名称,访问配置中心文件的规则是:配置中心uri/{ 应用名 }/{ 环境名 } [ / { 分支名 } ]
       name: system,common
+      #连接配置中心账号
 #      username: admin
+      #连接配置中心密码
 #      password: 123456
+      #连接配置中心快速失败,如果项目启动过程中连接不了配置中心,则会报错
       fail-fast: true
+      #重试
       retry:
+        #最大重试次数
         max-attempts: 3
+        #重试时间间隔
         max-interval: 1000
+      #访问请求超时时间
       request-read-timeout: 3000
+      #连接请求超时时间
       request-connect-timeout: 5000
+  #rabbitmq配置
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: admin
-    password: 123456
-    cache:
-      channel:
-        checkout-timeout: 2000
-        size: 10
-
+    host: localhost #主机
+    port: 5672   #端口
+    username: admin #用户名
+    password: 123456  #密码
+    cache: #缓存配置
+      channel: #管道配置
+        checkout-timeout: 2000 #超时
+        size: 10 #管道的数量,一个连接10个管道
+#消息总线配置
 management:
+  #关闭安全检查
   security:
     enabled: false
+  #端口测试
   endpoints:
     web:
-      exposure:
+      exposure: #暴露端口
         include: "*"
