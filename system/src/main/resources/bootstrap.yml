@@ -1,11 +1,18 @@
 spring:
   cloud:
+    #配置客户端
     config:
+      #注册中心配置发现
       discovery:
+        #允许配置中心发现
         enabled: true
+        #查找配置中心的服务id
         service-id: config
+       #配置中心的地址,如果配置了服务发现,则可以不要
 #      uri: http://config
+      #配置使用环境变量
       profile: dev
+      #git分支
       label: dev
       name: system,common
 #      username: admin
