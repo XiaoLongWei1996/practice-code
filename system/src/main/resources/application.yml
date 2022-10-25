@@ -49,11 +49,6 @@ spring:
         retry-on-all-operations: true
         # 同一个实例的重试次数，不包括第一次调用；比如填了 3，实际会调用 4 次
         max-retries-on-same-service-instance: 1
-    stream:
-      bindings:
-        myOutput:
-          destination: myExchange
-          group: myQueue
   servlet:
     #设置上传文件
     multipart:

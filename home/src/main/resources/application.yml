@@ -30,5 +30,13 @@ spring:
         port: ${server.port}
         #每隔15秒检查服务的健康状态
         health-check-interval: 15s
-
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin #用户名
+    password: 123456  #密码
+    cache: #缓存配置
+      channel: #管道配置
+        checkout-timeout: 2000 #超时
+        size: 10 #管道的数量,一个连接10个管道
 
