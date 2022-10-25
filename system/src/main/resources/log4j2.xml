@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="5">
+    <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+    <Properties>
+        <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
+        <!-- %logger{36} 表示 Logger 名字最长36个字符 -->
+        <property name="LOG_PATTERN" value="%date{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+        <!-- 定义日志存储的路径，不要配置相对路径 -->
+        <property name="FILE_PATH" value="D:\logs" />
+        <!--项目名称-->
+        <property name="FILE_NAME" value="log4j2.log" />
+    </Properties>
+
+    <appenders>
+        <!-- 控制台输出日志 -->
+        <console name="Console" target="SYSTEM_OUT">
+            <!--输出日志的格式-->
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <!--控制台只输出level及其以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </console>
+
+        <!-- 文件保存 -->
+        <RollingFile name="rollingFile" fileName="${FILE_PATH}/${FILE_NAME}"
+                     filePattern="{FILE_PATH}/log-%d{yyyyMM-dd-HH-mm}-%i.log">
+            <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY" />
+            <PatternLayout pattern="${LOG_PATTERN}" />
+            <Policies>
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+            <DefaultRolloverStrategy max="30" />
+        </RollingFile>
+    </appenders>
+
+    <Async name="Async">
+        <AppenderRef ref="rollingFile"/>
+    </Async>
+
+    <loggers>
+        <AsyncLogger name="com.itheima" level="trace"
+                     includeLocation="false" additivity="false">
+            <AppenderRef ref="rollingFile"/>
+        </AsyncLogger>
+
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="rollingFile"/>
+        </Root>
+    </loggers>
+
+</Configuration>
