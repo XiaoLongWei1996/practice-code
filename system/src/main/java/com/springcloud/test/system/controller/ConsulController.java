@@ -4,6 +4,7 @@ import com.springcloud.test.system.config.feign.HomeApi;
 import com.springcloud.test.system.entity.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -21,6 +22,7 @@ import java.util.concurrent.ExecutionException;
  * @author 肖龙威
  * @date 2022/09/14 14:47
  */
+@Slf4j
 @Api(tags = "consule测试")
 @RestController
 @RefreshScope
@@ -70,9 +72,8 @@ public class ConsulController {
 
     @ApiOperation(value = "测试同步请求", notes = "测试同步请求")
     @GetMapping("testSyn")
-    public String testSyn() throws InterruptedException, ExecutionException {
-        System.out.println(a);
-        System.out.println(b);
+    public String testSyn() {
+        log.info("执行同步请求测试");
         return a;
     }
 
