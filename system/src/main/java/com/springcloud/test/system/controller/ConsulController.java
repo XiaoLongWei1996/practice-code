@@ -56,6 +56,7 @@ public class ConsulController {
     @ApiOperation(value = "feign获取token", notes = "feign获取token")
     @GetMapping("getToken01")
     public ResponseEntity<Result<Map<String, String>>> getToken01() {
+        log.info("获取token");
         String token = homeApi.getToken();
         Map<String, String> map = new HashMap<String, String>();
         map.put("token", token);

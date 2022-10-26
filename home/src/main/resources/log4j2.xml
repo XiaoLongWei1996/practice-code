@@ -4,11 +4,11 @@
     <Properties>
         <!-- 格式化输出：%date表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %msg：日志消息，%n是换行符-->
         <!-- %logger{36} 表示 Logger 名字最长36个字符 -->
-        <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %level - [%thread] - [%X{traceId},%X{spanId}] - [%logger{50}] %l : %msg%n"/>
+        <property name="LOG_PATTERN" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %level - [%thread] - [%logger{50}] %l : %msg%n"/>
         <!-- 定义日志存储的路径，不要配置相对路径 -->
         <property name="FILE_PATH" value="D:\logs"/>
         <!--项目名称-->
-        <property name="FILE_NAME" value="system"/>
+        <property name="FILE_NAME" value="home"/>
     </Properties>
 
     <appenders>
@@ -40,13 +40,13 @@
     </appenders>
 
     <loggers>
-        <AsyncLogger name="com.springcloud.test.system" level="info"
+        <AsyncLogger name="com.springcloud.test.home" level="info"
                      includeLocation="true" additivity="false">
             <AppenderRef ref="rollingFile"/>
             <AppenderRef ref="Console"/>
         </AsyncLogger>
 
-        <Root level="info" includeLocation="true">
+        <Root level="info" includeLocation="info">
             <AppenderRef ref="Console"/>
 <!--            <AppenderRef ref="rollingFile"/>-->
         </Root>

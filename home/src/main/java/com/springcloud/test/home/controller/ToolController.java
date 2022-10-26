@@ -1,6 +1,7 @@
 package com.springcloud.test.home.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 肖龙威
  * @date 2022/09/14 14:39
  */
-
+@Slf4j
 @RestController
 @RequestMapping("tool")
 public class ToolController {
@@ -21,6 +22,7 @@ public class ToolController {
 
     @GetMapping("acquireToken")
     public ResponseEntity<String> acquireToken() throws InterruptedException {
+        log.info("生成token");
         //Thread.sleep(2000);
         String token = RandomUtil.randomString(8);
         return ResponseEntity.ok(token + port);
