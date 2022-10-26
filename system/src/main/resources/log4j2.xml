@@ -30,7 +30,12 @@
                 <SizeBasedTriggeringPolicy size="20 MB"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
-            <DefaultRolloverStrategy max="5"/>
+            <DefaultRolloverStrategy max="5">
+                <Delete basePath="${FILE_PATH}" maxDepth="1">
+                    <IfFileName glob="*.log"/>
+                    <IfLastModified age="3d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
         </RollingFile>
     </appenders>
 
