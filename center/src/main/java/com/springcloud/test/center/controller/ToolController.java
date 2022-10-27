@@ -21,6 +21,7 @@ public class ToolController {
 
     @GetMapping("acquireToken")
     public ResponseEntity<String> acquireToken() {
+        int i = 1/0;
         String token = RandomUtil.randomString(8);
         return ResponseEntity.ok(token + port);
     }

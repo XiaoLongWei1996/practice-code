@@ -5,7 +5,7 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
   application:
-    name: home
+    name: center
   #配置cloud
   cloud:
     #配置consul
@@ -17,7 +17,7 @@ spring:
       #配置服务发现
       discovery:
         #配置服务名称
-        service-name: ${spring.application.name}
+        service-name: home
         #配置服务实例id
         instance-id: ${spring.application.name}-${server.port}
         #是否注册服务
@@ -30,5 +30,13 @@ spring:
         port: ${server.port}
         #每隔15秒检查服务的健康状态
         health-check-interval: 15s
+  zipkin:
+    base-url: http://localhost:9411/
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+
 
 
