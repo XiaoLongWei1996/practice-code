@@ -1,0 +1,17 @@
+server:
+  port: 9996
+spring:
+  application:
+    name: alibaba-config
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      username: admin
+      password: 123456
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        group: global
+        namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
+        prefix: alibaba
