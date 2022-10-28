@@ -16,11 +16,13 @@
         <module>center</module>
         <module>gateway</module>
         <module>config</module>
+        <module>alibaba-config</module>
     </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.boot-version>2.6.11</spring.boot-version>
+        <spring.cloud.alibaba-version>2021.0.4.0</spring.cloud.alibaba-version>
         <spring.cloud-version>2021.0.4</spring.cloud-version>
         <mysql.connection-version>5.1.30</mysql.connection-version>
         <druid-version>1.1.24</druid-version>
@@ -46,6 +48,14 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
                 <version>${spring.cloud-version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring.cloud.alibaba-version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -218,6 +228,15 @@
                 <configuration>
                     <fork>true</fork>
                     <addResources>true</addResources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>
