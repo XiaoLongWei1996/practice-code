@@ -15,3 +15,7 @@ spring:
         group: global
         namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
         prefix: alibaba
+        extension-configs:
+          - data-id: common-dev.yaml
+            group: global
+            refresh: true
