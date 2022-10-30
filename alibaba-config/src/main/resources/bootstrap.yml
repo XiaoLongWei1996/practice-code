@@ -19,3 +19,9 @@ spring:
           - data-id: common-dev.yaml
             group: global
             refresh: true
+      discovery:
+        server-addr: localhost:8848
+        namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
+        group: g1
+        service: config
+        weight: 10
