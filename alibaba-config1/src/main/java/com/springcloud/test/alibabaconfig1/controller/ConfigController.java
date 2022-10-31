@@ -1,4 +1,4 @@
-package com.springcloud.test.alibabaconfig.controller;
+package com.springcloud.test.alibabaconfig1.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -27,6 +27,6 @@ public class ConfigController {
 
     @GetMapping("test")
     public ResponseEntity<String> test() {
-        return ResponseEntity.ok(a + "---" + port);
+        return ResponseEntity.ok(b + "---" + port);
     }
 }

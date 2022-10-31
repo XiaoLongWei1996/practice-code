@@ -10,10 +10,10 @@
     </parent>
 
     <groupId>com.springcloud.test</groupId>
-    <artifactId>alibaba-config1</artifactId>
+    <artifactId>alibaba-consumer</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>alibaba-config1</name>
-    <description>alibaba-config1</description>
+    <name>alibaba-consumer</name>
+    <description>alibaba-consumer</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -61,13 +61,9 @@
 
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

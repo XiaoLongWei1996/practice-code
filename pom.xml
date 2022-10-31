@@ -17,6 +17,8 @@
         <module>gateway</module>
         <module>config</module>
         <module>alibaba-config</module>
+        <module>alibaba-config1</module>
+        <module>alibaba-consumer</module>
     </modules>
 
     <properties>
