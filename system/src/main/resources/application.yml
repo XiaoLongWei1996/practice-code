@@ -9,8 +9,8 @@ spring:
   application:
     name: system  #应用名称
   mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
+    pathmatch: #路径匹配
+      matching-strategy: ant_path_matcher #匹配策略,swagger3配置路径
   cloud:
     consul:
       #配置consul主机
@@ -49,13 +49,16 @@ spring:
         retry-on-all-operations: true
         # 同一个实例的重试次数，不包括第一次调用；比如填了 3，实际会调用 4 次
         max-retries-on-same-service-instance: 1
+  #zipkin数据追踪系统配置
   zipkin:
-    base-url: http://localhost:9411/
-    sender:
+    base-url: http://localhost:9411/ #服务地址配置
+    sender: #数据传输方式，web 表示以 HTTP 报文的形式向服务端发送数据
       type: web
+  #链路追踪设置
   sleuth:
+    #取样设置
     sampler:
-      probability: 1.0
+      probability: 1.0  #收集数据百分比，默认 0.1（10%）
   servlet:
     #设置上传文件
     multipart:
@@ -171,7 +174,7 @@ resilience4j:
         maxWaitDuration: 10ms
         #最大并发调用数量
         maxConcurrentCalls: 5
-  #设置线程池舱壁
+  #设置线程池舱壁,仅支持方法返回值为CompletableFuture
   thread-pool-bulkhead:
     #实例
     instances:
@@ -183,7 +186,7 @@ resilience4j:
         coreThreadPoolSize: 2
         #等待队列的大小
         queueCapacity: 1
-  #配置超时器
+  #配置超时器,仅支持方法返回值为CompletableFuture
   timelimiter:
     #实例
     instances:

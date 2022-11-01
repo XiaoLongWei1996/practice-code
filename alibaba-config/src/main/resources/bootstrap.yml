@@ -23,5 +23,11 @@ spring:
         server-addr: localhost:8848
         namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
         group: g1
-        service: xxl_config
-        weight: 10
+        service: config #服务名称不能包含下划线
+        weight: 1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,24 +1,47 @@
 server:
-  port: 9998
+  port: 9998 #端口
 spring:
   application:
-    name: alibaba-consumer
+    name: alibaba-consumer  #应用名称
   profiles:
-    active: dev
+    active: dev  #配置文件的激活环境
   cloud:
+    #配置负载均衡服务调用
     loadbalancer:
+      #启用nacos服务发现
+      nacos:
+        enabled: true
+      #配置服务发现超时事件
       service-discovery:
         timeout: 2000
+      #配置服务重试
       retry:
+        #同一个服务重试2(第一次调用不算)
         max-retries-on-same-service-instance: 2
+        #所有的请求都允许重试(get,post,delete,put)
         retry-on-all-operations: true
+        #其它服务重试一次
         max-retries-on-next-service-instance: 1
+        #启动重试
         enabled: true
+    #nacos配置
     nacos:
+      #用户名
       username: admin
+      #密码
       password: 123456
+      #nacos服务地址
       server-addr: localhost:8848
+      #配置服务发现
       discovery:
+        #命名空间
         namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
+        #组
         group: g1
+        #注册的服务名称
         service: consumer
+    sentinel:
+      transport:
+        dashboard: localhost:19990
+      log:
+        dir: D:\logs
