@@ -25,7 +25,10 @@ spring:
         group: g1
         service: config #服务名称不能包含下划线
         weight: 1
-
+    sentinel:
+      transport:
+        dashboard: localhost:19990
+        port: 8881
 management:
   endpoints:
     web:
