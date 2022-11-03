@@ -45,3 +45,5 @@ spring:
         dashboard: localhost:19990
       log:
         dir: D:\logs
+      #配置sentinel ui不懒加载
+      eager: true

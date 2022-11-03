@@ -7,6 +7,8 @@ import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRule;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRuleManager;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
@@ -14,6 +16,8 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowItem;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager;
+import com.alibaba.csp.sentinel.slots.system.SystemRule;
+import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.springcloud.test.alibabaconsumer.util.SendUtil;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
@@ -146,6 +150,26 @@ public class TestController {
         paramFlowRule.setParamFlowItemList(Collections.singletonList(item));
         paramFlowRules.add(paramFlowRule);
         ParamFlowRuleManager.loadRules(paramFlowRules);
+
+        //系统保护,监控当前主机的资源使用情况对该系统(不是资源)进行限流
+        List<SystemRule> systemRules = new ArrayList<>();
+        SystemRule systemRule = new SystemRule();
+        //设置系统允许最大的线程数
+        systemRule.setMaxThread(1);
+        systemRules.add(systemRule);
+        SystemRuleManager.loadRules(systemRules);
+
+        //授权规则,对访问的资源设置黑名单或者白名单,阻拦或者允许被限制的app,需要实现RequestOriginParser来解析origin
+        List<AuthorityRule> authorityRules = new ArrayList<>();
+        AuthorityRule authorityRule = new AuthorityRule();
+        //资源名称
+        authorityRule.setResource("read1");
+        //策略白名单或者黑名单
+        authorityRule.setStrategy(RuleConstant.AUTHORITY_WHITE);
+        //被限制的app,也就是请求头的origin,多个用逗号隔开
+        authorityRule.setLimitApp("app1");
+        authorityRules.add(authorityRule);
+        AuthorityRuleManager.loadRules(authorityRules);
     }
 
     @SentinelResource("query")
@@ -176,9 +200,9 @@ public class TestController {
         return ResponseEntity.ok("result");
     }
 
-    @SentinelResource(value = "read", fallback = "error")
+    @SentinelResource(value = "read1")
     @GetMapping("read")
-    public String read() {
+    public String read() throws InterruptedException {
 
         return "读操作";
     }
