@@ -2,11 +2,13 @@ package com.springcloud.test.alibabaconsumer.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.authority.AuthorityException;
 import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRule;
 import com.alibaba.csp.sentinel.slots.block.authority.AuthorityRuleManager;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
@@ -21,10 +23,7 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.springcloud.test.alibabaconsumer.util.SendUtil;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -200,10 +199,10 @@ public class TestController {
         return ResponseEntity.ok("result");
     }
 
-    @SentinelResource(value = "read1")
+    @SentinelResource(value = "read1", fallback = "error", entryType = EntryType.IN)
     @GetMapping("read")
-    public String read() throws InterruptedException {
-
+    public String read(@RequestHeader(value = "origin") String origin){
+        System.out.println(origin);
         return "读操作";
     }
 
@@ -257,8 +256,8 @@ public class TestController {
         return "参数";
     }
 
-    public String error() {
-        System.out.println("执行");
-        return "请求出错";
+    public String error(BlockException e) throws BlockException {
+        e.printStackTrace();
+        throw new AuthorityException("服务器繁忙");
     }
 }

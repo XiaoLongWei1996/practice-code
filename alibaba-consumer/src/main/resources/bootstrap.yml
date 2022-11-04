@@ -47,3 +47,10 @@ spring:
         dir: D:\logs
       #配置sentinel ui不懒加载
       eager: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+

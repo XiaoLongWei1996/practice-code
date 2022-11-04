@@ -1,5 +1,6 @@
 package com.springcloud.test.alibabaconfig.controller;
 
+import com.springcloud.test.alibabaconfig.config.ConsumerApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
@@ -31,10 +32,20 @@ public class ConfigController {
     @Resource
     private RestTemplate restTemplate;
 
+    @Resource
+    private ConsumerApi consumerApi;
+
     @GetMapping("test")
     public ResponseEntity<String> test() {
         String result = restTemplate.getForObject("http://consumer/test/read", String.class);
         System.out.println(result);
         return ResponseEntity.ok(a + "---" + port);
+    }
+
+    @GetMapping("test1")
+    public ResponseEntity<String> test1() {
+
+        String read = consumerApi.read();
+        return ResponseEntity.ok(read);
     }
 }

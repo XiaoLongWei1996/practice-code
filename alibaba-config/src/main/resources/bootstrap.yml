@@ -29,6 +29,29 @@ spring:
       transport:
         dashboard: localhost:19990
         port: 8881
+    loadbalancer:
+      service-discovery:
+        timeout: 2000
+      nacos:
+        enabled: true
+feign:
+  sentinel:
+    enabled: true
+  httpclient:
+    connection-timeout: 1000
+    connection-timer-repeat: 2000
+    ok-http:
+      read-timeout: 3s
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 1000
+        readTimeout: 3000
 management:
   endpoints:
     web:
