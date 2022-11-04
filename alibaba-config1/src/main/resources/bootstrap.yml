@@ -63,8 +63,8 @@ feign:
         connectTimeout: 1000
         readTimeout: 3000
         loggerLevel: full
-        requestInterceptors:
-          - com.springcloud.test.alibabaconfig1.intercepter.HeadersIntercepter
+#        requestInterceptors:
+#          - com.springcloud.test.alibabaconfig1.intercepter.HeadersIntercepter
 management:
   endpoints:
     web:

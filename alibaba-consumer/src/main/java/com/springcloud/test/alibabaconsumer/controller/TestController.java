@@ -201,8 +201,8 @@ public class TestController {
 
     @SentinelResource(value = "read1", fallback = "error", entryType = EntryType.IN)
     @GetMapping("read")
-    public String read(@RequestHeader(value = "origin") String origin){
-        System.out.println(origin);
+    public String read(){
+//        System.out.println(origin);
         return "读操作";
     }
 

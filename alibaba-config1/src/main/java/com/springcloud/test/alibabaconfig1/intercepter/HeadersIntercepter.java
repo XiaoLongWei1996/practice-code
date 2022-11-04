@@ -11,6 +11,7 @@ import java.util.Enumeration;
  * @author 肖龙威
  * @date 2022/11/04 16:44
  */
+//@Component
 public class HeadersIntercepter implements RequestInterceptor {
 
     @Override

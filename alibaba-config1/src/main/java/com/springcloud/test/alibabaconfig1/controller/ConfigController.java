@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author 肖龙威
@@ -35,9 +33,7 @@ public class ConfigController {
 
     @GetMapping("test")
     public ResponseEntity<String> test() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("origin", "app1");
-        String result = consumerApi.read(map);
+        String result = consumerApi.read("app1");
         return ResponseEntity.ok(result);
     }
 }
