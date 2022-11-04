@@ -38,10 +38,9 @@ feign:
   sentinel:
     enabled: true
   httpclient:
+    enabled: true
     connection-timeout: 1000
     connection-timer-repeat: 2000
-    ok-http:
-      read-timeout: 3s
   compression:
     request:
       enabled: true
@@ -52,6 +51,7 @@ feign:
       default:
         connectTimeout: 1000
         readTimeout: 3000
+        loggerLevel: full
 management:
   endpoints:
     web:

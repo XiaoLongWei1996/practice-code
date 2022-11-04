@@ -45,6 +45,26 @@ spring:
       transport:
         dashboard: localhost:19990
         port: 8882
+feign:
+  sentinel:
+    enabled: true
+  httpclient:
+    enabled: true
+  okhttp:
+    enabled: false
+  compression:
+    request:
+      enabled: true
+    response:
+      enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 1000
+        readTimeout: 3000
+        loggerLevel: full
+        requestInterceptors:
+          - com.springcloud.test.alibabaconfig1.intercepter.HeadersIntercepter
 management:
   endpoints:
     web:

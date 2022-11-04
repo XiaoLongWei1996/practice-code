@@ -1,6 +1,5 @@
 package com.springcloud.test.alibabaconfig.config;
 
-import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,11 +8,10 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author 肖龙威
  * @date 2022/11/04 13:29
  */
-@FeignClient(value = "consumer", fallback = ConsumerApiImpl.class, configuration = FeignConfig.class)
+@FeignClient(value = "consumer", fallback = ConsumerApiImpl.class)
 public interface ConsumerApi {
 
-    @GetMapping(value = "/test/read")
-    @Headers({"origin=app1"})
+    @GetMapping(value = "/test/read", headers = {"origin=app1"})
     String read();
 
 }
