@@ -11,3 +11,35 @@ spring:
         namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
         group: g1
         service: gateway
+        server-addr: localhost:8848
+    sentinel:
+      eager: true
+      transport:
+        dashboard: localhost:19990
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            #allowed-origins: "http://localhost:9999/**" # spring boot2.4以后的配置
+            allowed-origin-patterns: "*" # spring boot2.4以后的配置
+            allowed-headers: "*"
+            allow-credentials: true
+            allowed-methods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTION
+      discovery:
+        locator:
+          lower-case-service-id: true
+          enabled: true
+      httpclient:
+        connect-timeout: 2000
+        response-timeout: 3s
+      routes:
+        - id: query1
+          uri: lb://alibaba-config
+          predicates:
+            - Path=/student/**
+

@@ -48,4 +48,9 @@ public class ConfigController {
         String read = consumerApi.read();
         return ResponseEntity.ok(read);
     }
+
+    @GetMapping("query")
+    public ResponseEntity<String> query(String s) {
+        return ResponseEntity.ok(s);
+    }
 }
