@@ -1,0 +1,13 @@
+server:
+  port: 9999
+spring:
+  application:
+    name: alibaba-gateway
+  cloud:
+    nacos:
+      discovery:
+        username: admin
+        password: 123456
+        namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
+        group: g1
+        service: gateway
