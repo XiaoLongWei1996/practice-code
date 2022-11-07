@@ -51,6 +51,8 @@ public class ConfigController {
 
     @GetMapping("query")
     public ResponseEntity<String> query(String s) {
+
         return ResponseEntity.ok(s);
     }
+
 }
