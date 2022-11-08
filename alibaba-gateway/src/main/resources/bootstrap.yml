@@ -1,27 +1,35 @@
 server:
-  port: 9999
+  port: 9999 #配置端口
 spring:
   application:
-    name: alibaba-gateway
+    name: alibaba-gateway  #配置应用名称
   cloud:
-    nacos:
-      discovery:
-        username: admin
-        password: 123456
-        namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
-        group: g1
-        service: gateway
-        server-addr: localhost:8848
-    sentinel:
-      eager: true
+    nacos: #配置nacos
+      discovery: #配置服务与发现
+        username: admin       #用户名配置
+        password: 123456      #密码配置
+        namespace: 7adfdfab-4bb0-46d3-a671-af0288719945  #命名空间配置
+        group: g1    #组配置
+        service: gateway  #注册服务的名称,默认是${spring.application.name}
+        server-addr: localhost:8848  #服务地址配置
+    sentinel:   #sentinel降级配置
+      eager: true  #启动项目注册到sentinel控制台
       transport:
-        dashboard: localhost:19990
+        dashboard: localhost:19990 #Sentinel 控制台地址配置
+      #配置限流之后的响应内容
+      scg:
+        #降级配置
+        fallback:
+          mode: response  #降级模式:响应/跳转
+          content-type: application/json  #降级响应内容格式
+          response-status: 429  #降级响应码
+          response-body: '{"code":429,"message":"服务器繁忙,请稍后再试"}' #降级响应体
     gateway:
       globalcors:
         cors-configurations:
           '[/**]':
             #allowed-origins: "http://localhost:9999/**" # spring boot2.4以后的配置
-            allowed-origin-patterns: "*" # spring boot2.4以后的配置
+            allowed-origin-patterns: "*" # spring boot2.4以后的配置,匹配所有的源
             allowed-headers: "*"
             allow-credentials: true
             allowed-methods:
@@ -46,5 +54,4 @@ spring:
         - id: query1
           uri: lb://alibaba-config
           predicates:
-            - Path=/student/**
-
+            - Path=/student/**,/config/**

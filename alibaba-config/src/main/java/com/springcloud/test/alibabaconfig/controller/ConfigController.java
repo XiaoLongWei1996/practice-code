@@ -44,7 +44,6 @@ public class ConfigController {
 
     @GetMapping("test1")
     public ResponseEntity<String> test1() {
-
         String read = consumerApi.read();
         return ResponseEntity.ok(read);
     }

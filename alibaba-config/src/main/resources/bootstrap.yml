@@ -28,6 +28,7 @@ spring:
       transport:
         dashboard: localhost:19990
         port: 8881
+      eager: true
     loadbalancer:
       service-discovery:
         timeout: 2000
