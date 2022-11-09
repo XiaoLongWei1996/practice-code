@@ -7,12 +7,18 @@ import com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiPredicateItem;
 import com.alibaba.csp.sentinel.adapter.gateway.common.api.GatewayApiDefinitionManager;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule;
 import com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayRuleManager;
+import com.alibaba.csp.sentinel.datasource.ReadableDataSource;
+import com.alibaba.csp.sentinel.datasource.nacos.NacosDataSource;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.alibaba.nacos.api.PropertyKeyConst;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -22,8 +28,42 @@ import java.util.Set;
 @Component
 public class StartListener implements ApplicationListener<ApplicationStartedEvent> {
 
+    // nacos server ip
+    private static final String remoteAddress = "localhost:8848";
+    // nacos server username
+    private static final String userName = "admin";
+    // nacos server password
+    private static final String password = "123456";
+    // nacos group
+    private static final String groupId = "g1";
+    // nacos dataId
+    private static final String dataId = "gateway-test.json";
+    // nacos namespace
+    private static final String NACOS_NAMESPACE_ID = "7adfdfab-4bb0-46d3-a671-af0288719945";
+
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
+        dynamicRuleConfig();
+    }
+
+    //动态规则配置,引入nacos配置中心,改变nacos配置文件,sentinel规则也会改变
+    private void dynamicRuleConfig() {
+        //nacos主机信息
+        Properties properties = new Properties();
+        properties.put(PropertyKeyConst.SERVER_ADDR, remoteAddress);
+        properties.put(PropertyKeyConst.USERNAME, userName);
+        properties.put(PropertyKeyConst.PASSWORD, password);
+        properties.put(PropertyKeyConst.NAMESPACE, NACOS_NAMESPACE_ID);
+        //配置nacos数据源
+        ReadableDataSource<String, Set<GatewayFlowRule>> gateFlowRuleDataSource = new NacosDataSource<>(properties, groupId, dataId,
+                source -> JSON.parseObject(source, new TypeReference<Set<GatewayFlowRule>>() {
+                }));
+        //加载数据源的规则数据
+        GatewayRuleManager.register2Property(gateFlowRuleDataSource.getProperty());
+    }
+
+    //定义网关限流规则
+    private void configRule() {
         //配置网关限流规则
         Set<GatewayFlowRule> set = new HashSet<>();
         //配置route id的限流方式
@@ -64,7 +104,10 @@ public class StartListener implements ApplicationListener<ApplicationStartedEven
         set.add(rule1);
         //载入规则
         GatewayRuleManager.loadRules(set);
+    }
 
+    //定义api组
+    private void configApiDefind() {
         //配置api定义
         Set<ApiDefinition> definitions = new HashSet<>();
         //api定义
