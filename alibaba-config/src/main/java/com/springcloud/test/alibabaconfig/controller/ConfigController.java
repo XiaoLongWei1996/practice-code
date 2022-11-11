@@ -1,6 +1,9 @@
 package com.springcloud.test.alibabaconfig.controller;
 
 import com.springcloud.test.alibabaconfig.config.ConsumerApi;
+import com.springcloud.test.alibabaconfig.dao.DeptMapper;
+import com.springcloud.test.alibabaconfig.entity.Dept;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +38,9 @@ public class ConfigController {
     @Resource
     private ConsumerApi consumerApi;
 
+    @Resource
+    private DeptMapper deptMapper;
+
     @GetMapping("test")
     public ResponseEntity<String> test() {
         String result = restTemplate.getForObject("http://consumer/test/read", String.class);
@@ -48,9 +54,13 @@ public class ConfigController {
         return ResponseEntity.ok(read);
     }
 
+    @GlobalTransactional
     @GetMapping("query")
     public ResponseEntity<String> query(String s) {
-
+        Dept dept = new Dept();
+        dept.setCode("a1");
+        dept.setName("技术");
+        deptMapper.insert(dept);
         return ResponseEntity.ok(s);
     }
 
