@@ -38,7 +38,7 @@ spring:
         #分组
         group: g1
         #配置的服务名称
-        service: config  #服务名称不能包含下划线
+        service: ${spring.application.name}  #服务名称不能包含下划线
         #权重
         weight: 1
     sentinel:

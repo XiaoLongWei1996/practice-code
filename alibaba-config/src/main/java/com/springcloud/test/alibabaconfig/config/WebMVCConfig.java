@@ -39,15 +39,4 @@ public class WebMVCConfig {
         return new SentinelResourceAspect();
     }
 
-//    @Bean
-//    public GlobalTransactionScanner globalTransactionScanner() {
-//        String applicationName = environment.getProperty("spring.application.name");
-//        String txServiceGroup = this.seataProperties.getTxServiceGroup();
-//        if (StringUtils.isEmpty(txServiceGroup)) {
-//            txServiceGroup = applicationName + "-fescar-service-group";
-//            this.seataProperties.setTxServiceGroup(txServiceGroup);
-//        }
-//
-//        return new GlobalTransactionScanner(applicationName, txServiceGroup);
-//    }
 }

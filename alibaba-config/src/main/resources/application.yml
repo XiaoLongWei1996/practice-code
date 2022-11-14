@@ -60,10 +60,15 @@ mybatis-plus:
 
 # seata配置
 seata:
+  # 分布式事务的模式默认AT,可以改成XA
+  data-source-proxy-mode: AT
+  #开启seata分布式事务
   enabled: true
+  #应用的id
   application-id: ${spring.application.name}
-  # Seata 事务组编号，此处需于 seata 相同
+  # Seata 事务组编号，此处需于 seata 服务配置中的service.vgroupMapping.my-test-group=default相同
   tx-service-group: my-test-group
+  #seata 配置中心,需于seata服务配置中的一致
   config:
     type: nacos
     nacos:
@@ -73,10 +78,11 @@ seata:
       username: admin
       password: 123456
       data-id: seataServer.properties
+  #seata注册中心,需于seata服务配置中的一致
   registry:
     type: nacos
     nacos:
-      application: seata-server # seata 服务名
+      application: seata-server # 注册中心中seata的服务名
       server-addr: localhost:8848
       group: g1
       namespace: 7adfdfab-4bb0-46d3-a671-af0288719945
