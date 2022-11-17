@@ -10,12 +10,10 @@ import com.spire.doc.formatting.ListFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.test.design.prototype.Animal;
-import org.test.util.DocUtils;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -91,10 +89,7 @@ public class AppTest {
 
     @Test
     public void Test() throws Exception {
-        //doc();
-        File file = new File("D:\\img\\target.doc");
-        File template = new File("D:\\img\\template.doc");
-        DocUtils.formatDoc(file, template);
+
     }
 
     public void doc() {
