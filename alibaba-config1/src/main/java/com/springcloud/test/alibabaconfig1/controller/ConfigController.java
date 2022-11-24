@@ -36,6 +36,11 @@ public class ConfigController {
     @Resource
     private ConsumerApi consumerApi;
 
+    /**
+     * 测试
+     *
+     * @return {@link ResponseEntity}<{@link String}>
+     */
     @GetMapping("test")
     public ResponseEntity<String> test() {
         Dept dept = new Dept();

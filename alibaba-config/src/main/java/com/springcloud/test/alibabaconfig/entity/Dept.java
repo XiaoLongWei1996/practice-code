@@ -12,10 +12,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
- * 部门 表(Dept)表实体类
+ * 部门
  *
- * @author xlw
- * @since 2022-09-06 10:36:58
+ * @author 70492
+ * @date 2022/11/24
  */
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -23,16 +23,13 @@ import java.util.Date;
 @Data
 @TableName("dept")
 public class Dept {
-    
-    /**
-    * 主键id
-    */
+
+
+    /** id */
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
-    
-    /**
-    * 名称
-    */
+
+    /** 名字 */
     private String name;
     
     /**

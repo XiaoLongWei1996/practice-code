@@ -22,6 +22,7 @@ public class TestFunction {
         return m -> m.map(v -> v * 2);
     }
 
+    
     @Bean
     public Consumer<Flux<Integer>> add1() {
         return f -> {
