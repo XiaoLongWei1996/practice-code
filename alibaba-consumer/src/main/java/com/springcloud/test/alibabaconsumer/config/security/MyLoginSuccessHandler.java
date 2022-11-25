@@ -3,6 +3,7 @@ package com.springcloud.test.alibabaconsumer.config.security;
 import com.alibaba.fastjson.JSONObject;
 import com.springcloud.test.alibabaconsumer.entity.Users;
 import com.springcloud.test.alibabaconsumer.service.UsersService;
+import com.springcloud.test.alibabaconsumer.util.TokenUtil;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 认证成功处理器
@@ -33,7 +36,12 @@ public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
         users.setLoginDt(new Date());
         users.setState(1);
         usersService.updateById(users);
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("id", users.getId());
+        payload.put("name", users.getName());
+        String token = TokenUtil.createToken(payload);
         response.setContentType("application/json;charset=utf-8");
+        response.setHeader("token", token);
         response.getWriter().println(JSONObject.toJSONString(users));
     }
 }
