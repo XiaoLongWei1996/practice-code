@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.springcloud.test.alibabaconsumer.entity.Users;
 import com.springcloud.test.alibabaconsumer.service.UsersService;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,6 +31,6 @@ public class LoginSecurity implements UserDetailsService {
         if (ObjectUtil.isEmpty(users)) {
             throw new RuntimeException("用户名或者密码错误");
         }
-        return new User(users.getUserName(), users.getPassword(), AuthorityUtils.createAuthorityList());
+        return new LoginUser(users.getUserName(), users.getPassword(), AuthorityUtils.createAuthorityList(), users);
     }
 }

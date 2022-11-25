@@ -2,6 +2,7 @@ package com.springcloud.test.alibabaconsumer.entity;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,11 +41,13 @@ public class Users {
     /**
     * 密码
     */
+    @JsonIgnore
     private String password;
     
     /**
     * 加盐加密
     */
+    @JsonIgnore
     private String salt;
     
     /**

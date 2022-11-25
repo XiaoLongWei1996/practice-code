@@ -20,9 +20,11 @@ import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager;
 import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
+import com.springcloud.test.alibabaconsumer.config.security.LoginUser;
 import com.springcloud.test.alibabaconsumer.util.SendUtil;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -247,11 +249,13 @@ public class TestController {
         return "预热";
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @SentinelResource(value = "wait", fallback = "error")
     @GetMapping("wait")
     public String wait1() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication.getPrincipal().toString());
+        LoginUser p = (LoginUser) authentication.getPrincipal();
+        System.out.println(p.getUsers());
         return "等待";
     }
 
@@ -260,6 +264,11 @@ public class TestController {
     public String param(@RequestParam(value = "a", required = false) Integer a) {
         System.out.println(a);
         return "参数";
+    }
+
+    @GetMapping("/loginInfo")
+    public String loginInfo() {
+        return "请登录";
     }
 
     public String error(BlockException e) throws BlockException {
