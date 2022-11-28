@@ -35,11 +35,12 @@ public class MyLoginSuccessHandler implements AuthenticationSuccessHandler {
         users.setUpdateDt(new Date());
         users.setLoginDt(new Date());
         users.setState(1);
-        usersService.updateById(users);
         Map<String, Object> payload = new HashMap<>();
         payload.put("id", users.getId());
         payload.put("name", users.getName());
         String token = TokenUtil.createToken(payload);
+        users.setToken(token);
+        usersService.updateById(users);
         response.setContentType("application/json;charset=utf-8");
         response.setHeader("token", token);
         response.getWriter().println(JSONObject.toJSONString(users));

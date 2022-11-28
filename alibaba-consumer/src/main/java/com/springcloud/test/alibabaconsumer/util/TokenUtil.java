@@ -30,7 +30,7 @@ public class TokenUtil {
         DateTime expire = now.offsetNew(DateField.MINUTE, 15);
         String token = JWT.create()
                 .addPayloads(payload)
-//                .setIssuedAt(now)
+                .setIssuedAt(now)
                 .setNotBefore(now)
                 .setExpiresAt(expire)
                 .setSigner(singer)

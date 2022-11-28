@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @author 肖龙威
  * @date 2022/11/24 14:53
  */
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
 @RequiredArgsConstructor
 @Configuration
@@ -28,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final MyAuthenticationFailureHandler loginFailureHandler;
 
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
+
+    private final MyAccessDeniedHandler myAccessDeniedHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,7 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeHttpRequests()
                 .antMatchers("/login", "/logout").permitAll()
                 .anyRequest().authenticated()
-                .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .accessDeniedHandler(myAccessDeniedHandler);
         //关闭session
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         //添加自定义过滤器

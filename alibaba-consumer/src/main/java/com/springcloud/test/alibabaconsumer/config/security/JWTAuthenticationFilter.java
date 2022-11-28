@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * @author 肖龙威
@@ -36,8 +37,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
         Users users = TokenUtil.parseToken(token, Users.class);
         Users u = usersService.getById(users.getId());
+        if (!Objects.equals(u.getToken(), token)) {
+            chain.doFilter(request, response);
+            return;
+        }
         LoginUser principal = new LoginUser(u.getUserName(), u.getPassword(), AuthorityUtils.createAuthorityList(), u);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null, null);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(principal, null, AuthorityUtils.createAuthorityList("ROLE_admin"));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(request, response);
     }

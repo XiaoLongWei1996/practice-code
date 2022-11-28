@@ -24,6 +24,7 @@ import com.springcloud.test.alibabaconsumer.config.security.LoginUser;
 import com.springcloud.test.alibabaconsumer.util.SendUtil;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -248,6 +249,7 @@ public class TestController {
         return "预热";
     }
 
+    @PreAuthorize("hasRole('admin')")
     @SentinelResource(value = "wait", fallback = "error")
     @GetMapping("wait")
     public String wait1() {

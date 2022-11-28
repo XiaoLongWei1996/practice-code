@@ -99,5 +99,8 @@ public class Users {
     * 是否删除
     */
     private Integer isDelete;
+
+    /** 令牌 */
+    private String token;
 }
 
