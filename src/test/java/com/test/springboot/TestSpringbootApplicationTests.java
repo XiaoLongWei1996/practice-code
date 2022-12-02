@@ -37,6 +37,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -410,6 +411,15 @@ class TestSpringbootApplicationTests {
         System.out.println(hero.getId());
         long id = heroMapper.insert(hero);
         System.out.println(hero.getId());
+    }
+
+    @Test
+    void test28() throws Exception {
+        File file1 = new File("D:\\img\\a1.mp3");
+        File file2 = new File("D:\\img\\a2.mp3");
+
+        mediaService.mergeAudio(file1, file2);
+
     }
 
 }

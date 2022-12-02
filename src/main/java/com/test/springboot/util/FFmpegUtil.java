@@ -13,7 +13,7 @@ import java.io.*;
  * @author 肖龙威
  * @date 2022/03/16 11:17
  */
-public class PhotoUtils {
+public class FFmpegUtil {
 
     /**
      * 照片流转换(其它格式转换"jpg"格式)
