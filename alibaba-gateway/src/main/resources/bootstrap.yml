@@ -49,7 +49,6 @@ spring:
           type: fixed
           acquire-timeout: 3000
           max-connections: 10
-          eviction-interval:
       routes:
         - id: query1
           uri: lb://alibaba-config
