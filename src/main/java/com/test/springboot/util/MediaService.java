@@ -717,17 +717,36 @@ public class MediaService {
     /**
      * 改变视频帧率
      *
-     * @param file
-     * @param rate
-     * @return
-     * @throws Exception
+     * @param file       文件
+     * @param rate       率
+     * @param resolution 分辨率
+     * @return {@link File}
+     * @throws Exception 异常
      */
-    private File changeVideoFrameRate(File file, Integer rate) throws Exception {
-        String fileName = tempDir + UUID.randomUUID() + ".mp4";
-        String ffmpeg = "ffmpeg -i " + file.getAbsolutePath() + " -qscale 0 -r " + rate + " -y " + fileName;
-        FFmpegUtil.ffmpegExecute(ffmpeg);
-        file = new File(fileName);
-        return file;
+    private File changeVideoFrameRate(File file, Integer rate, String resolution) throws Exception {
+        File mp4 = createFile("mp4");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-i");
+        command.add(file.getAbsolutePath());
+        command.add("-qscale 0");
+        command.add("-r");
+        command.add(String.valueOf(rate));
+        if (StrUtil.isNotBlank(resolution)) {
+            command.add("-s");
+            command.add(resolution);
+        }
+        command.add("-y");
+        command.add(mp4.getAbsolutePath());
+        //String ffmpeg = "ffmpeg -i " + file.getAbsolutePath() + " -qscale 0 -r " + rate + " -y " + fileName;
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp4;
     }
 
     /**
@@ -1235,7 +1254,7 @@ public class MediaService {
                 f1 = list.get(i);
                 //录制视频
                 if (f1.getName().endsWith("mp4")) {
-                    f1 = changeVideoFrameRate(f1, 25);
+                    f1 = changeVideoFrameRate(f1, 25, null);
                     vGrabber1 = new FFmpegFrameGrabber(f1);
                     vGrabber1.start();
                     recordVideo01(recorder, vGrabber1, isAudio);
@@ -1417,6 +1436,7 @@ public class MediaService {
         File mp3 = createFile("mp3");
         StringJoiner command = new StringJoiner(" ");
         command.add("ffmpeg");
+        command.add("-threads 4");
         command.add("-i");
         command.add("concat:" + paths);
         command.add("-q:a 1");
@@ -1436,47 +1456,69 @@ public class MediaService {
     }
 
     /**
-     * ffmpeg -loop 1 -t 5 -i 1.png -loop 1 -t 5 -i 2.png -filter_complex "[0][1]xfade=transition=fade:duration=1:offset=4,format=yuv420p output.mp4
+     * 混合音频
      *
+     * @param audio 音频
+     * @return {@link File}
+     * @throws Exception 异常
+     */
+    public File mixAudio(File ...audio) throws Exception {
+        Assert.notNull(audio, "操作文件为空");
+        File mp3 = createFile("mp3");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        for (File a : audio) {
+            command.add("-i");
+            command.add(a.getAbsolutePath());
+        }
+        command.add("-filter_complex");
+        command.add("amix=inputs=" + audio.length + ":duration=longest");
+        command.add("-vn");
+        command.add(mp3.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp3;
+    }
+
+    /**
+     * 合并一个视频
+     * ffmpeg -loop 1 -t 5 -i 1.png -loop 1 -t 5 -i 2.png -filter_complex "[0][1]xfade=transition=fade:duration=1:offset=4,format=yuv420p
+     * output.mp4
+     * <p>
      * ffmpeg -f concat -safe 0 -i 4826b1f4-a3a5-473c-a17e-d053a0b12a46.txt -s 1208x720 m1.mp4
      *
-     * @param img1
-     * @param img2
-     * @param duration1
-     * @param duration2
-     * @param transition
-     * @return
-     * @throws Exception
+     * @param img1       img1
+     * @param img2       img2
+     * @param duration1  duration1
+     * @param duration2  duration2
+     * @param transition 过渡
+     * @return {@link File}
+     * @throws Exception 异常
      */
     public File mergeImgsToVideo(File img1, File img2, int duration1, int duration2, String transition) throws Exception {
         File mp4 = createFile("mp4");
-        File concat = createImgConcatFile(img1.getAbsolutePath(), img2.getAbsolutePath(), duration1, duration2);
         StringJoiner command = new StringJoiner(" ");
         command.add("ffmpeg");
-//        command.add("-loop 1");
-//        command.add("-i");
-//        command.add(img1.getAbsolutePath());
-//        command.add("-loop 1");
-//        command.add("-i");
-//        command.add(img2.getAbsolutePath());
-        command.add("-f");
-        command.add("concat");
-        command.add("-safe 0");
+        command.add("-threads 4");
+        command.add("-loop 1");
         command.add("-i");
-        command.add(concat.getAbsolutePath());
-//        command.add("-vsync vfr");
+        command.add(img1.getAbsolutePath());
+        command.add("-loop 1");
+        command.add("-i");
+        command.add(img2.getAbsolutePath());
         command.add("-s 1208x720");
-        command.add("-g 25");
+        command.add("-r 25");
         command.add("-t");
         command.add(String.valueOf(duration1 + duration2));
-        command.add("-threads 4");
-//        command.add("-pix_fmt yuv420p");
         if (StrUtil.isNotBlank(transition)) {
-            command.add("-filter_complex \"[0][1]xfade=transition=" + transition + ":duration=0.5:offset=2,format=yuv420p\"");
+            command.add("-filter_complex \"[0][1]xfade=transition=" + transition + ":duration=0.5:offset="+ duration1 + ",format=yuv420p\"");
         }
-        command.add("-c copy");
         command.add(mp4.getAbsolutePath());
-        System.out.println(command);
         String sys = System.getProperty("os.name");
         if (sys.startsWith("Windows")) {
             FFmpegUtil.ffmpegExecute(command.toString());
@@ -1486,20 +1528,107 @@ public class MediaService {
         return mp4;
     }
 
-    private File createImgConcatFile(String path1, String path2, int duration1, int duration2) throws IOException {
+    /**
+     * 合并视频
+     *
+     * @param video 视频
+     * @return {@link File}
+     */
+    public File mergeVideo(File ...video) throws Exception {
+        Assert.notNull(video, "操作视频文件为空");
+        File mp4 = createFile("mp4");
+        File concat = createVideoConcatFile(video);
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-f concat");
+        command.add("-safe 0");
+        command.add("-i");
+        command.add(concat.getAbsolutePath());
+        command.add("-s 1208x720");
+        command.add("-r 25");
+        command.add("-c copy");
+        command.add(mp4.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp4;
+    }
+
+    /**
+     * 视频快照
+     *
+     * @param video   视频
+     * @param seconds 秒
+     * @return {@link File}
+     */
+    public File videoSnapshot(File video, Integer seconds) throws Exception {
+        File jpg = createFile("jpg");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-ss");
+        command.add(String.valueOf(seconds));
+        command.add("-i");
+        command.add(video.getAbsolutePath());
+        command.add("-f image2");
+        command.add("-vframes 1");
+        command.add("-r 1");
+        command.add("-an");
+        command.add(jpg.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return jpg;
+    }
+
+    /**
+     * 合并视频和音频
+     *
+     * @param video 视频
+     * @param audio 音频
+     * @return {@link File}
+     * @throws Exception 异常
+     */
+    public File mergeVideoAndAudio(File video, File audio) throws Exception {
+        File mp4 = createFile("mp4");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-i");
+        command.add(video.getAbsolutePath());
+        command.add("-i");
+        command.add(audio.getAbsolutePath());
+        command.add("-c:v copy -c:a aac -strict experimental -map 0:v:0 -map 1:a:0");
+        command.add("-t");
+        int videoDuration = getVideoDuration(video);
+        command.add(String.valueOf(videoDuration));
+        command.add(mp4.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp4;
+    }
+
+    private File createVideoConcatFile(File ...video) throws Exception {
         File concat = createFile("txt");
         FileWriter writer = new FileWriter(concat);
         BufferedWriter bw = new BufferedWriter(writer);
         try {
-            bw.write("file '" + path1 + "'");
-            bw.newLine();
-            bw.write("duration " + duration1);
-            bw.newLine();
-            bw.write("file '" + path2 + "'");
-            bw.newLine();
-            bw.write("duration " + duration2);
-//            bw.newLine();
-//            bw.write("file '" + path2 + "'");
+            for (File file : video) {
+                file = changeVideoFrameRate(file, 25, null);
+                bw.write("file '" + file.getAbsolutePath() + "'");
+                bw.newLine();
+            }
         } finally {
             bw.flush();
             IoUtil.close(writer);

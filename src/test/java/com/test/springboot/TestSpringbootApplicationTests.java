@@ -415,10 +415,10 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test28() throws Exception {
-        File file1 = new File("D:\\img\\a1.mp3");
+        File file1 = new File("D:\\img\\m1.mp4");
         File file2 = new File("D:\\img\\a2.mp3");
 
-        mediaService.mergeAudio(file1, file2);
+        mediaService.mergeVideoAndAudio(file1, file2);
 
     }
 
