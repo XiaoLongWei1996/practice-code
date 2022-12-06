@@ -266,4 +266,6 @@ mybatis-plus:
 #      logic-delete-value: 1
 #      logic-not-delete-value: 0
 
+ffmpeg:
+  pool-size: 4
 
