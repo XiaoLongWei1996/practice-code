@@ -416,16 +416,12 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test28() throws Exception {
-        File f1 = new File("D:\\img\\m2.jpg");
-        File f2 = new File("D:\\img\\m3.jpg");
-//        File o1 = mediaService.changeImg("jpg", 500, 500, f1);
-//        File o2 = mediaService.changeImg("jpg", 500, 500, f2);
-//        mediaService.mergeImgsToVideo(f1, null, 2, 0, null, null);
+        File f1 = new File("D:\\img\\m1.mp4");
+        File f2 = new File("D:\\img\\m3.mp4");
         List<FileDetail> list = new ArrayList<>();
-        list.add(FileDetail.builder().id(1).file(f1).time(3).effect("circlecrop").format("jpg").build());
-        list.add(FileDetail.builder().id(2).file(f2).time(2).effect("circlecrop").format("jpg").build());
+        list.add(FileDetail.builder().id(1).file(f1).time(3.0).effect("circlecrop").format("mp4").build());
+        list.add(FileDetail.builder().id(2).file(f2).time(2.0).effect("circlecrop").format("mp4").build());
         File f = mediaService.produceVideo(list, 1208, 720);
-        System.out.println(f);
     }
 
 }

@@ -19,7 +19,7 @@ public class FileDetail {
 
     private String effect;
 
-    private Integer time;
+    private Double time;
 
     private String format;
 }

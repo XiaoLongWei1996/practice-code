@@ -1,5 +1,6 @@
 package com.test.springboot.util;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
@@ -1358,6 +1359,8 @@ public class MediaService {
         }
         try {
             result = mergeVideo(null, fArray);
+            delFileList(Arrays.asList(fArray));
+            System.out.println("最终:" + result.getAbsolutePath());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1387,70 +1390,74 @@ public class MediaService {
     private File handleGroup(List<FileDetail> group, int index, int width, int height) throws Exception {
         int size = group.size();
         File file = null;
+        String resolution = width + "x" + height;
         //处理大于1的组
         if (size > 1) {
             FileDetail f1 = group.get(0);
             FileDetail f2 = group.get(1);
             double time1 = ObjectUtils.isEmpty(f1.getTime()) ? 2 : f1.getTime();
             double time2 = ObjectUtils.isEmpty(f2.getTime()) ? 2 : f2.getTime();
-            if (index == 0) {
-                time2 = time2 / 2;
-            } else {
-                time1 = time1 / 2;
-                time2 = time2 / 2;
-            }
+//            if (index == 0) {
+//                time2 = time2 / 2;
+//            } else {
+//                time1 = time1 / 2;
+//                time2 = time2 / 2;
+//            }
             if (Objects.equals(f1.getFormat(), "jpg") && Objects.equals(f2.getFormat(), "jpg")) {
                 //图片 + 图片
                 File o1 = changeImg("jpg", width, height, f1.getFile());
                 File o2 = changeImg("jpg", width, height, f2.getFile());
-                file = mergeImgsToVideo(o1, o2, time1, time2, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, "1208x720");
+                File transition = mergeImgsToVideo(o1, o2, time1, 0.5, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, resolution);
+                file = transition;
+                if (index == 0) {
+                    file = setAudioTrack(transition);
+                    FileUtil.del(transition);
+                }
                 FileUtil.del(o1);
                 FileUtil.del(o2);
             } else if (Objects.equals(f1.getFormat(), "jpg") && Objects.equals(f2.getFormat(), "mp4")) {
                 //图片 + 视频
-                File img = videoSnapshot(f2.getFile(), 1);
-                File transition = mergeImgsToVideo(f1.getFile(), img, time1, 0.5, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, "1208x720");
-                file = mergeVideo(null, transition, f2.getFile());
-                FileUtil.del(img);
-                FileUtil.del(transition);
+                File o1 = changeImg("jpg", width, height, f1.getFile());
+                File o2 = videoSnapshot(f2.getFile(), 1, resolution);
+                File transition = mergeImgsToVideo(o1, o2, time1, 0.5, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, resolution);
+                if (index == 0) {
+                    file = setAudioTrack(transition);
+                    FileUtil.del(transition);
+                }
+                FileUtil.del(o1);
+                FileUtil.del(o2);
             } else if (Objects.equals(f1.getFormat(), "mp4") && Objects.equals(f2.getFormat(), "mp4")) {
                 //视频 + 视频
                 int videoDuration = getVideoDuration(f1.getFile());
-                File img1 = videoSnapshot(f1.getFile(), videoDuration);
-                File img2 = videoSnapshot(f2.getFile(), 1);
-                File transition = mergeImgsToVideo(img1, img2, 0.5, 0.5, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, "1208x720");
-                file = mergeVideo(null, f1.getFile(), transition, f2.getFile());
+                File img1 = videoSnapshot(f1.getFile(), videoDuration - 1, resolution);
+                File img2 = videoSnapshot(f2.getFile(), 1, resolution);
+                File o1 = changeVideoFrameRate(f1.getFile(), 25, resolution);
+                File transition = mergeImgsToVideo(img1, img2, 0.5, 0.5, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, resolution);
+                file = mergeVideo(resolution, o1, transition);
                 FileUtil.del(img1);
                 FileUtil.del(img2);
                 FileUtil.del(transition);
             } else if (Objects.equals(f1.getFormat(), "mp4") && Objects.equals(f2.getFormat(), "jpg")) {
                 //视频 + 图片
                 int videoDuration = getVideoDuration(f1.getFile());
-                File img1 = videoSnapshot(f1.getFile(), videoDuration);
-                File transition = mergeImgsToVideo(img1, f2.getFile(), 0.5, time2, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, "1208x720");
-                file = mergeVideo(null, f1.getFile(), transition);
+                File img1 = videoSnapshot(f1.getFile(), videoDuration, resolution);
+                File transition = mergeImgsToVideo(img1, f2.getFile(), 0.5, time2, StrUtil.isNotBlank(f1.getEffect()) ? f1.getEffect() : null, resolution);
+                file = mergeVideo(resolution, f1.getFile(), transition);
                 FileUtil.del(img1);
                 FileUtil.del(transition);
             }
             return file;
         }
         //处理小于1的组
-        for (FileDetail fileDetail : group) {
-            if (Objects.equals(fileDetail.getFormat(), "jpg")) {
-                File o1 = changeImg("jpg", width, height, fileDetail.getFile());
-                if (index == 0) {
-                    file = mergeImgsToVideo(o1, null, fileDetail.getTime(), 0, null, "1208x720");
-                    FileUtil.del(o1);
-                    return file;
-                }
-                double time = fileDetail.getTime();
-                file = mergeImgsToVideo(o1, null, time / 2, 0, null, "1208x720");
-                FileUtil.del(o1);
-                return file;
-            }
-            if (Objects.equals(fileDetail.getFormat(), "mp4")) {
-                file = fileDetail.getFile();
-            }
+        FileDetail fileDetail = group.get(0);
+        if (Objects.equals(fileDetail.getFormat(), "jpg")) {
+            File o1 = changeImg("jpg", width, height, fileDetail.getFile());
+            file = mergeImgsToVideo(o1, null, fileDetail.getTime(), 0, null, resolution);
+            FileUtil.del(o1);
+            return file;
+        }
+        if (Objects.equals(fileDetail.getFormat(), "mp4")) {
+            file = changeVideoFrameRate(fileDetail.getFile(), 25, resolution);
         }
         return file;
     }
@@ -1644,11 +1651,11 @@ public class MediaService {
      * @param duration1  duration1
      * @param duration2  duration2
      * @param transition 过渡
-     * @param rate       率
+     * @param resolution 决议
      * @return {@link File}
      * @throws Exception 异常
      */
-    public File mergeImgsToVideo(File img1, File img2, double duration1, double duration2, String transition, String rate) throws Exception {
+    public File mergeImgsToVideo(File img1, File img2, double duration1, double duration2, String transition, String resolution) throws Exception {
         File mp4 = createFile("mp4");
         StringJoiner command = new StringJoiner(" ");
         command.add("ffmpeg");
@@ -1662,14 +1669,15 @@ public class MediaService {
             command.add(img2.getAbsolutePath());
         }
         command.add("-s");
-        if (StrUtil.isNotBlank(rate)) {
-            command.add(rate);
+        if (StrUtil.isNotBlank(resolution)) {
+            command.add(resolution);
         } else {
             command.add("1208x720");
         }
         command.add("-r 25");
         command.add("-t");
         command.add(String.valueOf(duration1 + duration2));
+        command.add("-an");
         if (StrUtil.isNotBlank(transition)) {
             command.add("-filter_complex \"[0][1]xfade=transition=" + transition + ":duration=0.5:offset=" + duration1 + ",format=yuv420p\"");
         }
@@ -1689,7 +1697,7 @@ public class MediaService {
      * @param video 视频
      * @return {@link File}
      */
-    public File mergeVideo(String rate, File... video) throws Exception {
+    public File mergeVideo(String resolution, File... video) throws Exception {
         Assert.notNull(video, "操作视频文件为空");
         File mp4 = createFile("mp4");
         File concat = createVideoConcatFile(video);
@@ -1701,8 +1709,8 @@ public class MediaService {
         command.add("-i");
         command.add(concat.getAbsolutePath());
         command.add("-s");
-        if (StrUtil.isNotBlank(rate)) {
-            command.add(rate);
+        if (StrUtil.isNotBlank(resolution)) {
+            command.add(resolution);
         } else {
             command.add("1208x720");
         }
@@ -1726,7 +1734,7 @@ public class MediaService {
      * @param seconds 秒
      * @return {@link File}
      */
-    public File videoSnapshot(File video, Integer seconds) throws Exception {
+    public File videoSnapshot(File video, Integer seconds, String resolution) throws Exception {
         File jpg = createFile("jpg");
         StringJoiner command = new StringJoiner(" ");
         command.add("ffmpeg");
@@ -1738,6 +1746,10 @@ public class MediaService {
         command.add("-f image2");
         command.add("-vframes 1");
         command.add("-r 1");
+        if (StrUtil.isNotBlank(resolution)) {
+            command.add("-s");
+            command.add(resolution);
+        }
         command.add("-an");
         command.add(jpg.getAbsolutePath());
         String sys = System.getProperty("os.name");
@@ -1780,13 +1792,43 @@ public class MediaService {
         return mp4;
     }
 
+    /**
+     * 设置音轨
+     *
+     * @param video 视频
+     * @return {@link File}
+     * @throws Exception 异常
+     */
+    public File setAudioTrack(File video) throws Exception {
+        File mp4 = createFile("mp4");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-i");
+        command.add(video.getAbsolutePath());
+        command.add("-f");
+        command.add("lavfi");
+        command.add("-i");
+        command.add("aevalsrc=0");
+        command.add("-shortest");
+        command.add("-y");
+        command.add(mp4.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp4;
+    }
+
     private File createVideoConcatFile(File... video) throws Exception {
         File concat = createFile("txt");
         FileWriter writer = new FileWriter(concat);
         BufferedWriter bw = new BufferedWriter(writer);
         try {
             for (File file : video) {
-                file = changeVideoFrameRate(file, 25, null);
+//                file = changeVideoFrameRate(file, 25, null);
                 bw.write("file '" + file.getAbsolutePath() + "'");
                 bw.newLine();
             }
@@ -1798,5 +1840,18 @@ public class MediaService {
         return concat;
     }
 
+    /**
+     * del文件列表
+     *
+     * @param list 列表
+     */
+    private void delFileList(List<File> list) {
+        if (CollectionUtil.isEmpty(list)) {
+            return;
+        }
+        for (File file : list) {
+            FileUtil.del(file);
+        }
+    }
 
 }
