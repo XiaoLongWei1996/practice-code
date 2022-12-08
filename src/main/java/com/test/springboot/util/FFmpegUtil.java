@@ -55,6 +55,10 @@ public class FFmpegUtil {
         }
         ProcessBuilder builder = new ProcessBuilder(commands);
         Process process = builder.inheritIO().start();
+//        StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), "ERROR");
+//        errorGobbler.start();//  kick  off  stderr
+//        StreamGobbler outGobbler = new StreamGobbler(process.getInputStream(), "STDOUT");
+//        outGobbler.start();//  kick  off  stdout
         process.waitFor();
         process.destroy();
     }

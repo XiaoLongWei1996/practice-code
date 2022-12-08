@@ -416,12 +416,25 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test28() throws Exception {
-        File f1 = new File("D:\\img\\m1.mp4");
-        File f2 = new File("D:\\img\\m3.mp4");
+        long start = System.currentTimeMillis();
         List<FileDetail> list = new ArrayList<>();
-        list.add(FileDetail.builder().id(1).file(f1).time(3.0).effect("circlecrop").format("mp4").build());
-        list.add(FileDetail.builder().id(2).file(f2).time(2.0).effect("circlecrop").format("mp4").build());
+        File f1 = new File("D:\\img\\j1.jpg");
+        list.add(FileDetail.builder().id(1).file(f1).time(4.0).effect("slideleft").format("jpg").build());
+        File f2 = new File("D:\\img\\j2.jpg");
+        list.add(FileDetail.builder().id(2).file(f2).time(6.0).effect("rectcrop").format("jpg").build());
+        File f3 = new File("D:\\img\\m1.mp4");
+        list.add(FileDetail.builder().id(1).file(f3).time(3.0).effect("hrslice").format("mp4").build());
+        File f4 = new File("D:\\img\\m2.mp4");
+        list.add(FileDetail.builder().id(1).file(f4).time(3.0).effect("wipetr").format("mp4").build());
+        File f5 = new File("D:\\img\\j3.png");
+        list.add(FileDetail.builder().id(1).file(f5).time(5.0).effect("slideleft").format("jpg").build());
         File f = mediaService.produceVideo(list, 1208, 720);
+        long end = System.currentTimeMillis();
+        System.out.println((end - start) / 1000);
+//        File file = mediaService.changeImg("png", 500, 500, f1);
+//        System.out.println(file);
+//        File file1 = mediaService.changeImg2("png", 500, 500, f1);
+//        System.out.println(file1);
     }
 
 }
