@@ -769,11 +769,13 @@ public class MediaService {
     }
 
     /**
-     * @param file
-     * @param start
-     * @param duration
-     * @return
-     * @throws Exception
+     * 剪辑视频
+     *
+     * @param file     文件
+     * @param start    开始
+     * @param duration 持续时间
+     * @return {@link File}
+     * @throws Exception 异常
      */
     private File clipVideo(File file, Integer start, Integer duration) throws Exception {
         String fileName = tempDir + UUID.randomUUID() + ".mp4";
