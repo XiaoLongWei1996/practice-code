@@ -425,11 +425,21 @@ class TestSpringbootApplicationTests {
         File f3 = new File("D:\\img\\m1.mp4");
         list.add(FileDetail.builder().id(1).file(f3).time(3.0).effect("hrslice").format("mp4").build());
         File f4 = new File("D:\\img\\m2.mp4");
-        list.add(FileDetail.builder().id(1).file(f4).time(3.0).effect("wipetr").format("mp4").build());
+        list.add(FileDetail.builder().id(1).file(f4).time(3.0).effect("wipetr").mute(1).format("mp4").build());
         File f5 = new File("D:\\img\\j3.png");
         list.add(FileDetail.builder().id(1).file(f5).time(5.0).effect("slideleft").format("jpg").build());
         File f = mediaService.produceVideo(list, 1208, 720);
         long end = System.currentTimeMillis();
+
+        List<FileDetail> list1 = new ArrayList<>();
+        File f6 = new File("D:\\img\\j1.mp3");
+        list1.add(FileDetail.builder().id(1).file(f6).format("mp3").build());
+        File f7 = new File("D:\\img\\j2.mp3");
+        list1.add(FileDetail.builder().id(1).file(f7).format("mp3").build());
+        File file = mediaService.produceAudio(list1);
+
+        File file1 = mediaService.mergeVideoAndAudio(f, file);
+        System.out.println(file1);
         System.out.println((end - start) / 1000);
 //        File file = mediaService.changeImg("png", 500, 500, f1);
 //        System.out.println(file);

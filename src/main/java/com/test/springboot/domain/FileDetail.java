@@ -22,4 +22,13 @@ public class FileDetail {
     private Double time;
 
     private String format;
+
+    /**----------------------音视频----------------------*/
+
+    private Integer startTime;
+
+    private Integer endTime;
+
+    /** 是否静音 */
+    private Integer mute;
 }

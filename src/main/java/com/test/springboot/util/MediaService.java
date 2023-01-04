@@ -778,16 +778,26 @@ public class MediaService {
      * @throws Exception 异常
      */
     private File clipVideo(File file, Integer start, Integer duration) throws Exception {
-        String fileName = tempDir + UUID.randomUUID() + ".mp4";
-        String ffmpeg = "ffmpeg -ss " + start + " -t " + duration + " -accurate_seek -i " + file.getAbsolutePath() + " -codec copy " + fileName;
+        File mp4 = createFile("mp4");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-ss");
+        command.add(String.valueOf(start));
+        command.add("-t");
+        command.add(String.valueOf(duration));
+        command.add("-accurate_seek");
+        command.add("-i");
+        command.add(file.getAbsolutePath());
+        command.add("-codec copy");
+        command.add(mp4.getAbsolutePath());
         String sys = System.getProperty("os.name");
         if (sys.startsWith("Windows")) {
-            FFmpegUtil.ffmpegExecute(ffmpeg);
+            FFmpegUtil.ffmpegExecute(command.toString());
         } else {
-            FFmpegUtil.linuxffmpegExecute(ffmpeg);
+            FFmpegUtil.linuxffmpegExecute(command.toString());
         }
-        file = new File(fileName);
-        return file;
+        return mp4;
     }
 
     /**
@@ -1249,90 +1259,103 @@ public class MediaService {
         g.dispose();
     }
 
-    public File generateFile(List<File> list, String effect, int width, int height) throws Exception {
-        //视频宽高最好是按照常见的视频的宽高  16：9  或者 9：16
-        File file = new File("D:\\v01.mp4");
-        File f1 = null;
-        File f2 = null;
-        File transitionVideo = null;
-        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(file, width, height, 1);
-        FFmpegFrameGrabber vGrabber1 = null;
-        FFmpegFrameGrabber vGrabber2 = null;
-        //设置视频编码层模式
-        recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
-        //设置视频为25帧每秒
-        recorder.setFrameRate(25);
-        //设置视频图像数据格式
-        recorder.setPixelFormat(avutil.AV_PIX_FMT_YUV420P);//avutil.AV_PIX_FMT_RGB32_1
-        //设置视频的输出格式
-        recorder.setFormat("mp4");
-        //设置清晰度
-        recorder.setVideoQuality(25);
-        //8000kb/s 这个说明视频每秒大小，值越大图片转过来的压缩率就越小质量就会越高
-        recorder.setVideoBitrate(8000000);
-        recorder.setAudioBitrate(1000);
-        boolean isAudio = false;
-        if (list.get(list.size() - 1).getName().endsWith("mp3")) {
-            isAudio = true;
-        }
-        try {
-            recorder.start();
-            for (int i = 0, len = list.size(); i < len; i++) {
-                f1 = list.get(i);
-                //录制视频
-                if (f1.getName().endsWith("mp4")) {
-                    f1 = changeVideoFrameRate(f1, 25, null);
-                    vGrabber1 = new FFmpegFrameGrabber(f1);
-                    vGrabber1.start();
-                    recordVideo01(recorder, vGrabber1, isAudio);
-                    closeGrabber(vGrabber1);
-                } else if (f1.getName().endsWith("jpg")) { //录制图片
-                    BufferedImage image = ImageIO.read(f1);
-                    //一张图片录制2秒
-                    for (int j = 1; j <= 1; j++) {
-                        //一秒是25帧 所以要记录25次
-                        recordImg(recorder, Java2DFrameUtils.toFrame(image), isAudio);
-                    }
-                } else if (f1.getName().endsWith("mp3")) {
-                    vGrabber1 = new FFmpegFrameGrabber(f1);
-                    vGrabber1.start();
-                    recordAudio(recorder, vGrabber1);
-                    closeGrabber(vGrabber1);
-                }
-                //合成过渡效果
-                if ((i + 1) < list.size() && ObjectUtils.isNotEmpty(effect)) {
-                    f2 = list.get(i + 1);
-                    if (f1.getName().endsWith("jpg") && f2.getName().endsWith("jpg")) {
-                        //照片和照片
-                        transitionVideo = imgTransition(f1, f2, width, height, effect);
-                    } else if (f1.getName().endsWith("jpg") && f2.getName().endsWith("mp4")) {
-                        //照片和视频
-                        transitionVideo = imgVideoTransition(f1, f2, width, height, effect);
-                    } else if (f1.getName().endsWith("mp4") && f2.getName().endsWith("mp4")) {
-                        //视频和视频
-                        transitionVideo = videoTransition(f1, f2, width, height, effect);
-                    } else if (f1.getName().endsWith("mp4") && f2.getName().endsWith("jpg")) {
-                        //视频和照片
-                        transitionVideo = videoImgTransition(f1, f2, width, height, effect);
-                    }
-                    if (transitionVideo != null) {
-                        vGrabber2 = new FFmpegFrameGrabber(transitionVideo);
-                        vGrabber2.start();
-                        recordVideo(recorder, vGrabber2, isAudio);
-                        closeGrabber(vGrabber2);
-                        //删除临时数据
-                        transitionVideo.delete();
-                        transitionVideo = null;
-                    }
-                }
-                f1.delete();
-            }
-        } finally {
-            closeRecorder(recorder);
-            closeGrabber(vGrabber1);
-            closeGrabber(vGrabber2);
-        }
+//    public File generateFile(List<FileDetail> list, int width, int height) throws Exception {
+//        //视频宽高最好是按照常见的视频的宽高  16：9  或者 9：16
+//        File mp4 = createFile("mp4");
+//        FileDetail f1 = null;
+//        FileDetail f2 = null;
+//        File transitionVideo = null;
+//        FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(mp4, width, height, 2);
+//        FFmpegFrameGrabber vGrabber1 = null;
+//        FFmpegFrameGrabber vGrabber2 = null;
+//        //设置视频编码层模式
+//        recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
+//        //设置视频为25帧每秒
+//        recorder.setFrameRate(25);
+//        //设置视频图像数据格式
+//        recorder.setPixelFormat(avutil.AV_PIX_FMT_YUV420P);//avutil.AV_PIX_FMT_RGB32_1
+//        //设置视频的输出格式
+//        recorder.setFormat("mp4");
+//        //设置清晰度
+//        recorder.setVideoQuality(25);
+//        //8000kb/s 这个说明视频每秒大小，值越大图片转过来的压缩率就越小质量就会越高
+//        recorder.setVideoBitrate(8000000);
+//        recorder.setAudioBitrate(1000);
+//        try {
+//            recorder.start();
+//            for (int i = 0, len = list.size(); i < len; i++) {
+//                f1 = list.get(i);
+//                //录制视频
+//                if (Objects.equals(f1.getFormat(), "mp4")) {
+//                    File file = changeVideoFrameRate(f1.getFile(), 25, null);
+//                    vGrabber1 = new FFmpegFrameGrabber(file);
+//                    vGrabber1.start();
+//                    recordVideo01(recorder, vGrabber1, Objects.equals(f1.getMute(), 1));
+//                    closeGrabber(vGrabber1);
+//                } else if (Objects.equals(f1.getFormat(), "jpg")) { //录制图片
+//                    BufferedImage image = ImageIO.read(f1.getFile());
+//                    //一张图片录制2秒
+//                    for (int j = 1; j <= 1; j++) {
+//                        //一秒是25帧 所以要记录25次
+//                        recordImg(recorder, Java2DFrameUtils.toFrame(image), isAudio);
+//                    }
+//                } else if (Objects.equals(f1.getFormat(), "mp3")) {
+//                    vGrabber1 = new FFmpegFrameGrabber(f1.getFile());
+//                    vGrabber1.start();
+//                    recordAudio(recorder, vGrabber1);
+//                    closeGrabber(vGrabber1);
+//                }
+//                //合成过渡效果
+//                if ((i + 1) < list.size() && ObjectUtils.isNotEmpty(effect)) {
+//                    f2 = list.get(i + 1);
+//                    if (f1.getName().endsWith("jpg") && f2.getName().endsWith("jpg")) {
+//                        //照片和照片
+//                        transitionVideo = imgTransition(f1, f2, width, height, effect);
+//                    } else if (f1.getName().endsWith("jpg") && f2.getName().endsWith("mp4")) {
+//                        //照片和视频
+//                        transitionVideo = imgVideoTransition(f1, f2, width, height, effect);
+//                    } else if (f1.getName().endsWith("mp4") && f2.getName().endsWith("mp4")) {
+//                        //视频和视频
+//                        transitionVideo = videoTransition(f1, f2, width, height, effect);
+//                    } else if (f1.getName().endsWith("mp4") && f2.getName().endsWith("jpg")) {
+//                        //视频和照片
+//                        transitionVideo = videoImgTransition(f1, f2, width, height, effect);
+//                    }
+//                    if (transitionVideo != null) {
+//                        vGrabber2 = new FFmpegFrameGrabber(transitionVideo);
+//                        vGrabber2.start();
+//                        recordVideo(recorder, vGrabber2, isAudio);
+//                        closeGrabber(vGrabber2);
+//                        //删除临时数据
+//                        transitionVideo.delete();
+//                        transitionVideo = null;
+//                    }
+//                }
+//                f1.delete();
+//            }
+//        } finally {
+//            closeRecorder(recorder);
+//            closeGrabber(vGrabber1);
+//            closeGrabber(vGrabber2);
+//        }
+//        return file;
+//    }
+
+    public File produceAudio(List<FileDetail> fileList) throws Exception {
+        Assert.noNullElements(fileList, "文件列表为空");
+        List<File> list = fileList.stream().map(FileDetail::getFile).collect(Collectors.toList());
+        File file = mergeAudio(list.toArray(new File[list.size()]));
         return file;
+    }
+
+    private File handleAudio(FileDetail fileDetail) throws Exception {
+        File result = null;
+        if (Objects.equals("mp4", fileDetail.getFormat())) {
+            result = splitAudio(fileDetail.getFile());
+        } else {
+            result = fileDetail.getFile();
+        }
+        return result;
     }
 
     public File produceVideo(List<FileDetail> fileList, int width, int height) {
@@ -1349,7 +1372,10 @@ public class MediaService {
                 try {
                     if (Objects.equals(fileDetail.getFormat(), "mp4")) {
                         file = changeVideoFrameRate(fileDetail.getFile(), 25, w + "x" + h);
-                    } else {
+                        if (Objects.equals(fileDetail.getMute(), 1)) {
+                            file = splitVideo(file);
+                        }
+                    } else if (Objects.equals(fileDetail.getFormat(), "jpg")) {
                         file = changeImg("jpg", w, h, fileDetail.getFile());
                     }
                 } catch (Exception e) {

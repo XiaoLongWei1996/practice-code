@@ -289,8 +289,6 @@ public class MediaController {
             list.add(f);
         }
 
-        File file = mediaService.generateFile(list, effect, width, height);
-        System.out.println(file.getName());
         list.forEach(f -> {
             if (f.exists()) {
                 f.delete();
