@@ -269,3 +269,8 @@ mybatis-plus:
 ffmpeg:
   pool-size: 4
 
+minio:
+  access_key: admin
+  secret_key: 123456qaz
+  endpoint: http://192.168.0.208:9000
+  default-bucket-name: mybucket

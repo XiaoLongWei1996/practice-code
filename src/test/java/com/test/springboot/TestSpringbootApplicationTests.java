@@ -17,8 +17,8 @@ import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
+import com.test.springboot.config.minio.MinioTemplate;
 import com.test.springboot.domain.FileDetail;
-import com.test.springboot.domain.Hero;
 import com.test.springboot.domain.Student;
 import com.test.springboot.mapper.ClazzMapper;
 import com.test.springboot.mapper.HeroMapper;
@@ -26,6 +26,7 @@ import com.test.springboot.mongo.StudentMdbService;
 import com.test.springboot.mongo.StudentOperate;
 import com.test.springboot.service.HeroService;
 import com.test.springboot.util.MediaService;
+import io.minio.StatObjectResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,8 +39,11 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import javax.annotation.Resource;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -74,6 +78,9 @@ class TestSpringbootApplicationTests {
 
     @Autowired
     private ResourceLoader resourceLoader;
+
+    @Resource
+    private MinioTemplate minioTemplate;
 
     @Test
     void contextLoads() throws IOException {
@@ -405,13 +412,9 @@ class TestSpringbootApplicationTests {
     @Test
         //@Transactional(rollbackFor = Exception.class)
     void test27() throws Exception {
-        Hero hero = new Hero();
-        hero.setName("宋江");
-        hero.setPower(1001);
-        hero.setClassId(1l);
-        System.out.println(hero.getId());
-        long id = heroMapper.insert(hero);
-        System.out.println(hero.getId());
+        OutputStream outputStream = new FileOutputStream("D:\\tem\\da1dfc0a-81a7-47ae-b2fd-a56802f8689c.mp4");
+        StatObjectResponse response = minioTemplate.fileMetaData("mybucket", "m1.mp4");
+        System.out.println(response.toString());
     }
 
     @Test
