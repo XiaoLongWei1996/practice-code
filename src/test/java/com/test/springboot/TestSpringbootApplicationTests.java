@@ -26,7 +26,6 @@ import com.test.springboot.mongo.StudentMdbService;
 import com.test.springboot.mongo.StudentOperate;
 import com.test.springboot.service.HeroService;
 import com.test.springboot.util.MediaService;
-import io.minio.StatObjectResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,10 +39,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.annotation.Resource;
+import java.awt.*;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -412,9 +410,12 @@ class TestSpringbootApplicationTests {
     @Test
         //@Transactional(rollbackFor = Exception.class)
     void test27() throws Exception {
-        OutputStream outputStream = new FileOutputStream("D:\\tem\\da1dfc0a-81a7-47ae-b2fd-a56802f8689c.mp4");
-        StatObjectResponse response = minioTemplate.fileMetaData("mybucket", "m1.mp4");
-        System.out.println(response.toString());
+        File file = new File("D:\\img\\j4.png");
+
+//        BufferedImage bi = ImageIO.read(file);
+//        file = mediaService.changeImg("jpg", bi.getWidth(), bi.getHeight(), file);
+        File file1 = mediaService.fontMark1(file, "hello", new Font("微软雅黑", 0, 32), new Color(25, 51, 77, 100), 1243, 819);
+        System.out.println(file1.getAbsolutePath());
     }
 
     @Test
@@ -427,27 +428,13 @@ class TestSpringbootApplicationTests {
         list.add(FileDetail.builder().id(2).file(f2).time(6.0).effect("rectcrop").format("jpg").build());
         File f3 = new File("D:\\img\\m1.mp4");
         list.add(FileDetail.builder().id(1).file(f3).time(3.0).effect("hrslice").format("mp4").build());
-        File f4 = new File("D:\\img\\m2.mp4");
+        File f4 = new File("D:\\img\\j1.mp3");
         list.add(FileDetail.builder().id(1).file(f4).time(3.0).effect("wipetr").mute(1).format("mp4").build());
         File f5 = new File("D:\\img\\j3.png");
         list.add(FileDetail.builder().id(1).file(f5).time(5.0).effect("slideleft").format("jpg").build());
-        File f = mediaService.produceVideo(list, 1208, 720);
-        long end = System.currentTimeMillis();
-
-        List<FileDetail> list1 = new ArrayList<>();
-        File f6 = new File("D:\\img\\j1.mp3");
-        list1.add(FileDetail.builder().id(1).file(f6).format("mp3").build());
-        File f7 = new File("D:\\img\\j2.mp3");
-        list1.add(FileDetail.builder().id(1).file(f7).format("mp3").build());
-        File file = mediaService.produceAudio(list1);
-
-        File file1 = mediaService.mergeVideoAndAudio(f, file);
-        System.out.println(file1);
-        System.out.println((end - start) / 1000);
-//        File file = mediaService.changeImg("png", 500, 500, f1);
-//        System.out.println(file);
-//        File file1 = mediaService.changeImg2("png", 500, 500, f1);
-//        System.out.println(file1);
+        //File f = mediaService.produceVideo(list, 1208, 720);
+        //long end = System.currentTimeMillis();
+        mediaService.mixVideoAndAudio(f3, f4);
     }
 
 }

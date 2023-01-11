@@ -2,6 +2,7 @@ package com.test.springboot.config.minio;
 
 import ch.qos.logback.core.util.CloseUtil;
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.RandomUtil;
 import io.minio.*;
 import io.minio.http.Method;
 import io.minio.messages.DeleteObject;
@@ -298,6 +299,25 @@ public class MinioTemplate {
             e.printStackTrace();
         }
         return url;
+    }
+
+    public String copyFile(String bucketName, String fileName) {
+        int index = fileName.lastIndexOf(".");
+        String newFileName = RandomUtil.randomString(11) + fileName.substring(index);
+        try {
+            ObjectWriteResponse response = minioClient.copyObject(CopyObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(newFileName)
+                    .source(CopySource.builder()
+                            .bucket(bucketName)
+                            .object(fileName)
+                            .build())
+                    .build());
+            return response.object();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

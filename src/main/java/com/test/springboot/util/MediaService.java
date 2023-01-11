@@ -117,6 +117,18 @@ public class MediaService {
         }
     }
 
+    public File fontMark1(File file, String text, Font font, Color color, int x, int y) throws IOException {
+        File target = createFile("jpg");
+        Image image = ImageIO.read(file);
+        Assert.notNull(image, "文件不存在");
+        int height = image.getHeight(null);
+        int width = image.getWidth(null);
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        mark(bufferedImage, image, text, font, color, x, y);
+        ImageIO.write(bufferedImage, "png", target);
+        return target;
+    }
+
     /**
      * 添加图片水印
      *
@@ -1687,6 +1699,41 @@ public class MediaService {
     }
 
     /**
+     * 混合视频和音频
+     *
+     * @param video 视频
+     * @param audio 音频
+     * @return {@link File}
+     * @throws Exception 异常
+     */
+    public File mixVideoAndAudio(File video, File audio) throws Exception {
+        Assert.isTrue(FileUtil.exist(video), "操作视频为空");
+        Assert.isTrue(FileUtil.exist(audio), "操作音频为空");
+        File mp4 = createFile("mp4");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-i");
+        command.add(video.getAbsolutePath());
+        command.add("-i");
+        command.add(audio.getAbsolutePath());
+        command.add("-c:v copy");
+        command.add("-map 0:v:0");
+        command.add("-filter_complex");
+        command.add("\"[0:a][1:a]amerge=inputs=2[aout]\"");
+        command.add("-map \"[aout]\"");
+        command.add("-ac 2");
+        command.add(mp4.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp4;
+    }
+
+    /**
      * 合并一个视频
      * ffmpeg -loop 1 -t 5 -i 1.png -loop 1 -t 5 -i 2.png -filter_complex "[0][1]xfade=transition=fade:duration=1:offset=4,format=yuv420p
      * output.mp4
@@ -1738,6 +1785,15 @@ public class MediaService {
         return mp4;
     }
 
+    /**
+     * img视频
+     *
+     * @param img        img
+     * @param resolution 决议
+     * @param duration   持续时间
+     * @return {@link File}
+     * @throws Exception 异常
+     */
     public File imgToVideo(File img, String resolution, double duration) throws Exception {
         File mp4 = createFile("mp4");
         StringJoiner command = new StringJoiner(" ");
@@ -1864,7 +1920,7 @@ public class MediaService {
     }
 
     /**
-     * 设置音轨
+     * 设置视频静音音轨
      *
      * @param video 视频
      * @return {@link File}
