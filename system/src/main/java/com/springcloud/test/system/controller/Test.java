@@ -47,5 +47,11 @@ public class Test {
         //System.out.println(cf2.get());
         //System.out.println(cf1.get());
         pool.shutdown();
+        ExecutorService executorService = Executors.newFixedThreadPool(1);
+        executorService.execute(() -> System.out.print("hello"));
+    }
+
+    public void test() {
+
     }
 }
