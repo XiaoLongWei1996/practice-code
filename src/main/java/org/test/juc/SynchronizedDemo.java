@@ -10,6 +10,27 @@ public class SynchronizedDemo {
 
     private int count = 0;
 
+    private static int c1 = 0;
+
+    public void testA() {
+        int i = 0;
+        synchronized (this) {
+            i++;
+        }
+    }
+
+    public static synchronized void testB() {
+        c1++;
+    }
+
+    public void testC() {
+        synchronized (this) {
+            count++;
+        }
+    }
+
+
+
     private Object lock = new Object();
 
     public void set() {
@@ -42,20 +63,21 @@ public class SynchronizedDemo {
         }
     }
 
-    public static void main(String[] args) {
-        SynchronizedDemo demo = new SynchronizedDemo();
-
-        for (int i = 0; i < 10; i++) {
-            new Thread(() -> {
-                demo.set();
-            }, "ThreadA" + i).start();
-        }
-
-        for (int i = 0; i < 10; i++) {
-            new Thread(() -> {
-                demo.get();
-            }, "ThreadB" + i).start();
-        }
+    public static void main(String[] args) throws InterruptedException {
+//        SynchronizedDemo demo = new SynchronizedDemo();
+//
+//        for (int i = 0; i < 10; i++) {
+//            new Thread(() -> {
+//                demo.set();
+//            }, "ThreadA" + i).start();
+//        }
+//
+//        for (int i = 0; i < 10; i++) {
+//            new Thread(() -> {
+//                demo.get();
+//            }, "ThreadB" + i).start();
+//        }
+        Thread.sleep(2000);
 
     }
 }

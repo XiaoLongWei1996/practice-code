@@ -22,6 +22,18 @@ public class ReentrantLockDemo {
 
     private Condition c3 = lock.newCondition();
 
+    public void testA() {
+        lock.lock();
+        testB();
+        lock.unlock();
+    }
+
+    public void testB() {
+        lock.lock();
+
+        lock.unlock();
+    }
+
     public void executeA() {
         lock.lock();
         if (count != 1) {
