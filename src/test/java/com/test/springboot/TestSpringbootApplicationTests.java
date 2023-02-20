@@ -18,7 +18,6 @@ import co.elastic.clients.elasticsearch.indices.*;
 import co.elastic.clients.json.JsonData;
 import co.elastic.clients.transport.endpoints.BooleanResponse;
 import com.test.springboot.config.minio.MinioTemplate;
-import com.test.springboot.domain.FileDetail;
 import com.test.springboot.domain.Student;
 import com.test.springboot.mapper.ClazzMapper;
 import com.test.springboot.mapper.HeroMapper;
@@ -420,21 +419,8 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test28() throws Exception {
-        long start = System.currentTimeMillis();
-        List<FileDetail> list = new ArrayList<>();
         File f1 = new File("D:\\img\\j1.jpg");
-        list.add(FileDetail.builder().id(1).file(f1).time(4.0).effect("slideleft").format("jpg").build());
-        File f2 = new File("D:\\img\\j2.jpg");
-        list.add(FileDetail.builder().id(2).file(f2).time(6.0).effect("rectcrop").format("jpg").build());
-        File f3 = new File("D:\\img\\m1.mp4");
-        list.add(FileDetail.builder().id(1).file(f3).time(3.0).effect("hrslice").format("mp4").build());
-        File f4 = new File("D:\\img\\j1.mp3");
-        list.add(FileDetail.builder().id(1).file(f4).time(3.0).effect("wipetr").mute(1).format("mp4").build());
-        File f5 = new File("D:\\img\\j3.png");
-        list.add(FileDetail.builder().id(1).file(f5).time(5.0).effect("slideleft").format("jpg").build());
-        //File f = mediaService.produceVideo(list, 1208, 720);
-        //long end = System.currentTimeMillis();
-        mediaService.mixVideoAndAudio(f3, f4);
+        mediaService.imgToVideo(f1, "1024x768", 5);
     }
 
 }

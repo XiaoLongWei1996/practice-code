@@ -1800,6 +1800,7 @@ public class MediaService {
         command.add("ffmpeg");
         command.add("-threads 4");
         command.add("-f image2");
+        command.add("-loop 1");
         command.add("-i");
         command.add(img.getAbsolutePath());
         command.add("-t");
