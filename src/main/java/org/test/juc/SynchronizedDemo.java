@@ -64,7 +64,7 @@ public class SynchronizedDemo {
     }
 
     public static void main(String[] args) throws InterruptedException {
-//        SynchronizedDemo demo = new SynchronizedDemo();
+        SynchronizedDemo demo = new SynchronizedDemo();
 //
 //        for (int i = 0; i < 10; i++) {
 //            new Thread(() -> {
@@ -77,7 +77,27 @@ public class SynchronizedDemo {
 //                demo.get();
 //            }, "ThreadB" + i).start();
 //        }
-        Thread.sleep(2000);
+        Thread thread = new Thread(() -> {
+            demo.a();
+        });
 
+        thread.start();
+
+        thread.interrupt();
+
+
+    }
+
+    public void a() {
+        int i = 0;
+        try {
+            System.out.println(Thread.currentThread().getName() + "开始执行");
+            while (i < Integer.MAX_VALUE) {
+                i++;
+            }
+            System.out.println(Thread.currentThread().getName() + "结束执行");
+        } finally {
+            System.out.println("测试线程被打断");
+        }
     }
 }
