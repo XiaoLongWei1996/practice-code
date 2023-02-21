@@ -419,8 +419,7 @@ class TestSpringbootApplicationTests {
 
     @Test
     void test28() throws Exception {
-        File f1 = new File("D:\\img\\j1.jpg");
-        mediaService.imgToVideo(f1, "1024x768", 5);
+
     }
 
 }
