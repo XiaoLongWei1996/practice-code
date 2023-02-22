@@ -31,6 +31,7 @@ public class TestSafeCollection {
 
         //不安全map
         Map<String, Object> map = new HashMap<>();
+        Map<String, Object> linkMap = new LinkedHashMap<>();
         //安全的map
         Map<String, Object> table = new Hashtable<>();
         Map<String, Object> safeMap = new ConcurrentHashMap<>();
