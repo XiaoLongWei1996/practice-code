@@ -18,6 +18,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Unit test for simple App.
@@ -36,16 +38,19 @@ public class AppTest {
     }
 
     @Test
-    public void test01() {
-        a:for (int i = 0; i < 10; i++) {
-            System.out.println("i=" + i);
-            for (int j = 0; j < 5; j++) {
-                System.out.println("       j=" + j);
-                if (j == 3) {
-                    break a;
-                }
-            }
-        }
+    public void test01() throws ExecutionException, InterruptedException {
+        CompletableFuture<Void> cf1 = CompletableFuture.runAsync(() -> {
+            int i = 1;
+            i = i/0;
+            System.out.println(i);
+        });
+
+        CompletableFuture<Void> cf2 = cf1.exceptionally(e -> {
+            System.out.println(e.getMessage());
+            return null;
+        });
+
+        System.out.println(cf2.get());
     }
 
     /**
