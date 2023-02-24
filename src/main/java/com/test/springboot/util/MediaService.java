@@ -813,25 +813,33 @@ public class MediaService {
     }
 
     /**
-     * 切割音频
+     * 视频音频
      *
-     * @param file     文件
+     * @param audio    音频
      * @param start    开始
      * @param duration 持续时间
      * @return {@link File}
      * @throws Exception 异常
      */
-    private File clipAudio(File file, Integer start, Integer duration) throws Exception {
-        String fileName = tempDir + UUID.randomUUID() + ".mp3";
-        String ffmpeg = "ffmpeg -i " + file.getAbsolutePath() + " -ss " + start + " -t " + duration + " " + fileName;
+    public File clipAudio(File audio, Integer start, Integer duration) throws Exception {
+        File mp3 = createFile("mp3");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-i");
+        command.add(audio.getAbsolutePath());
+        command.add("-ss");
+        command.add(String.valueOf(start));
+        command.add("-t");
+        command.add(String.valueOf(duration));
+        command.add(mp3.getAbsolutePath());
         String sys = System.getProperty("os.name");
         if (sys.startsWith("Windows")) {
-            FFmpegUtil.ffmpegExecute(ffmpeg);
+            FFmpegUtil.ffmpegExecute(command.toString());
         } else {
-            FFmpegUtil.linuxffmpegExecute(ffmpeg);
+            FFmpegUtil.linuxffmpegExecute(command.toString());
         }
-        file = new File(fileName);
-        return file;
+        return mp3;
     }
 
     /**
@@ -1785,6 +1793,32 @@ public class MediaService {
         return mp4;
     }
 
+    public File imgToImgTransition(File img1, File img2, String effect) throws Exception {
+        File mp4 = createFile("mp4");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-loop 1");
+        command.add("-i");
+        command.add(img1.getAbsolutePath());
+        command.add("-loop 1");
+        command.add("-i");
+        command.add(img2.getAbsolutePath());
+        command.add("-r 25");
+        command.add("-t");
+        command.add(String.valueOf(1));
+        command.add("-an");
+        command.add("-filter_complex \"[0][1]xfade=transition=" + effect + ":duration=0.5:offset=0.5,format=yuv420p\"");
+        command.add(mp4.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp4;
+    }
+
     /**
      * img视频
      *
@@ -1948,6 +1982,28 @@ public class MediaService {
             FFmpegUtil.linuxffmpegExecute(command.toString());
         }
         return mp4;
+    }
+
+    public File createMuteAudio(Integer duration) throws Exception {
+        File mp3 = createFile("mp3");
+        StringJoiner command = new StringJoiner(" ");
+        command.add("ffmpeg");
+        command.add("-threads 4");
+        command.add("-f");
+        command.add("lavfi");
+        command.add("-i");
+        command.add("anullsrc");
+        command.add("-t");
+        command.add(String.valueOf(duration));
+        command.add("-y");
+        command.add(mp3.getAbsolutePath());
+        String sys = System.getProperty("os.name");
+        if (sys.startsWith("Windows")) {
+            FFmpegUtil.ffmpegExecute(command.toString());
+        } else {
+            FFmpegUtil.linuxffmpegExecute(command.toString());
+        }
+        return mp3;
     }
 
     private File createVideoConcatFile(File... video) throws Exception {
