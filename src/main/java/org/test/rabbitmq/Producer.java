@@ -35,7 +35,7 @@ public class Producer {
         channel.queueDeclare(
                 QUEUE_NAME, //队列的名称
                 false,   //队列李的数据是否需要持久化(默认储存在内存中)
-                false,   //该队列是否共享(true:共享,可以多个消费者消费;false不共享,只能被一个消费者消费),
+                false,   //该队列是否共享(true:不共享,只能被一个消费者消费;false:共享,可以多个消费者消费),
                 false,   //是否自动删除队列,true最后一个消费者断开连接,该队列也会被删除,
                 null     //其它参数
                 );
