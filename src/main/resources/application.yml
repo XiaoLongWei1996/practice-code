@@ -2,31 +2,38 @@ server:
   port: 9091
 
 spring:
-  #  #整合rabbitmq
-  #  rabbitmq:
-  #    host: localhost
-  #    port: 5672
-  #    username: admin
-  #    password: 123456
-  #    #设置消息确认成功确认后进行回调
-  #    #NONE值是禁用发布确认模式，是默认值
-  #    #CORRELATED值是发布消息成功到交换器后会触发回调方法，如1示例
-  #    #SIMPLE值经测试有两种效果，其一效果和CORRELATED值一样会触发回调方法，
-  #    #其二在发布消息成功后使用rabbitTemplate调用waitForConfirms或waitForConfirmsOrDie
-  #    #方法等待broker节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie
-  #    #方法如果返回false则会关闭channel，则接下来无法发送消息到broker;
-  #    #调用confirmCallback接口
-  #    publisher-confirm-type: correlated
-  #    cache:
-  #      channel:
-  #        #缓存中管道的数量5个
-  #        size: 5
-  #    #设置消费者
-  #    listener:
-  #      simple:
-  #        acknowledge-mode: manual #手动应答
-  #        default-requeue-rejected: true #拒绝后重回队列
-  #        prefetch: 5    #预获取
+  #整合rabbitmq
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: 123456
+    #设置消息确认成功确认后进行回调
+    #NONE值是禁用发布确认模式，是默认值
+    #CORRELATED值是发布消息成功到交换器后会触发回调方法，如1示例
+    #SIMPLE值经测试有两种效果，其一效果和CORRELATED值一样会触发回调方法，
+    #其二在发布消息成功后使用rabbitTemplate调用waitForConfirms或waitForConfirmsOrDie
+    #方法等待broker节点返回发送结果，根据返回结果来判定下一步的逻辑，要注意的点是waitForConfirmsOrDie
+    #方法如果返回false则会关闭channel，则接下来无法发送消息到broker;
+    #调用confirmCallback接口
+    publisher-confirm-type: correlated
+    cache:
+      channel:
+        #缓存中管道的数量5个
+        size: 5
+        checkout-timeout: 2s
+    #设置消费者
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 1
+          initial-interval: 1s
+          max-interval: 2s
+          multiplier: 3
+        acknowledge-mode: manual #手动应答
+        default-requeue-rejected: true #拒绝后重回队列
+        prefetch: 5    #预获取
   autoconfigure:
     #排除druid数据源的自动配置
     exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
