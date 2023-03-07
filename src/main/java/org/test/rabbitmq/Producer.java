@@ -1,5 +1,6 @@
 package org.test.rabbitmq;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -46,7 +47,7 @@ public class Producer {
             channel.basicPublish(
                     "", //发送到那个交换机,""空字符串默认交换机
                     QUEUE_NAME, //路由key(也就是队列名称)
-                    null,  //设置消息属性
+                    new AMQP.BasicProperties.Builder().expiration("3000").build(),  //设置消息属性
                     message.getBytes()  //发送的消息
             );
         }
