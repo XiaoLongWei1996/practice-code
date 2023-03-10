@@ -205,6 +205,7 @@ public class Sort {
      * @param ints2 数组2
      * @return
      */
+    @SuppressWarnings("all")
     public static int[] mergeArr(int[] ints1, int[] ints2) {
         int[] temp = new int[ints1.length + ints2.length];  //合并后的临时数组
         int i = 0;  //数组1的角标
