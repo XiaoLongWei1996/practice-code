@@ -7,6 +7,9 @@ spring:
   cloud:
     #网关配置
     gateway:
+      #当ReactorLoadBalancer无法找到服务实例时，将返回503。您可以通过设置将网关配置为返回404
+      loadbalancer:
+        use404: true
       #服务发现配置
       discovery:
         locator:
