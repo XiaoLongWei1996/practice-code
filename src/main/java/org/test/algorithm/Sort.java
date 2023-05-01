@@ -201,7 +201,7 @@ public class Sort {
     /**
      * 合并两个无序数组为有序数组
      * 运用了双指针排序 + 插入排序(位移排序)
-     * @param ints1 数组1
+     * @param ints1 数组
      * @param ints2 数组2
      * @return
      */

@@ -1,11 +1,10 @@
 package org.test;
 
-import org.test.algorithm.Sort;
+import org.test.util.DateOperateUtil;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -21,15 +20,9 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        System.out.println("zhix");
-        //int ii = 1/0;
-        int[] i1 = {1, 3, 2, 76, 45, 67};
-        for (int i : i1) {
-            System.out.println(i);
-        }
-        int[] i2 = {4, 7, 34, 55, 66};
-        int[] i3 = Sort.mergeArr(i1, i2);
-        System.out.println(Arrays.toString(i3));
+        DateOperateUtil operateUtil = new DateOperateUtil(2023,4, "2");
+        DateOperateUtil.DateBean dateBean = operateUtil.monthToQuarter();
+        System.out.println(dateBean);
     }
 
     private static LocalDate dateToLocalDate(Date date, long l) {
@@ -38,6 +31,10 @@ public class Test {
         ld = LocalDate.from(instant.atZone(ZoneId.of("+8")));
         ld = ld.plusMonths(l);
         return ld;
+    }
+
+    public void test() {
+
     }
 
 }
