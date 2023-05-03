@@ -8,6 +8,7 @@ import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import org.test.util.excel.strategy.ExcelWidthStyleStrategy;
 import org.test.util.excel.strategy.FormatStrategy;
+import org.test.util.excel.strategy.MergeStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ExcelUtil {
                 .head(heads)
                 .registerWriteHandler(new FormatStrategy())
                 .registerWriteHandler(new ExcelWidthStyleStrategy())
+                .registerWriteHandler(new MergeStrategy(data.size(), 0 ,4))
                 .build();
         ew.write(data, ws);
         ew.close();

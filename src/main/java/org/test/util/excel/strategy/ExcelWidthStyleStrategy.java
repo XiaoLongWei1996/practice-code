@@ -21,7 +21,7 @@ public class ExcelWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
         }
         String value = cellDataList.get(0).getStringValue();
         Integer width = value.length() * 3;
-        System.out.println(value);
+        System.out.println("value:" + value + "/" + "row:" + cell.getRowIndex() + "/cell:" + cell.getColumnIndex());
         if (width != null) {
             width = width * 256;
             writeSheetHolder.getSheet().setColumnWidth(cell.getColumnIndex(), width);
