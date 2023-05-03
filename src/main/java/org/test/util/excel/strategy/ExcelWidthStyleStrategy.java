@@ -1,5 +1,6 @@
 package org.test.util.excel.strategy;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.excel.metadata.Head;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.write.metadata.holder.WriteSheetHolder;
@@ -14,15 +15,13 @@ public class ExcelWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
     @Override
     protected void setColumnWidth(WriteSheetHolder writeSheetHolder, List<WriteCellData<?>> cellDataList, Cell cell, Head head, Integer relativeRowIndex, Boolean isHead) {
         //boolean needSetWidth = relativeRowIndex != null && (isHead || relativeRowIndex == 0);
-        boolean needSetWidth = isHead;
+        boolean needSetWidth = isHead || CollectionUtil.isNotEmpty(cellDataList);
         if (!needSetWidth) {
             return;
         }
         String value = cellDataList.get(0).getStringValue();
-        Integer width = 20;
-        if (value.contains("生日")) {
-            width = 35;
-        }
+        Integer width = value.length() * 3;
+        System.out.println(value);
         if (width != null) {
             width = width * 256;
             writeSheetHolder.getSheet().setColumnWidth(cell.getColumnIndex(), width);
