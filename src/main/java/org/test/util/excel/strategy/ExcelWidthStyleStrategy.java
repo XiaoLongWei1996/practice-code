@@ -13,11 +13,16 @@ public class ExcelWidthStyleStrategy extends AbstractColumnWidthStyleStrategy {
 
     @Override
     protected void setColumnWidth(WriteSheetHolder writeSheetHolder, List<WriteCellData<?>> cellDataList, Cell cell, Head head, Integer relativeRowIndex, Boolean isHead) {
-        boolean needSetWidth = relativeRowIndex != null && (isHead || relativeRowIndex == 0);
+        //boolean needSetWidth = relativeRowIndex != null && (isHead || relativeRowIndex == 0);
+        boolean needSetWidth = isHead;
         if (!needSetWidth) {
             return;
         }
+        String value = cellDataList.get(0).getStringValue();
         Integer width = 20;
+        if (value.contains("生日")) {
+            width = 35;
+        }
         if (width != null) {
             width = width * 256;
             writeSheetHolder.getSheet().setColumnWidth(cell.getColumnIndex(), width);
