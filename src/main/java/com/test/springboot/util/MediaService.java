@@ -5,7 +5,6 @@ import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
-import com.jhlabs.image.PointFilter;
 import com.test.springboot.domain.FileDetail;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
@@ -221,14 +220,12 @@ public class MediaService {
      *
      * @param imgInput 图片io
      * @param target   输出io
-     * @param filter   滤镜对象
      * @throws IOException
      */
-    public void addImageFilter(InputStream imgInput, OutputStream target, PointFilter filter) throws IOException {
+    public void addImageFilter(InputStream imgInput, OutputStream target) throws IOException {
         try {
             BufferedImage image = ImageIO.read(imgInput);
             BufferedImage bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            filter.filter(image, bufferedImage);
             ImageIO.write(bufferedImage, "png", target);
         } finally {
             IOUtils.closeQuietly(imgInput);
@@ -516,9 +513,8 @@ public class MediaService {
      *
      * @param video  视频
      * @param target 目标
-     * @param filter 滤镜
      */
-    public void addVideoFilter(InputStream video, OutputStream target, PointFilter filter) throws FrameGrabber.Exception, FrameRecorder.Exception {
+    public void addVideoFilter(InputStream video, OutputStream target) throws FrameGrabber.Exception, FrameRecorder.Exception {
         File file = new File("D:\\v01.mp4");
         FFmpegFrameRecorder recorder = null;
         FFmpegFrameGrabber vGrabber = null;
@@ -545,7 +541,6 @@ public class MediaService {
             while ((frame = vGrabber.grabFrame()) != null) {
                 if (frame.image != null) {
                     BufferedImage image = Java2DFrameUtils.toBufferedImage(frame);
-                    filter.filter(image, image);
                     frame = Java2DFrameUtils.toFrame(image);
                 }
                 recorder.record(frame);
