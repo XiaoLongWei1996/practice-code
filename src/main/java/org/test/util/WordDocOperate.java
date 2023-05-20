@@ -1,9 +1,9 @@
 package org.test.util;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -19,7 +19,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,103 +26,74 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @className: WordUtil
- * @author: xlw
- * @date: 2023/5/19 8:51
+ * @Title: WordDocOperate
+ * @Author xlw
+ * @Package org.test.util
+ * @Date 2023/5/20 22:02
+ * @description: word文档操作类
  */
-public class WordUtil {
+public class WordDocOperate {
 
-    private static final String PATTERN = "\\$.*\\$";
+    //操作word文档对象
+    private final XWPFDocument DOCUMENT;
 
-    private static final Map<String, XWPFChart> chartMap = new HashMap<>();
+    private String pattern;
 
-    public static void handleWord(String path, String outPath) {
-        try (InputStream in = new FileInputStream(path);
-             OutputStream out = new FileOutputStream(outPath)) {
-            XWPFDocument document = new XWPFDocument(in);
-            Map<String, String> data = new HashMap<>();
-            data.put("$dateTime$", "2023年05月");
-            data.put("$lastDate$", "2023-01-05");
-            data.put("$tba$", "15.26");
-            replaceText(document, data);
-            // 加载图表
-            loadChart(document);
+    private Map<String, XWPFChart> chartMap;
 
-            List<String> classis = new ArrayList<>();
-            classis.add("a");
-            classis.add("b");
-            classis.add("c");
-            classis.add("d");
-            classis.add("e");
-            classis.add("f");
-
-            List<String> series = new ArrayList<>();
-            series.add("#1");
-            series.add("#2");
-            series.add("#3");
-
-            List<Map<String, String>> dataItems = new ArrayList<>();
-            Map<String, String> row1 = new HashMap<>();
-            row1.put("#1", "123");
-//            row1.put("#2", "0");
-//            row1.put("#3", "13");
-            dataItems.add(row1);
-
-            Map<String, String> row2 = new HashMap<>();
-            row2.put("#1", "852");
-//            row2.put("#2", "0");
-//            row2.put("#3", "16");
-            dataItems.add(row2);
-
-            Map<String, String> row3 = new HashMap<>();
-            row3.put("#1", "753");
-//            row3.put("#2", "0");
-//            row3.put("#3", "45");
-            dataItems.add(row3);
-
-            Map<String, String> row4 = new HashMap<>();
-            row4.put("#1", "564");
-//            row4.put("#2", "0");
-//            row4.put("#3", "5");
-            dataItems.add(row4);
-
-            Map<String, String> row5 = new HashMap<>();
-            row5.put("#1", "236");
-//            row5.put("#2", "0");
-//            row5.put("#3", "52");
-            dataItems.add(row5);
-
-            Map<String, String> row6 = new HashMap<>();
-            row6.put("#1", "452");
-//            row6.put("#2", "0");
-//            row6.put("#3", "7");
-            dataItems.add(row6);
-
-            modifyChartExcel("mix", "测试", classis, series, dataItems);
-            document.write(out);
-            out.flush();
-            document.close();
+    public WordDocOperate(File word) {
+        try (InputStream in = new FileInputStream(word)) {
+            DOCUMENT = new XWPFDocument(in);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * 替换文本
-     */
-    private static void replaceText(XWPFDocument document, Map<String, String> data) {
-        // 替换页眉
-        replaceHeaderText(document, data);
-        // 替换段落
-        replaceParagraphsText(document, data);
-        // 替换表
-        replaceTableText(document, data);
-        // 替换页脚
-        replaceFooterText(document, data);
+    public WordDocOperate(InputStream input) {
+        try {
+            DOCUMENT = new XWPFDocument(input);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
-    private static void loadChart(XWPFDocument document) {
-        List<XWPFChart> charts = document.getCharts();
+    /**
+     * 替换文本
+     *
+     * @param data 数据
+     */
+    public void replaceText(Map<String, String> data) {
+        Assert.notBlank(pattern, "请先设置替换文本样式");
+        // 替换页眉
+        replaceHeaderText(DOCUMENT, data);
+        // 替换段落
+        replaceParagraphsText(DOCUMENT, data);
+        // 替换表
+        replaceTableText(DOCUMENT, data);
+        // 替换页脚
+        replaceFooterText(DOCUMENT, data);
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    /**
+     * 加载图表
+     */
+    public void loadChart() {
+        chartMap = new HashMap<>();
+        List<XWPFChart> charts = DOCUMENT.getCharts();
         if (CollectionUtil.isEmpty(charts)) {
             return;
         }
@@ -135,13 +105,84 @@ public class WordUtil {
         }
     }
 
+    public void modifyChartExcel(String key,
+                                 String title,
+                                 List<String> classes,
+                                 List<String> series,
+                                 List<Map<String, String>> dataItems) {
+        Assert.notEmpty(this.chartMap, "请先执行loadChart()");
+        XWPFChart chart = chartMap.get(key);
+        if (ObjectUtil.isNull(chart)) {
+            return;
+        }
+        // 根据属性第一列名称切换数据类型
+        CTChart ctChart = chart.getCTChart();
+        CTPlotArea plotArea = ctChart.getPlotArea();
+
+        // 设置标题
+        if (StrUtil.isNotBlank(title)) {
+            setChartTitle(ctChart, title);
+        }
+
+        // 刷新chart内置的excel数据
+        refreshChartInnerExcel(chart, classes, series, dataItems);
+
+        if (key.contains("pie")) {
+            CTPieChart pieChart = plotArea.getPieChartArray(0);
+            List<CTPieSer> serList = pieChart.getSerList();// 获取柱状图单位
+            // 刷新word显示的数据
+            refreshPieChart(pieChart, serList, dataItems, series, classes, 1);
+        } else if (key.contains("bar")) {
+            CTBarChart barChart = plotArea.getBarChartArray(0);
+            List<CTBarSer> BarSerList = barChart.getSerList();  // 获取柱状图单位
+            // 刷新word显示的数据
+            refreshBarChart(barChart, BarSerList, dataItems, series, classes, 1);
+        } else if (key.contains("mix")) {
+            CTBarChart barChart = plotArea.getBarChartArray(0); // 获取柱状图单位
+            List<CTBarSer> BarSerList = barChart.getSerList();
+            refreshBarChart(barChart, BarSerList, dataItems, series, classes, 1);
+            CTLineChart lineChart = plotArea.getLineChartArray(0); //获取折线图单位
+            List<CTLineSer> lineSerList = lineChart.getSerList();
+            refreshLineChart(lineChart, lineSerList, dataItems, series, classes, 3);
+        }
+
+    }
+
+    public void write(OutputStream output) {
+        try {
+            DOCUMENT.write(output);
+            output.flush();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            close();
+        }
+    }
+
+    public void close() {
+        if (DOCUMENT != null) {
+            try {
+                DOCUMENT.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     /**
      * 更换标题文本
      *
      * @param document 文档
      * @param data     数据
      */
-    private static void replaceHeaderText(XWPFDocument document, Map<String, String> data) {
+    private void replaceHeaderText(XWPFDocument document, Map<String, String> data) {
         // 获取页眉
         List<XWPFHeader> headerList = document.getHeaderList();
         if (CollectionUtil.isNotEmpty(headerList)) {
@@ -158,7 +199,7 @@ public class WordUtil {
      * @param document 文档
      * @param data     数据
      */
-    private static void replaceParagraphsText(XWPFDocument document, Map<String, String> data) {
+    private void replaceParagraphsText(XWPFDocument document, Map<String, String> data) {
         // 获取段落集合
         List<XWPFParagraph> paragraphList = document.getParagraphs();
         handleParagraphs(paragraphList, data);
@@ -170,7 +211,7 @@ public class WordUtil {
      * @param document 文档
      * @param data     数据
      */
-    private static void replaceTableText(XWPFDocument document, Map<String, String> data) {
+    private void replaceTableText(XWPFDocument document, Map<String, String> data) {
         // 获取表格
         List<XWPFTable> tables = document.getTables();
         if (CollectionUtil.isNotEmpty(tables)) {
@@ -196,7 +237,7 @@ public class WordUtil {
      * @param document 文档
      * @param data     数据
      */
-    private static void replaceFooterText(XWPFDocument document, Map<String, String> data) {
+    private void replaceFooterText(XWPFDocument document, Map<String, String> data) {
         // 获取页脚
         List<XWPFFooter> footerList = document.getFooterList();
         if (CollectionUtil.isNotEmpty(footerList)) {
@@ -207,7 +248,13 @@ public class WordUtil {
         }
     }
 
-    private static void handleParagraphs(List<XWPFParagraph> paragraphs, Map<String, String> data) {
+    /**
+     * 处理段落
+     *
+     * @param paragraphs 段落
+     * @param data       数据
+     */
+    private void handleParagraphs(List<XWPFParagraph> paragraphs, Map<String, String> data) {
         if (CollectionUtil.isEmpty(paragraphs)) {
             return;
         }
@@ -216,7 +263,7 @@ public class WordUtil {
             for (XWPFRun run : runs) {
                 String text = run.getText(0);
                 // 替换文字
-                String newText = replaceText(text, data);
+                String newText = replaceWords(text, data);
                 if (StrUtil.isNotBlank(newText)) {
                     run.setText(newText, 0);
                 }
@@ -224,11 +271,11 @@ public class WordUtil {
         }
     }
 
-    private static String replaceText(String text, Map<String, String> data) {
+    private String replaceWords(String text, Map<String, String> data) {
         if (StrUtil.isBlank(text)) {
             return null;
         }
-        Pattern pattern = Pattern.compile(PATTERN);
+        Pattern pattern = Pattern.compile(this.pattern);
         Matcher matcher = pattern.matcher(text);
         boolean flag = false;
         while (matcher.find()) {
@@ -243,7 +290,7 @@ public class WordUtil {
         return flag ? text : null;
     }
 
-    private static String extractChartKey(XWPFChart chart) {
+    private String extractChartKey(XWPFChart chart) {
         String key = null;
         XSSFWorkbook workbook = null;
         try {
@@ -257,63 +304,8 @@ public class WordUtil {
             key = cell.getStringCellValue().trim(); // 获取格子内容
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            if (workbook != null) {
-//                try {
-//                    workbook.close();
-//                } catch (IOException e) {
-//                    throw new RuntimeException(e);
-//                }
-            }
         }
-
         return key;
-    }
-
-    /**
-     * 修改图表excel
-     */
-    private static void modifyChartExcel(String key,
-                                         String title,
-                                         List<String> classes,
-                                         List<String> series,
-                                         List<Map<String, String>> dataItems) {
-        XWPFChart chart = chartMap.get(key);
-        if (chartMap.isEmpty() || ObjectUtil.isNull(chart)) {
-            return;
-        }
-        // 根据属性第一列名称切换数据类型
-        CTChart ctChart = chart.getCTChart();
-        CTPlotArea plotArea = ctChart.getPlotArea();
-
-        // 设置标题
-        if (StrUtil.isNotBlank(title)) {
-            setChartTitle(ctChart, title);
-        }
-
-        // 刷新chart内置的excel数据
-        refreshInnerExcel(chart, classes, series, dataItems);
-
-        if (key.contains("pie_chart")) {
-            CTPieChart pieChart = plotArea.getPieChartArray(0);
-            List<CTPieSer> serList = pieChart.getSerList();// 获取柱状图单位
-            // 刷新word显示的数据
-            refreshPieChart(pieChart, serList, dataItems, series, classes, 1);
-        } else if (key.contains("colum_chart")) {
-            CTBarChart barChart = plotArea.getBarChartArray(0);
-            List<CTBarSer> BarSerList = barChart.getSerList();  // 获取柱状图单位
-            // 刷新word显示的数据
-            refreshColumChart(barChart, BarSerList, dataItems, series, classes, 1);
-        } else if (key.contains("mix")) {
-            CTBarChart barChart = plotArea.getBarChartArray(0);
-            List<CTBarSer> BarSerList = barChart.getSerList();  // 获取柱状图单位
-            refreshColumChart(barChart, BarSerList, dataItems, series, classes, 1);
-
-            CTLineChart lineChart = plotArea.getLineChartArray(0);
-            List<CTLineSer> lineSerList = lineChart.getSerList();
-            refreshLineChart(lineChart, lineSerList, dataItems, series, classes, 3);
-        }
-
     }
 
     /**
@@ -322,7 +314,7 @@ public class WordUtil {
      * @param ctChart ct图
      * @param title   标题
      */
-    private static void setChartTitle(CTChart ctChart, String title) {
+    private void setChartTitle(CTChart ctChart, String title) {
         CTTitle ct = ctChart.getTitle();
         if (ObjectUtil.isEmpty(ct)) {
             return;
@@ -339,19 +331,18 @@ public class WordUtil {
     }
 
     /**
-     * 刷新excel内部
+     * 刷新图表内部的excel
      *
      * @param chart     图
      * @param classes   类
      * @param series    系列
      * @param dataItems 数据项
      */
-    private static boolean refreshInnerExcel(
+    private void refreshChartInnerExcel(
             XWPFChart chart,
             List<String> classes,
             List<String> series,
             List<Map<String, String>> dataItems) {
-        boolean flag = true;
         XSSFWorkbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
         //根据数据创建excel第一行系列
@@ -377,54 +368,40 @@ public class WordUtil {
                     if (j == 0) {
                         sheet.createRow(i + 1).createCell(j).setCellValue(classes.get(i) == null ? "" : classes.get(i));
                     } else {
-                        sheet.createRow(i + 1).createCell(j).setCellValue(data.get(cell) == null ? 0.00 : Double.valueOf(data.get(cell)));
+                        if ("".equals(data.get(cell))) {
+                            sheet.createRow(i + 1).createCell(j).setCellValue("");
+                        } else {
+                            sheet.createRow(i + 1).createCell(j).setCellValue(data.get(cell) == null ? 0.00 : Double.valueOf(data.get(cell)));
+                        }
                     }
                 } else {
                     if (j == 0) {
                         sheet.getRow(i + 1).createCell(j).setCellValue(classes.get(i) == null ? "" : classes.get(i));
                     } else {
-                        System.out.println(cell);
-                        sheet.getRow(i + 1).createCell(j).setCellValue(data.get(cell) == null ? 0.00 : Double.valueOf(data.get(cell)));
+                        if ("".equals(data.get(cell))) {
+                            sheet.getRow(i + 1).createCell(j).setCellValue("");
+                        } else {
+                            sheet.getRow(i + 1).createCell(j).setCellValue(data.get(cell) == null ? 0.00 : Double.valueOf(data.get(cell)));
+                        }
                     }
                 }
             }
         }
-        OutputStream xlsOut = null;
-
-        try {
-            // 更新嵌入的workbook
-            List<POIXMLDocumentPart> parts = chart.getRelations();
-            if (CollectionUtil.isNotEmpty(parts)) {
-                for (POIXMLDocumentPart part : parts) {
-                    if (part.toString().contains("sheet")) {
-                        System.out.println(part.toString());
-                        xlsOut = part.getPackagePart().getOutputStream();
-                        break;
-                    }
-                }
-            }
-
-            //xlsOut = xlsPart.getPackagePart().getOutputStream();
-            //xlsOut = new FileOutputStream("E:\\Xlw\\1.xlsx");
-            chart.setWorkbook(wb);
-            //wb.write(xlsOut);
-            xlsOut.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-            flag = false;
-        } finally {
-            if (xlsOut != null) {
-                try {
-                    xlsOut.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return flag;
+        chart.setWorkbook(wb);
     }
 
-    private static boolean refreshPieChart(Object typeChart, List<?> serList, List<Map<String, String>> dataList, List<String> series, List<String> classes, int position) {
+    /**
+     * 刷新饼图
+     *
+     * @param typeChart 类型图
+     * @param serList   ser列表
+     * @param dataList  数据列表
+     * @param series    系列
+     * @param classes   类
+     * @param position  位置,系列的第几列
+     * @return boolean
+     */
+    private void refreshPieChart(Object typeChart, List<?> serList, List<Map<String, String>> dataList, List<String> series, List<String> classes, int position) {
 
         boolean result = true;
         //更新数据区域
@@ -435,13 +412,13 @@ public class WordUtil {
 
             // 设置系列（excel第一行数据） 用以下这个方式，可以兼容office和wps
             CTSerTx tx = ser.getTx();
-            tx.getStrRef().getStrCache().getPtList().get(0).setV(series.get(0));
+            tx.getStrRef().getStrCache().getPtList().get(0).setV(series.get(position - 1));
 
             // 类别(excel第一列数据)
             cat = ser.getCat();
             // 获取图表的值
             val = ser.getVal();
-            // strData.set
+
             CTStrData strData = cat.getStrRef().getStrCache();
             CTNumData numData = val.getNumRef().getNumCache();
             strData.setPtArray((CTStrVal[]) null); // unset old axis text
@@ -452,8 +429,8 @@ public class WordUtil {
             for (int j = 0; j < classes.size(); j++) {
                 //判断获取的值是否为空
                 String value = "0";
-                if (new BigDecimal(dataList.get(j).get(series.get(0))) != null) {
-                    value = new BigDecimal(dataList.get(j).get(series.get(0))).toString();
+                if (new BigDecimal(dataList.get(j).get(series.get(position - 1))) != null) {
+                    value = new BigDecimal(dataList.get(j).get(series.get(position - 1))).toString();
                 }
                 if (!"0".equals(value)) {
                     CTNumVal numVal = numData.addNewPt();//序列值
@@ -479,11 +456,20 @@ public class WordUtil {
                     .formatAsString("Sheet1", true);
             val.getNumRef().setF(numDataRange);
         }
-        return result;
     }
 
-    private static boolean refreshColumChart(Object typeChart, List<?> serList, List<Map<String, String>> dataList, List<String> series, List<String> classes, int position) {
-        boolean result = true;
+    /**
+     * 刷新柱形图
+     *
+     * @param typeChart 类型图
+     * @param serList   ser列表
+     * @param dataList  数据列表
+     * @param series    系列
+     * @param classes   类
+     * @param position  位置,系列的第几列
+     * @return boolean
+     */
+    private void refreshBarChart(Object typeChart, List<?> serList, List<Map<String, String>> dataList, List<String> series, List<String> classes, int position) {
         //更新数据区域
         for (int i = 0; i < serList.size(); i++) {
             CTAxDataSource cat = null;
@@ -492,7 +478,7 @@ public class WordUtil {
 
             // 设置系列（excel第一行数据） 用以下这个方式，可以兼容office和wps
             CTSerTx tx = ser.getTx();
-            tx.getStrRef().getStrCache().getPtList().get(0).setV(series.get(0));
+            tx.getStrRef().getStrCache().getPtList().get(0).setV(series.get(position - 1));
 
             // 类别(excel第一列数据)
             cat = ser.getCat();
@@ -509,8 +495,8 @@ public class WordUtil {
             for (int j = 0; j < classes.size(); j++) {
                 //判断获取的值是否为空
                 String value = "0";
-                if (new BigDecimal(dataList.get(j).get(series.get(i))) != null) {
-                    value = new BigDecimal(dataList.get(j).get(series.get(i))).toString();
+                if (new BigDecimal(dataList.get(j).get(series.get(position - 1))) != null) {
+                    value = new BigDecimal(dataList.get(j).get(series.get(position - 1))).toString();
                 }
                 if (!"0".equals(value)) {
                     CTNumVal numVal = numData.addNewPt();//序列值
@@ -536,11 +522,20 @@ public class WordUtil {
                     .formatAsString("Sheet1", true);
             val.getNumRef().setF(numDataRange);
         }
-        return result;
     }
 
-    public static boolean refreshLineChart(Object typeChart, List<?> serList, List<Map<String, String>> dataList, List<String> series, List<String> classes, int position) {
-        boolean result = true;
+    /**
+     * 刷新折线图
+     *
+     * @param typeChart 类型图
+     * @param serList   ser列表
+     * @param dataList  数据列表
+     * @param series    系列
+     * @param classes   类
+     * @param position  位置
+     * @return boolean
+     */
+    public void refreshLineChart(Object typeChart, List<?> serList, List<Map<String, String>> dataList, List<String> series, List<String> classes, int position) {
         //更新数据区域
         for (int i = 0; i < serList.size(); i++) {
             CTAxDataSource cat = null;
@@ -593,15 +588,6 @@ public class WordUtil {
                     .formatAsString("Sheet1", true);
             val.getNumRef().setF(numDataRange);
         }
-        return result;
     }
 
-
-
-
-    public static void main(String[] args) {
-        String path = "E:\\Xlw\\template.docx";
-        String outPath = "E:\\Xlw\\templateBak.docx";
-        WordUtil.handleWord(path, outPath);
-    }
 }
