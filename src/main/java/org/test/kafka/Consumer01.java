@@ -11,11 +11,11 @@ import java.time.Duration;
 import java.util.*;
 
 /**
- * @className: Consumer
+ * @className: Consumer01
  * @author: xlw
- * @date: 2023/5/31 14:32
+ * @date: 2023/6/5 17:17
  **/
-public class Consumer {
+public class Consumer01 {
 
     /**
      * consumer采用从broker中主动拉取数据。
@@ -27,15 +27,11 @@ public class Consumer {
         Properties properties = new Properties();
         // 指定kafka服务
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
-        // 消费者反序列化key
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        // 消费者反序列化value
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        // 指定消费者组
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "g1");
-        // 创建消费者
+        //创建消费者
         KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
-        // 注册要消费的主题（可以消费多个主题）
         Set<String> topicSet = new HashSet<>();
         topicSet.add(topicName);
         consumer.subscribe(topicSet);
@@ -45,7 +41,7 @@ public class Consumer {
                 System.out.println(cr);
             }
         }
-//        consumer.close();
+        //        consumer.close();
     }
 
     /**
@@ -68,8 +64,8 @@ public class Consumer {
         KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(properties);
         // 指定消费主题以及分区
         List<TopicPartition> partitions = new ArrayList<>();
-        partitions.add(new TopicPartition(topicName, 0));
-        partitions.add(new TopicPartition(topicName, 1));
+        partitions.add(new TopicPartition(topicName, 2));
+        partitions.add(new TopicPartition(topicName, 3));
         consumer.assign(partitions);
         while (true) {
             ConsumerRecords<String, String> data = consumer.poll(Duration.ofMillis(100));
