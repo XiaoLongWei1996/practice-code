@@ -23,7 +23,7 @@ public class Consumer01 {
         // kafka消费者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "g1");
@@ -50,7 +50,7 @@ public class Consumer01 {
         // kafka消费者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 消费者反序列化key
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消费者反序列化value
@@ -83,7 +83,7 @@ public class Consumer01 {
         // kafka消费者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 消费者反序列化key
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消费者反序列化value
@@ -116,7 +116,7 @@ public class Consumer01 {
         // kafka消费者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 消费者反序列化key
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消费者反序列化value

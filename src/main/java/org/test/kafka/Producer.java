@@ -24,7 +24,7 @@ public class Producer {
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -69,7 +69,7 @@ public class Producer {
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -126,7 +126,7 @@ public class Producer {
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -178,7 +178,7 @@ public class Producer {
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -236,7 +236,7 @@ public class Producer {
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -294,7 +294,7 @@ public class Producer {
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "10.220.99.163:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
