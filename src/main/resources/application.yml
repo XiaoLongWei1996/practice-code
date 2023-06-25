@@ -1,0 +1,59 @@
+server:
+  port: 9090
+
+spring:
+  application:
+    name: kafka-demo
+  #配置kafka
+  kafka:
+    #配置kafka访问地址
+    bootstrap-servers: 10.220.99.163:9092
+    #配置生产者
+    producer:
+      #配置broker应答,0：生产者发送过来的数据，不需要等数据落盘应答;1：生产者发送过来的数据，Leader收到数据后应答;-1（all）：生产者发送过来的数据，Leader+和isr队列里面的所有节点收齐数据后应答。-1和all等价。
+      acks: -1
+      #配置缓冲区,一次达到多大的消息开始发送，16384代表16k。
+      batch-size: 16KB
+      #配置RecordAccumulator 缓冲区总大小32M
+      buffer-memory: 32MB
+      #配置压缩类型,默认 none，可配置值 gzip、snappy、lz4 和 zstd
+      compression-type: gzip
+      #配置重试次数，控制消息只发送3次
+      retries: 3
+      #序列化key
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      # 系列化值
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      #事务id前缀
+      transaction-id-prefix: tx_
+    #配置消费者
+    consumer:
+      #消费者反序列化key
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #消费者反序列化value
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      #配置自动提交 offset
+      enable-auto-commit: false
+      #配置偏移量
+      auto-offset-reset: earliest
+      #配置组id
+      group-id: g2
+      #配置隔离级别
+      isolation-level: read_committed
+      #配置一次拉取消息条数
+      max-poll-records: 100
+      properties:
+        metrics:
+          recording:
+            level: DEBUG
+    #监听器
+    listener:
+      #当enable.auto.commit的值设置为false时，该值会生效；为true时不会生效
+      #manual_immediate:需要手动调用Acknowledgment.acknowledge()后立即提交
+      ack-mode: manual_immediate
+      #如果至少有一个topic不存在，true启动失败。false忽略
+      missing-topics-fatal: true
+      #type: single #单条消费？批量消费？ #批量消费需要配合 consumer.max-poll-records
+      type: batch
+      #配置多少，就为为每个消费者实例创建多少个线程。多出分区的线程空闲
+      concurrency: 4
