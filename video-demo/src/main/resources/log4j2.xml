@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="5">
+    <properties>
+        <property name="LOG_DIR">log</property>
+        <property name="LOG_PATTERN">%d{HH:mm:ss.SSS} [%t] [%-5level] %c{36}:%L --- %m%n</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <RollingFile name="rollingFile" fileName="${LOG_DIR}/application.log" filePattern="${LOG_DIR}/log-%d{yyyyMMdd}_%i.log">
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <AsyncRoot level="info" includeLocation="true">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="rollingFile"/>
+        </AsyncRoot>
+
+        <AsyncLogger name="com.xlw.videodemo" level="info"
+                     includeLocation="true" additivity="false">
+            <AppenderRef ref="rollingFile"/>
+        </AsyncLogger>
+    </Loggers>
+</Configuration>
