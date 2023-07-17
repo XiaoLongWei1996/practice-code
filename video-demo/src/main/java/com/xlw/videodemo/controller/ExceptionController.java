@@ -18,7 +18,8 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     public String ex(Exception e) {
         e.printStackTrace();
-        log.error(e.getMessage());
+        //记录异常信息
+        log.error(e.getMessage(), e);
         return "访问失败";
     }
 }

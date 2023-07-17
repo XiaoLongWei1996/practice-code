@@ -10,13 +10,30 @@
             <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
         </Console>
 
-        <RollingFile name="rollingFile" fileName="${LOG_DIR}/application.log" filePattern="${LOG_DIR}/log-%d{yyyyMMdd}_%i.log">
-            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        <RollingFile name="infoRollingFile" fileName="${LOG_DIR}/application_info.log" filePattern="${LOG_DIR}/info_%d{yyyyMMdd}_%i.log">
+            <!-- 只打印info日志 -->
+            <Filters>
+                <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="10MB"/>
-                <TimeBasedTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <RollingFile name="errorRollingFile" fileName="${LOG_DIR}/application_error.log" filePattern="${LOG_DIR}/error_%d{yyyyMMdd}_%i.log">
+            <!-- 只打印error日志 -->
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <DefaultRolloverStrategy max="30"/>
         </RollingFile>
@@ -24,12 +41,13 @@
     <Loggers>
         <AsyncRoot level="info" includeLocation="true">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="rollingFile"/>
+<!--            <AppenderRef ref="rollingFile"/>-->
         </AsyncRoot>
 
         <AsyncLogger name="com.xlw.videodemo" level="info"
                      includeLocation="true" additivity="false">
-            <AppenderRef ref="rollingFile"/>
+            <AppenderRef ref="infoRollingFile"/>
+            <AppenderRef ref="errorRollingFile"/>
         </AsyncLogger>
     </Loggers>
 </Configuration>

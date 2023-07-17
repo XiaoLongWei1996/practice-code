@@ -74,7 +74,6 @@ public class VideoController {
 
     @GetMapping("{ts}")
     public void downloadTs(@PathVariable("ts") String ts, HttpServletResponse response) throws IOException {
-//        response.reset();
         response.setContentType("application/octet-stream");
         response.setHeader(
                 "Content-disposition",
@@ -100,6 +99,12 @@ public class VideoController {
                 inputStream.close();
             }
         }
+    }
+
+    @GetMapping("test")
+    public String test() {
+        int i = 1 / 0;
+        return "test";
     }
 
 }
