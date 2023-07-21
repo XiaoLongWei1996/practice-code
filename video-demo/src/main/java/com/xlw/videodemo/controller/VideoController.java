@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
- * @description: 视频处理
+ * @description: 视频分段返回前端，加快视频播放速度，节省流量
  * @Title: VideoController
  * @Author xlw
  * @Package com.xlw.videodemo.controller
@@ -31,6 +31,7 @@ public class VideoController {
     @Resource
     ResourceLoader resourceLoader;
 
+    //获取enc.key文件，用以前端解密
     @GetMapping("acquireKey")
     public void acquireKey(HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
@@ -55,6 +56,7 @@ public class VideoController {
         }
     }
 
+    //获取m3u8文件内容，用以前端解析并且获取视频ts
     @GetMapping("acquireM3U8")
     public ResponseEntity<String> acquireM3U8() throws IOException {
         InputStream inputStream = null;
@@ -72,6 +74,7 @@ public class VideoController {
         }
     }
 
+    //获取ts文件流
     @GetMapping("{ts}")
     public void downloadTs(@PathVariable("ts") String ts, HttpServletResponse response) throws IOException {
         response.setContentType("application/octet-stream");
@@ -101,10 +104,5 @@ public class VideoController {
         }
     }
 
-    @GetMapping("test")
-    public String test() {
-        int i = 1 / 0;
-        return "test";
-    }
 
 }
