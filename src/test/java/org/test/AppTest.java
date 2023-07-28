@@ -10,6 +10,7 @@ import com.spire.doc.formatting.ListFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.test.design.prototype.Animal;
+import org.test.design.prototype.bean.Student;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -94,7 +95,8 @@ public class AppTest {
 
     @Test
     public void Test() throws Exception {
-
+        Student student = new Student("小明", 12);
+        student.a(() -> student.getName());
     }
 
     public void doc() {
