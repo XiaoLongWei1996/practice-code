@@ -14,16 +14,20 @@ import java.util.*;
  **/
 public class Consumer01 {
 
+    private static final String ADDR = "192.168.86.128:9092";
+
+    private static final String TOPIC_NAME = "test";
+
     /**
      * consumer采用从broker中主动拉取数据。
      */
     private static void createConsumer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka消费者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "g1");
@@ -141,6 +145,6 @@ public class Consumer01 {
     }
 
     public static void main(String[] args) {
-        createStickyRobinConsumer();
+        createConsumer();
     }
 }

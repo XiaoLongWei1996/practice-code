@@ -15,16 +15,21 @@ import java.util.concurrent.ExecutionException;
  */
 public class Producer {
 
+
+    private static final String ADDR = "192.168.86.128:9092";
+
+    private static final String TOPIC_NAME = "test";
+
     /**
      * 创建普通生产商
      */
     private static void createProducer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -53,7 +58,7 @@ public class Producer {
                 System.out.println("生产者退出服务");
                 break;
             }
-            // 发送数据
+            // 普通异步发送数据
             producer.send(new ProducerRecord<>(topicName, word));
             producer.flush();
         }
@@ -65,11 +70,11 @@ public class Producer {
      */
     private static void createCallbackProducer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -122,11 +127,11 @@ public class Producer {
      */
     private static void createSyncProducer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -170,15 +175,16 @@ public class Producer {
     }
 
     /**
+     * 没有指定分区或者没有key的情况下，随机选取一个分区，并且黏性分发送，并尽可能一直使用该分区， 待该分区的batch已满或者已完成， Kafka再随机一个分区进行使用（和上一次的分区不同）
      * 创建生产者,指定发送数据到topic的某个分区中
      */
     private static void createPartitionProducer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -209,7 +215,7 @@ public class Producer {
             }
             producer.send(
                     //数据指定发送到topic的第二个分区
-                    new ProducerRecord<>(topicName, 2, "", word),
+                    new ProducerRecord<>(topicName, 0, "", word),
                     //消息发送回调函数，Exception为空正常发送，否则异常
                     new Callback() {
                         @Override
@@ -232,11 +238,11 @@ public class Producer {
      */
     private static void createKeyProducer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka生产者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         // 序列化key
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         // 系列化值
@@ -255,6 +261,66 @@ public class Producer {
         properties.put(ProducerConfig.ACKS_CONFIG, "1");
         // 配置压缩类型,默认 none，可配置值 gzip、snappy、lz4 和 zstd
         properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        // kafka生产者对象
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
+        // 发送数据
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()) {
+            String word = scanner.next();
+            if ("exit".equals(word)) {
+                System.out.println("生产者退出服务");
+                break;
+            }
+            producer.send(
+                    //数据指定key,通过key的hash取模发送数据到某分区
+                    new ProducerRecord<>(topicName, word, word),
+                    //消息发送回调函数，Exception为空正常发送，否则异常
+                    new Callback() {
+                        @Override
+                        public void onCompletion(RecordMetadata recordMetadata, Exception e) {
+                            if (e == null) {
+                                System.out.println("主题：" + recordMetadata.topic() + "-> 分区：" + recordMetadata.partition());
+                            } else {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+            producer.flush();
+        }
+        producer.close(Duration.ofSeconds(3));
+    }
+
+    /**
+     * 创建生产者,使用自定义分区器
+     *
+     */
+    private static void createCustomProducer() {
+        // topic名称
+        String topicName = TOPIC_NAME;
+        // kafka生产者配置属性
+        Properties properties = new Properties();
+        // 指定kafka服务
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
+        // 序列化key
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 系列化值
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        // 配置重试次数
+        properties.put(ProducerConfig.RETRIES_CONFIG, 3);
+        // 配置重试间隔时间
+        properties.put(ProducerConfig.RETRY_BACKOFF_MS_CONFIG, 500);
+        // 配置RecordAccumulator 缓冲区总大小32M
+        properties.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 33554432);
+        // 配置缓冲区,一次达到多大的消息开始发送，16384代表16k。
+        properties.put(ProducerConfig.BATCH_SIZE_CONFIG, 16384);
+        // 配置提交间隔,控制消息发送延时行为的，该参数默认值是0。表示消息需要被立即发送，无须关系batch是否被填满。
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 10);
+        // 配置broker应答,0：生产者发送过来的数据，不需要等数据落盘应答;1：生产者发送过来的数据，Leader收到数据后应答;-1（all）：生产者发送过来的数据，Leader+和isr队列里面的所有节点收齐数据后应答。-1和all等价。
+        properties.put(ProducerConfig.ACKS_CONFIG, "1");
+        // 配置压缩类型,默认 none，可配置值 gzip、snappy、lz4 和 zstd
+        properties.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        //配置自定义分区器
+        properties.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, CustomPartitioner.class.getName());
         // kafka生产者对象
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
         // 发送数据
@@ -342,6 +408,6 @@ public class Producer {
     }
 
     public static void main(String[] args) {
-        Producer.createKeyProducer();
+        Producer.createCustomProducer();
     }
 }

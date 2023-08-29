@@ -17,6 +17,11 @@ import java.util.*;
  **/
 public class Consumer {
 
+
+    private static final String ADDR = "192.168.86.128:9092";
+
+    private static final String TOPIC_NAME = "test";
+
     /**
      * kafka可以一个消费者进行消费broker，也可以多个消费者组成消费者组进行消费broker，消费者组中的每个消费者可以消费1个或多个topic分区，1个分区只能被一个消费者消费
      * consumer采用从broker中主动拉取数据。
@@ -24,11 +29,11 @@ public class Consumer {
      */
     private static void createConsumer() {
         // topic名称
-        String topicName = "test";
+        String topicName = TOPIC_NAME;
         // kafka消费者配置属性
         Properties properties = new Properties();
         // 指定kafka服务
-        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "xlw.asia:9092");
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, ADDR);
         // 消费者反序列化key
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         // 消费者反序列化value
@@ -372,6 +377,6 @@ public class Consumer {
     }
 
     public static void main(String[] args) {
-        createSetOffsetConsumer01();
+        createSetOffsetConsumer();
     }
 }
