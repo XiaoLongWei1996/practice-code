@@ -15,7 +15,7 @@ import java.nio.channels.SocketChannel;
 public class MyClientSocket {
 
     public static void main(String[] args) {
-        client05();
+        client01();
     }
 
     private static void client01() {
@@ -26,6 +26,7 @@ public class MyClientSocket {
             socket = new Socket("127.0.0.1", 9999);
             outputStream = socket.getOutputStream();
             printWriter = new PrintWriter(outputStream);
+            //阻塞写
             printWriter.print("你好啊");
             printWriter.flush();
         } catch (Exception e) {

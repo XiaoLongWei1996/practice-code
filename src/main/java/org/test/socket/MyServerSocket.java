@@ -1,14 +1,13 @@
 package org.test.socket;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author 肖龙威
@@ -17,7 +16,7 @@ import java.util.Set;
 public class MyServerSocket {
 
     public static void main(String[] args) {
-        server05();
+        server06();
     }
 
     private static void server01() {
@@ -31,6 +30,7 @@ public class MyServerSocket {
                 socket = serverSocket.accept();
                 inputStream = socket.getInputStream();
                 reader = new BufferedReader(new InputStreamReader(inputStream));
+                //阻塞读
                 System.out.println(reader.readLine());
                 if (inputStream != null) {
                     inputStream.close();
@@ -173,6 +173,64 @@ public class MyServerSocket {
            }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void server06() {
+        ExecutorService poll = Executors.newFixedThreadPool(4);
+        ServerSocket ss = null;
+        try {
+            ss = new ServerSocket(9999);
+            while (true) {
+                //阻塞等待客户端的连接
+                Socket s = ss.accept();
+                //多线程处理客户端的连接
+                poll.execute(() -> {
+                    handler(s);
+                });
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (ss != null) {
+                try {
+                    ss.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private static void handler(Socket s) {
+        InputStream in = null;
+        BufferedReader reader = null;
+        try {
+            in = s.getInputStream();
+            reader = new BufferedReader(new InputStreamReader(in));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(Thread.currentThread().getName() + "" + line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 }
