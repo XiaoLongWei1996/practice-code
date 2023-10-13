@@ -153,6 +153,7 @@ public class TestChinnel {
         }
     }
 
+    //零拷贝
     private static void testChanel03() {
         try {
             FileInputStream inputStream = new FileInputStream("D:\\a.jpeg");
@@ -169,7 +170,7 @@ public class TestChinnel {
         }
     }
 
-    //使用直接缓冲区完成文件的复制(内存映射文件)
+    //使用直接缓冲区完成文件的复制(内存映射文件)，零拷贝
     private static void testChanel04() {
         try {
             FileInputStream inputStream = new FileInputStream("D:\\a.jpeg");

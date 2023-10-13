@@ -77,7 +77,7 @@ public class MyClientSocket {
         SocketChannel socketChannel = null;
         try {
             socketChannel = SocketChannel.open(new InetSocketAddress("127.0.0.1", 9998));
-            //socketChannel.configureBlocking(false);
+            socketChannel.configureBlocking(false);
             ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
             byteBuffer.put("你好啊".getBytes());
             byteBuffer.flip();

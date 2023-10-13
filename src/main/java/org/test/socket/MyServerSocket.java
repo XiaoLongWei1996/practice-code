@@ -90,17 +90,24 @@ public class MyServerSocket {
         try {
             serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.bind(new InetSocketAddress(9998));
+            //设置为nio
             serverSocketChannel.configureBlocking(false);
+            //开启selector
             Selector selector = Selector.open();
+            //将serverSocketChannel和SelectionKey.OP_ACCEPT绑定到selector
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+            //selector.select()阻塞的
             while (selector.select() > 0) {
+                //获取触发事件的SelectionKey集合
                 Set<SelectionKey> selectionKeys = selector.selectedKeys();
                 Iterator<SelectionKey> iterator = selectionKeys.iterator();
                 while (iterator.hasNext()) {
                     SelectionKey selectionKey = iterator.next();
                     if (selectionKey.isAcceptable()) {
+                        //获取客户端连接
                         socketChannel = serverSocketChannel.accept();
                         socketChannel.configureBlocking(false);
+                        //注册客户端读事件连接
                         socketChannel.register(selector, SelectionKey.OP_READ);
                     } else if (selectionKey.isReadable()) {
                         buffer.clear();
@@ -110,6 +117,7 @@ public class MyServerSocket {
                         byte[] data = new byte[buffer.limit()];
                         buffer.get(data);
                         System.out.println(new String(data));
+                        //注册客户端写事件连接
                         socketChannel.register(selector, SelectionKey.OP_WRITE);
                     } else if (selectionKey.isWritable()) {
                         buffer.clear();
