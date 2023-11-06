@@ -1,5 +1,8 @@
 package org.test.reactor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @description: 响应式编程
  * @Title: Reactro
@@ -10,9 +13,12 @@ package org.test.reactor;
 public class Reactro {
 
 
-
     public static void main(String[] args) {
 
+        List<Integer> list = new ArrayList<>();
 
+        for (Integer integer : list) {
+            
+        }
     }
 }
