@@ -18,7 +18,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 
 /**
- * @description: 视频分段返回前端，加快视频播放速度，节省流量
+ * @description: m3u8流媒体播放视频分段返回前端，加快视频播放速度，节省流量
  * @Title: VideoController
  * @Author xlw
  * @Package com.xlw.videodemo.controller
