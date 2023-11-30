@@ -1,8 +1,5 @@
 package org.test.inner;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @description:
  * @Title: Test001
@@ -12,21 +9,13 @@ import java.util.List;
  */
 public class Test001 {
     public static void main(String[] args) {
-        List<Integer> list = new ArrayList<>();
-        list.add(12);
-        list.add(45);
-        list.add(11);
-        list.add(67);
-        list.add(23);
-        list.add(10);
-        list.stream()
-                .filter(o ->  o > 10)
-                .sorted(Integer::compare)
-                .forEach(System.out::println);
+        System.out.println(Father.i);
     }
 }
 
 class Father {
+
+    static int i = 1;
 
     static {
         System.out.println("父类静态代码块");
