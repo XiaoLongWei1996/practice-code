@@ -1,7 +1,5 @@
 package org.test;
 
-import org.test.util.ExecuteUtil;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -22,8 +20,8 @@ public class Test {
     }
 
     public static void main(String[] args) {
-        String path = "E:\\test.bat";
-        ExecuteUtil.asynExec("cmd.exe", "/c", path);
+
+
 
     }
 
@@ -35,8 +33,5 @@ public class Test {
         return ld;
     }
 
-    public void test() {
-
-    }
 
 }
