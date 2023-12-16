@@ -109,6 +109,12 @@
             <version>4.1.98.Final</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.bouncycastle</groupId>-->
+<!--            <artifactId>bcprov-jdk15to18</artifactId>-->
+<!--            <version>1.69</version>-->
+<!--        </dependency>-->
+
 
     </dependencies>
 
