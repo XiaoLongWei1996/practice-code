@@ -138,8 +138,6 @@ public class JWTUtil {
         String jwt = JWTUtil.createAsymmetricJWT(new HashMap<>(), DateUtil.offsetMinute(new Date(), -30), privateKey.getEncoded());
         Map<String, Object> stringObjectMap = JWTUtil.verifyAsymmetricJWT(jwt, publicKey.getEncoded());
 
-//        Map<String, Object> stringObjectMap = JWTUtil.verifyAsymmetricJWT(jwt, publicKey.getEncoded());
-//        String jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7Im5hbWUiOiLlsI_mmI4iLCJhZ2UiOjE1fSwiZXhwIjoxNzAyNzM3MTA0LCJpYXQiOjE3MDI3MzUzMDR9.vEisR5155cey-QqR-ThIhQL-kRjxDhQ-geHIMjzh34E";
         System.out.println(jwt);
 
 
