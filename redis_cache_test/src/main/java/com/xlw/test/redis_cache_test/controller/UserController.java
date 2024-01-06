@@ -3,6 +3,7 @@ package com.xlw.test.redis_cache_test.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xlw.test.redis_cache_test.config.cache.Cache;
 import com.xlw.test.redis_cache_test.entity.Result;
 import com.xlw.test.redis_cache_test.entity.User;
 import com.xlw.test.redis_cache_test.service.UserService;
@@ -57,6 +58,7 @@ public class UserController {
      * @param id 主键
      * @return 单条数据
      */
+    @Cache(prefix = "user", key = "#id")
     @GetMapping("selectOne/{id}")
     public Result<User> selectOne(@PathVariable Integer id) {
         return Result.succeed(userService.getById(id));
