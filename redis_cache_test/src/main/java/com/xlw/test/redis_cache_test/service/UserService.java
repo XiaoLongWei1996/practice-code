@@ -19,5 +19,17 @@ public interface UserService extends IService<User> {
      * @return {@link IPage}<{@link User}>
      */
     IPage<User> listByPage(IPage<?> page);
+
+    /**
+     * 根据id查询
+     *
+     * @param id id
+     * @return {@link User}
+     */
+    User selectOne(Integer id);
+
+    boolean update(User user);
+
+    boolean delete(Integer id);
 }
 

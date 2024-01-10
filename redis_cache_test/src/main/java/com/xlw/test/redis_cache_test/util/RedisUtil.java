@@ -37,8 +37,12 @@ public class RedisUtil {
         return redisTemplate.getExpire(key);
     }
 
-    public void expire(String key, long timeout) {
-        redisTemplate.expire(key, timeout, TimeUnit.MILLISECONDS);
+    public void expire(String key, long timeout, TimeUnit timeUnit) {
+        redisTemplate.expire(key, timeout, timeUnit);
+    }
+
+    public Set<String> keys(String pattern) {
+        return redisTemplate.keys(pattern);
     }
 
     /*---------------------------------------------------String操作--------------------------------------------------------------*/

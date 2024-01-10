@@ -31,11 +31,11 @@ public @interface Cache {
      * 缓存时间
      * @return
      */
-    long timeout() default 0;
+    long timeout() default 1000;
 
     /**
      * 缓存时间单位
      * @return
      */
-    TimeUnit timeUnit() default TimeUnit.SECONDS;
+    TimeUnit timeUnit() default TimeUnit.MILLISECONDS;
 }

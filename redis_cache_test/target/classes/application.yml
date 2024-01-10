@@ -43,16 +43,20 @@ spring:
         url-pattern: '/*'
         exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
   redis:
-    lettuce:
+    jedis:
       pool:
         enabled: true
         max-active:  8
         max-idle:  8
         min-idle: 0
     host: 192.168.86.128
+    password: 123456
     database: 0
     port: 6379
     connect-timeout: 18000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml

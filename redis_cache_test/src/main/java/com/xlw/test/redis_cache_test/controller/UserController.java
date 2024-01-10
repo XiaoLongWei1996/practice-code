@@ -3,7 +3,6 @@ package com.xlw.test.redis_cache_test.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xlw.test.redis_cache_test.config.cache.Cache;
 import com.xlw.test.redis_cache_test.entity.Result;
 import com.xlw.test.redis_cache_test.entity.User;
 import com.xlw.test.redis_cache_test.service.UserService;
@@ -58,10 +57,9 @@ public class UserController {
      * @param id 主键
      * @return 单条数据
      */
-    @Cache(prefix = "user", key = "#id")
     @GetMapping("selectOne/{id}")
     public Result<User> selectOne(@PathVariable Integer id) {
-        return Result.succeed(userService.getById(id));
+        return Result.succeed(userService.selectOne(id));
     }
 
     /**
@@ -83,18 +81,18 @@ public class UserController {
      */
     @PutMapping("update")
     public Result<Boolean> update(User user) {
-        return Result.succeed(userService.updateById(user));
+        return Result.succeed(userService.update(user));
     }
 
     /**
      * 删除数据
      *
-     * @param idList 主键结合
+     * @param id 主键
      * @return 删除结果
      */
     @DeleteMapping("delete")
-    public Result<Boolean> delete(List<Integer> idList) {
-        return Result.succeed(userService.removeByIds(idList));
+    public Result<Boolean> delete(Integer id) {
+        return Result.succeed(userService.delete(id));
     }
 	
 }

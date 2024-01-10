@@ -25,4 +25,8 @@ public @interface CacheClean {
      * @return
      */
     String key();
+
+    boolean isAll() default false;
+
+    boolean before() default true;
 }
