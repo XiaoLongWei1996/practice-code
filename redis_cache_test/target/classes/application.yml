@@ -1,5 +1,24 @@
 server:
     port: 8080
+    tomcat:
+      #设置uri编码
+      uri-encoding: UTF-8
+      #设置等待队列的最大长度
+      accept-count: 1000
+      #设置最大链接数
+      max-connections: 10000
+      #链接建立超时时间
+      connection-timeout: 1m
+      #设置最大http表单提交大小
+      max-http-form-post-size: 50MB
+      #连接最大支持的请求数
+      max-keep-alive-requests: 100
+      #线程设置
+      threads:
+        #最大线程的数
+        max: 500
+        #最小的线程数
+        min-spare: 50
 
 spring:
   datasource:
