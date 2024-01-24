@@ -1,0 +1,9 @@
+server:
+  port: 9999
+  compression:
+    enabled: true
+
+spring:
+  jackson:
+    date-format: yyyy/MM/dd HH:mm:ss
+    time-zone: GMT+8

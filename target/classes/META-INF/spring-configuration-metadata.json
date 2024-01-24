@@ -1,0 +1,92 @@
+{
+  "groups": [
+    {
+      "name": "hello",
+      "type": "com.test.springboot.domain.Hello",
+      "sourceType": "com.test.springboot.domain.Hello"
+    },
+    {
+      "name": "minio",
+      "type": "com.test.springboot.config.minio.MinioProperties",
+      "sourceType": "com.test.springboot.config.minio.MinioProperties"
+    },
+    {
+      "name": "rmq",
+      "type": "com.test.springboot.rabbitmq.RabbitmqProperties",
+      "sourceType": "com.test.springboot.rabbitmq.RabbitmqProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "hello.age",
+      "type": "java.lang.Integer",
+      "sourceType": "com.test.springboot.domain.Hello"
+    },
+    {
+      "name": "hello.chars",
+      "type": "java.lang.Character[]",
+      "sourceType": "com.test.springboot.domain.Hello"
+    },
+    {
+      "name": "hello.count",
+      "type": "java.lang.Integer",
+      "sourceType": "com.test.springboot.domain.Hello"
+    },
+    {
+      "name": "hello.describe",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.domain.Hello"
+    },
+    {
+      "name": "hello.name",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.domain.Hello"
+    },
+    {
+      "name": "minio.access-key",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.config.minio.MinioProperties"
+    },
+    {
+      "name": "minio.default-bucket-name",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.config.minio.MinioProperties"
+    },
+    {
+      "name": "minio.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.config.minio.MinioProperties"
+    },
+    {
+      "name": "minio.secret-key",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.config.minio.MinioProperties"
+    },
+    {
+      "name": "rmq.back-exchange-name",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.rabbitmq.RabbitmqProperties"
+    },
+    {
+      "name": "rmq.back-queue-name",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.rabbitmq.RabbitmqProperties"
+    },
+    {
+      "name": "rmq.exchange-name",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.rabbitmq.RabbitmqProperties"
+    },
+    {
+      "name": "rmq.queue-name",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.rabbitmq.RabbitmqProperties"
+    },
+    {
+      "name": "rmq.routing-key",
+      "type": "java.lang.String",
+      "sourceType": "com.test.springboot.rabbitmq.RabbitmqProperties"
+    }
+  ],
+  "hints": []
+}
