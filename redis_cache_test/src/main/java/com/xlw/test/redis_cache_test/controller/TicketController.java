@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xlw.test.redis_cache_test.entity.Result;
 import com.xlw.test.redis_cache_test.entity.Ticket;
+import com.xlw.test.redis_cache_test.entity.UserTicket;
 import com.xlw.test.redis_cache_test.service.TicketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,12 @@ public class TicketController {
      */
     @Resource
     private TicketService ticketService;
+
+
+    @PostMapping("flashSale")
+    public Result<Boolean> flashSale(UserTicket ut) {
+        return Result.succeed(ticketService.flashSale(ut));
+    }
 
     /**
      * 查询所有数据
@@ -94,6 +101,6 @@ public class TicketController {
     public Result<Boolean> delete(List<Integer> idList) {
         return Result.succeed(ticketService.removeByIds(idList));
     }
-	
+
 }
 

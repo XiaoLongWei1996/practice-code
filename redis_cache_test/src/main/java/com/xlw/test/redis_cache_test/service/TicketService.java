@@ -3,6 +3,7 @@ package com.xlw.test.redis_cache_test.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.xlw.test.redis_cache_test.entity.Ticket;
+import com.xlw.test.redis_cache_test.entity.UserTicket;
 
 /**
  * 优惠卷表(Ticket)表服务接口
@@ -19,5 +20,12 @@ public interface TicketService extends IService<Ticket> {
      * @return {@link IPage}<{@link Ticket}>
      */
     IPage<Ticket> listByPage(IPage<?> page);
+
+    /**
+     * 秒杀
+     *
+     * @return boolean
+     */
+    boolean flashSale(UserTicket ut);
 }
 
