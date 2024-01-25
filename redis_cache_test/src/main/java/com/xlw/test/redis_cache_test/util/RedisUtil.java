@@ -1,9 +1,11 @@
 package com.xlw.test.redis_cache_test.util;
 
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -287,5 +289,12 @@ public class RedisUtil {
         return redisTemplate.opsForHyperLogLog().size(key);
     }
 
+    /*----------------------------------------------------执行lua脚本-----------------------------------------------------------------*/
+    public <R> R execute(Class<R> resultClass, String luaPath, List<String> keys, Object... args) {
+        DefaultRedisScript<R> script = new DefaultRedisScript();
+        script.setLocation(new ClassPathResource(luaPath));
+        script.setResultType(resultClass);
+        return redisTemplate.execute(script, keys, args);
+    }
 
 }

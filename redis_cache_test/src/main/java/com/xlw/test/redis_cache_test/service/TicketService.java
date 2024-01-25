@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xlw.test.redis_cache_test.entity.Ticket;
 import com.xlw.test.redis_cache_test.entity.UserTicket;
 
+import java.util.List;
+
 /**
  * 优惠卷表(Ticket)表服务接口
  *
@@ -26,6 +28,38 @@ public interface TicketService extends IService<Ticket> {
      *
      * @return boolean
      */
-    boolean flashSale(UserTicket ut);
+    String flashSale(UserTicket ut);
+
+    /**
+     * 添加票
+     *
+     * @param ticket 票
+     * @return {@link Ticket}
+     */
+    Ticket addTicket(Ticket ticket);
+
+    /**
+     * 秒杀优化
+     *
+     * @param ut ut
+     * @return {@link String}
+     */
+    String flashSale2(UserTicket ut);
+
+    /**
+     * 删除
+     *
+     * @param idList id列表
+     * @return boolean
+     */
+    boolean delete(List<Integer> idList);
+
+    /**
+     * 更新
+     *
+     * @param ticket 票
+     * @return {@link Ticket}
+     */
+    boolean update(Ticket ticket);
 }
 

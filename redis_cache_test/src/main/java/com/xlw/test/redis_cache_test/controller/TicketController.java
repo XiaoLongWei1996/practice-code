@@ -35,6 +35,11 @@ public class TicketController {
         return Result.succeed(ticketService.flashSale(ut));
     }
 
+    @PostMapping("flashSale2")
+    public Result<Boolean> flashSale2(UserTicket ut) {
+        return Result.succeed(ticketService.flashSale2(ut));
+    }
+
     /**
      * 查询所有数据
      *
@@ -76,8 +81,8 @@ public class TicketController {
      * @return 新增结果
      */
     @PostMapping("save")
-    public Result<Boolean> insert(Ticket ticket) {
-        return Result.succeed(ticketService.save(ticket));
+    public Result<Ticket> insert(Ticket ticket) {
+        return Result.succeed(ticketService.addTicket(ticket));
     }
 
     /**
@@ -88,7 +93,7 @@ public class TicketController {
      */
     @PutMapping("update")
     public Result<Boolean> update(Ticket ticket) {
-        return Result.succeed(ticketService.updateById(ticket));
+        return Result.succeed(ticketService.update(ticket));
     }
 
     /**
@@ -98,8 +103,8 @@ public class TicketController {
      * @return 删除结果
      */
     @DeleteMapping("delete")
-    public Result<Boolean> delete(List<Integer> idList) {
-        return Result.succeed(ticketService.removeByIds(idList));
+    public Result<Boolean> delete(@RequestParam("idList") List<Integer> idList) {
+        return Result.succeed(ticketService.delete(idList));
     }
 
 }

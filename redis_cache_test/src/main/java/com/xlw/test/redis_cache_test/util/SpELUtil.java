@@ -17,6 +17,7 @@ import java.util.Map;
  */
 public class SpELUtil {
 
+
     public static String parseSpEL(String expression, Map<String, Object> parameters) {
         Assert.notBlank(expression, "表达式不能为空");
         Assert.notNull(parameters, "对象不能为空");
@@ -29,6 +30,5 @@ public class SpELUtil {
         //3、在获取表达式对应的值时传入包含对应变量定义的EvaluationContext
         return e.getValue(context).toString();
     }
-
 
 }
