@@ -96,6 +96,13 @@ public class TransactionProducer {
                 }
             }
         }
+        //再次确认
+        if (num > 0) {
+            boolean confirm = channel.waitForConfirms(); //阻塞等待mq返回的确认消息
+            if (confirm) {
+                System.out.println("消息发送成功");
+            }
+        }
         System.out.println("关闭");
         //关闭通道
         channel.close();
@@ -150,4 +157,38 @@ public class TransactionProducer {
         }
         channel.close();
     }
+
+    /**
+     * 事务发送,并发效率低
+     *
+     * @throws IOException      ioexception
+     * @throws TimeoutException 超时异常
+     */
+    private static void transactionConfirm(){
+        Channel channel = MQConnectionUtils.createChannel();
+        try {
+            //开启事务
+            channel.txSelect();
+            //发送消息
+            channel.basicPublish("", QUEUE_NAME, MessageProperties.PERSISTENT_TEXT_PLAIN, "hello".getBytes());
+            //提交事务
+            channel.txCommit();
+        } catch (IOException e) {
+            //回滚事务
+            try {
+                channel.txRollback();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                channel.close();
+            } catch (IOException | TimeoutException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 }

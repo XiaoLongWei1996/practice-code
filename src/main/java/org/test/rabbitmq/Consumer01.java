@@ -26,9 +26,9 @@ public class Consumer01 {
             String message = new String(delivery.getBody());
             System.out.println(consumerTag + "===" + message);
         };
-        //失败消费的回调函数(在消费的时候队列被删除)
+        //消费者取消订阅调用，如队列被删除了
         CancelCallback cancelCallback = (consumerTag) -> {
-            System.out.println("数据消费失败");
+            System.out.println("消费者取消订阅");
         };
         System.out.println("C2等待接收消息");
         //从队列里面获取数据

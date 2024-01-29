@@ -16,10 +16,10 @@ public class MQConnectionUtils {
     public static Channel createChannel() {
         //创建连接工厂
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("www.xiaolongwei.cn");
         factory.setPort(5672);
         factory.setUsername("admin");
-        factory.setPassword("123456");
+        factory.setPassword("x123456");
         //创建连接
         Connection connection = null;
         //创建管道

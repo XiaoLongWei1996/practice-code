@@ -1,7 +1,5 @@
 package org.test.channel;
 
-import sun.security.util.CurveDB;
-
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
@@ -34,8 +32,7 @@ public class TestChinnel {
     private static int number = 10;
 
     public static void main(String[] args) {
-        ClassLoader classLoader1 = CurveDB.class.getClassLoader();
-        System.out.println(classLoader1);
+
     }
 
     private static void testPipeChinel() {

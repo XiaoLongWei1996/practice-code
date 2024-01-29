@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 /**
- * TTL队列:队列里面的消息在过期时间内没有被消费,那么会被丢弃获取加入到死信队列里面;
+ * TTL队列:队列里面的消息在过期时间内没有被消费,那么会被丢弃或者加入到死信队列里面;
  * 设置消息的TTL的两种方式:
  *      1.生产者生成消息的时候给消息加上过期时间;
  *      2.队列自己指定消息的过期时间.
@@ -41,17 +41,18 @@ public class TTLQueue {
     private static final String DEAD_QUEUE_NAME = "dead_queue";
 
     public static void main(String[] args) throws IOException {
-
+        TTLqueue();
     }
 
     //ttl队列
     private static void TTLqueue() throws IOException {
         Channel channel = MQConnectionUtils.createChannel();
+
         //创建交换机
         channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
         channel.exchangeDeclare(DEAD_EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
 
-        //创建队列
+        //创建死信队列
         channel.queueDeclare(DEAD_QUEUE_NAME, false, false, false, null);
         channel.queueBind(DEAD_QUEUE_NAME, DEAD_EXCHANGE_NAME, "dead");
 
@@ -73,7 +74,7 @@ public class TTLQueue {
             //需要发送到队列中的消息
             String message = scanner.next();
             //设置消息的过期时间,消息过期后会入死信队列
-            channel.basicPublish(EXCHANGE_NAME, "log", null, message.getBytes());
+            channel.basicPublish(EXCHANGE_NAME, "log", properties, message.getBytes());
         }
     }
 }

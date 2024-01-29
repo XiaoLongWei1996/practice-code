@@ -31,10 +31,11 @@ public class AckConsumer {
                     false  //是否批量应答(true:消费者收到1,2,3,4条信息,如果当前正在执行4被确认应答,那么1,2,3也会被确认应答;
                            //false:不批量应答,只应答当前的数据 )
             );
+//            channel.basicReject(delivery.getEnvelope().getDeliveryTag(), true);
         };
-        //失败消费
+        //消费者取消订阅调用，如队列被删除了
         CancelCallback cancelCallback = (consumerTag) -> {
-            System.out.println("消息消费失败");
+            System.out.println("消费者取消订阅");
         };
         //手动应答
         Boolean autoAck = false;

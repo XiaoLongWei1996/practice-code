@@ -24,10 +24,10 @@ public class Producer {
     public static void main(String[] args) throws IOException, TimeoutException {
         //创建一个连接工厂
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("www.xiaolongwei.cn");
         factory.setPort(5672);
         factory.setUsername("admin");
-        factory.setPassword("123456");
+        factory.setPassword("x123456");
         //通过连接工厂创建连接
         Connection connection = factory.newConnection();
         //通过连接创建通道(多线程应用,多个可以公用一个连接,数据传输通过通道来交互)
@@ -36,7 +36,7 @@ public class Producer {
         channel.queueDeclare(
                 QUEUE_NAME, //队列的名称
                 false,   //队列李的数据是否需要持久化(默认储存在内存中)
-                false,   //该队列是否共享(true:不共享,只能被一个消费者消费;false:共享,可以多个消费者消费),
+                false,   //该队列是否共享(false:共享,可以多个消费者消费;true不共享,只能被一个消费者消费),
                 false,   //是否自动删除队列,true最后一个消费者断开连接,该队列也会被删除,
                 null     //其它参数
                 );

@@ -27,15 +27,7 @@ public class ExchangeDemo {
 
     @SuppressWarnings("all")
     public static void main(String[] args) throws IOException {
-        Channel channel = MQConnectionUtils.createChannel();
-        //创建交换机
-        channel.exchangeDeclare(EXCHANGE_NAME, BuiltinExchangeType.DIRECT);
-        Scanner scanner = new Scanner(System.in);
-        while (scanner.hasNext()) {
-            //需要发送到队列中的消息
-            String message = scanner.next();
-            channel.basicPublish(EXCHANGE_NAME, "log", null, message.getBytes());
-        }
+        directExchange();
     }
 
     //发送TTL消息

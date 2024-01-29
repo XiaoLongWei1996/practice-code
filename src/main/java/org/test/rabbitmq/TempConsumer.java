@@ -17,7 +17,7 @@ public class TempConsumer {
 
     @SuppressWarnings("all")
     public static void main(String[] args) throws IOException {
-
+        directExchange();
     }
 
     //direct交换机

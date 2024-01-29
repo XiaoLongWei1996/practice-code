@@ -27,7 +27,7 @@ public class DurableProducer {
         boolean durable = true;
         channel.queueDeclare(QUEUE_NAME, //队列名称
                 durable,   //持久化队列
-                false,     //该队列是否共享(true:共享,可以多个消费者消费;false不共享,只能被一个消费者消费),
+                false,     //该队列是否共享(false:共享,可以多个消费者消费;true不共享,只能被一个消费者消费),
                 false,   //是否自动删除队列,true最后一个消费者断开连接,该队列也会被删除,
                 null     //其它参数
                 );

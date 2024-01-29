@@ -19,10 +19,10 @@ public class Consumer {
     public static void main(String[] args) throws IOException, TimeoutException {
         //创建连接工厂
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
+        factory.setHost("www.xiaolongwei.cn");
         factory.setPort(5672);
         factory.setUsername("admin");
-        factory.setPassword("123456");
+        factory.setPassword("x123456");
         //创建连接
         Connection connection = factory.newConnection();
         //创建管道
@@ -35,10 +35,9 @@ public class Consumer {
             String message = new String(delivery.getBody());
             System.out.println(consumerTag + "===" + message);
         };
-        //失败消费的回调函数(在消费的时候队列被删除)
+        //消费者取消订阅调用，如队列被删除了
         CancelCallback cancelCallback = (consumerTag) -> {
-
-            System.out.println("数据消费失败");
+            System.out.println("消费者取消订阅");
         };
         System.out.println("C1等待接收消息");
         //从队列里面获取数据,阻塞消费

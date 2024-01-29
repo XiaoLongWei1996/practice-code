@@ -26,7 +26,12 @@ public class UnfairConsumer {
         Channel channel = MQConnectionUtils.createChannel();
         //不公平分发,最后接收5条信息,只有当有一条消息ack才能继续接收消息
         int prefetch = 5;
-        channel.basicQos(prefetch);
+        /**  设置限流机制
+         *  param1: prefetchSize，消息本身的大小 如果设置为0  那么表示对消息本身的大小不限制
+         *  param2: prefetchCount，告诉rabbitmq不要一次性给消费者推送大于N个消息
+         *  param3：global，是否将上面的设置应用于整个通道，false表示只应用于当前消费者
+         */
+        channel.basicQos(0, prefetch, false);
         DeliverCallback deliverCallback = (consumerTag, delivery) -> {
             String message = new String(delivery.getBody());
             System.out.println(message);
