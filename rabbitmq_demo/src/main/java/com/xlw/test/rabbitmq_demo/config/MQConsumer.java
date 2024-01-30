@@ -28,7 +28,7 @@ public class MQConsumer {
     @Resource
     private TicketService ticketService;
 
-    private ThreadPoolTaskExecutor threadPool ;
+    private ThreadPoolTaskExecutor threadPool;
 
     @PostConstruct
     public void init() {
@@ -47,18 +47,24 @@ public class MQConsumer {
         threadPool.execute(() -> {
             log.info("消费者消费：{}", msg);
             UserTicket userTicket = JSONObject.parseObject(msg, UserTicket.class);
-            boolean b = ticketService.createOrder(userTicket);
-            if (b) {
-                try {
+            try {
+                boolean b = ticketService.createOrder(userTicket);
+                if (b) {
                     //手动签收
                     channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    return;
                 }
-                return;
+            } catch (Exception e) {
+                try {
+                    //拒绝消息，进入死信队列
+                    channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                throw new RuntimeException(e);
             }
             try {
-                //拒绝消息
+                //拒绝消息，进入死信队列
                 channel.basicReject(message.getMessageProperties().getDeliveryTag(), false);
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
