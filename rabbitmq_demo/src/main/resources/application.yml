@@ -1,6 +1,5 @@
 server:
-    port: 8080
-    tomcat:
+  tomcat:
       #设置uri编码
       uri-encoding: UTF-8
       #设置等待队列的最大长度
@@ -16,9 +15,10 @@ server:
       #线程设置
       threads:
         #最大线程的数
-        max: 500
+        max: 8
         #最小的线程数
-        min-spare: 50
+        min-spare: 4
+  port: 9099
 
 spring:
   datasource:
@@ -61,18 +61,18 @@ spring:
       web-stat-filter:
         url-pattern: '/*'
         exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
-  redis:
-    jedis:
-      pool:
-        enabled: true
-        max-active:  8
-        max-idle:  8
-        min-idle: 0
-    host: 192.168.86.128
-    password: 123456
-    database: 0
-    port: 6379
-    connect-timeout: 1m
+#  redis:
+#    jedis:
+#      pool:
+#        enabled: true
+#        max-active:  8
+#        max-idle:  8
+#        min-idle: 0
+#    host: 192.168.86.128
+#    password: 123456
+#    database: 0
+#    port: 6379
+#    connect-timeout: 18000
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -100,10 +100,23 @@ spring:
       mandatory: true
     #开启消息回退
     publisher-returns: true
+    #消费者配置
+    listener:
+      simple:
+        #配置手动签收
+        acknowledge-mode: manual
+        #配置预取数量basicQos
+        prefetch: 10
+        #配置消费者数量
+        concurrency: 2
+        #配置最大消费者数量
+        max-concurrency: 4
+        #被拒绝的消息是否重新入队
+        default-requeue-rejected: false
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.test.springboot.domain
+  type-aliases-package: com.xlw.test.rabbitmq_demo.entity
   configuration:
     default-fetch-size: 100
     map-underscore-to-camel-case: true
@@ -115,4 +128,8 @@ mybatis-plus:
 
 mq:
   exchange-name: ex1
+  queue-name: order-queue
   routing-key: oder
+  dead-exchange-name: dx1
+  dead-queue-name: dead-queue
+  dead-routing-key: dead

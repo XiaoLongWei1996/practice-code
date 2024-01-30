@@ -11,6 +11,7 @@ import com.xlw.test.redis_cache_test.entity.Ticket;
 import com.xlw.test.redis_cache_test.entity.UserTicket;
 import com.xlw.test.redis_cache_test.service.TicketService;
 import com.xlw.test.redis_cache_test.service.UserTicketService;
+import com.xlw.test.redis_cache_test.util.RabbitMQUtil;
 import com.xlw.test.redis_cache_test.util.RedisUtil;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,8 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, Ticket> impleme
     @Resource
     private RedisUtil redisUtil;
 
+    @Resource
+    private RabbitMQUtil rabbitMQUtil;
     private final Interner<String> pool = Interners.newWeakInterner();
 
     /**
@@ -96,9 +99,8 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, Ticket> impleme
             //下单失败
             return result.intValue() == 1 ? "库存不足" : "用户已下单";
         }
-
-        //通过MQ完成下单和库存扣减
-
+        //下单成功，通过MQ完成下单和库存扣减
+        rabbitMQUtil.safeSend(ut);
         return "下单成功";
     }
 
