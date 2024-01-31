@@ -1,5 +1,6 @@
 package com.xlw.test.redis_cache_test.util;
 
+import cn.hutool.core.util.RandomUtil;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONWriter;
 import com.xlw.test.redis_cache_test.entity.UserTicket;
@@ -33,11 +34,17 @@ public class RabbitMQUtil {
     @Value("${mq.routing-key}")
     private String routingKey;
 
-    public void sendMsg(String msg){
+    @Value("${mq.ttl-exchange-name}")
+    private String ttlExchange;
+
+    @Value("${mq.ttl-routing-key}")
+    private String ttlRoutingKey;
+
+    public void sendMsg(String msg) {
         rabbitTemplate.convertAndSend(exchange, routingKey, msg);
     }
 
-    public void sendMsg(String msg, String exchangeName, String routingKey){
+    public void sendMsg(String msg, String exchangeName, String routingKey) {
         rabbitTemplate.convertAndSend(exchangeName, routingKey, msg);
     }
 
@@ -52,6 +59,19 @@ public class RabbitMQUtil {
                     return message;
                 }
                 , new CorrelationData(id));
+    }
+
+    public void ttlSend(String msg, int delay) {
+        rabbitTemplate.convertAndSend("tex", "ttl", msg,
+                message -> {
+                    MessageProperties messageProperties = message.getMessageProperties();
+//                    messageProperties.setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                    messageProperties.setContentLength(msg.length());
+                    messageProperties.setDelay(delay);
+                    return message;
+                }
+                , new CorrelationData(RandomUtil.randomString(10))
+        );
     }
 
 

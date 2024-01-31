@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xlw.test.redis_cache_test.entity.Result;
 import com.xlw.test.redis_cache_test.entity.User;
 import com.xlw.test.redis_cache_test.service.UserService;
+import com.xlw.test.redis_cache_test.util.RabbitMQUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,9 @@ public class UserController {
      */
     @Resource
     private UserService userService;
+
+    @Resource
+    private RabbitMQUtil rabbitMQUtil;
 
     /**
      * 查询所有数据
@@ -94,6 +98,11 @@ public class UserController {
     public Result<Boolean> delete(Integer id) {
         return Result.succeed(userService.delete(id));
     }
-	
+
+    @GetMapping("/send/{msg}")
+    public Result<String> send(@PathVariable("msg") String msg) {
+        rabbitMQUtil.ttlSend(msg, 10000);
+        return Result.succeed("发送成功");
+    }
 }
 

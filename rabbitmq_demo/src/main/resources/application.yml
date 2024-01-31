@@ -136,3 +136,6 @@ mq:
   dead-exchange-name: dx1
   dead-queue-name: dead-queue
   dead-routing-key: dead
+  ttl-exchange-name: tex
+  ttl-queue-name: ttl-queue
+  ttl-routing-key: ttl

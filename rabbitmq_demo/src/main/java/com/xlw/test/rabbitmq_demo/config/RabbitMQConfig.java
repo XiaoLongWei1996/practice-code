@@ -1,14 +1,12 @@
 package com.xlw.test.rabbitmq_demo.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.SimpleMessageConverter;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +23,7 @@ import java.util.Map;
  */
 @Slf4j
 @Configuration
+@EnableConfigurationProperties(RabbitMQProperties.class)
 public class RabbitMQConfig {
 
     @Resource
@@ -32,6 +31,7 @@ public class RabbitMQConfig {
 
     @Resource
     private RabbitMQProperties rabbitMQProperties;
+
     /**
      * rabbitmq模板
      *
@@ -52,7 +52,7 @@ public class RabbitMQConfig {
         //配置消息回退
         rabbitTemplate.setMandatory(true);
         rabbitTemplate.setReturnsCallback((returned) -> {
-            log.warn("消息:{}被服务器退回，退回原因:{}, 交换机是:{}, 路由 key:{}",returned.getMessage().toString(), returned.getReplyText(), returned.getExchange(), returned.getRoutingKey());
+            log.warn("消息:{}被服务器退回，退回原因:{}, 交换机是:{}, 路由 key:{}", returned.getMessage().toString(), returned.getReplyText(), returned.getExchange(), returned.getRoutingKey());
         });
         //配置编码
         rabbitTemplate.setEncoding("UTF-8");
@@ -99,6 +99,24 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(deadQueue()).to(deadExchange()).with(rabbitMQProperties.getDeadRoutingKey());
     }
 
+    /*------------------------------------------------------延时队列---------------------------------------------------------*/
+
+    @Bean
+    public CustomExchange ttlExchange() {
+        Map<String, Object> arguments = new HashMap<>();
+        arguments.put("x-delayed-type", "direct");
+        return new CustomExchange(rabbitMQProperties.getTtlExchangeName(), "x-delayed-message", true, false, arguments);
+    }
+
+    @Bean
+    public Queue ttlQueue() {
+        return new Queue(rabbitMQProperties.getTtlQueueName(), true, false, false);
+    }
+
+    @Bean
+    public Binding ttlBinding() {
+        return BindingBuilder.bind(ttlQueue()).to(ttlExchange()).with(rabbitMQProperties.getTtlRoutingKey()).noargs();
+    }
 
 
 }

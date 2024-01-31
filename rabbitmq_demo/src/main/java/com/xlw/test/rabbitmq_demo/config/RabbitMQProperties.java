@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * 兔子mqproperties
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
  * @Date 2024/1/29 19:25
  */
 @Data
-@Component
 @NoArgsConstructor
 @AllArgsConstructor
 @ConfigurationProperties(prefix = "mq")
@@ -51,5 +49,20 @@ public class RabbitMQProperties {
      * 死信队列名称
      */
     private String deadQueueName;
+
+    /**
+     * TTL交换名称
+     */
+    private String ttlExchangeName;
+
+    /**
+     * TTL路由密钥
+     */
+    private String ttlRoutingKey;
+
+    /**
+     * TTL队列名称
+     */
+    private String ttlQueueName;
 
 }

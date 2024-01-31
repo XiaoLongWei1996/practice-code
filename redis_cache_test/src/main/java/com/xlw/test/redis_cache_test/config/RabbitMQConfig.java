@@ -35,11 +35,11 @@ public class RabbitMQConfig {
                 log.error(correlationData + "：消息发送失败，原因：" + cause);
             }
         });
-        //配置消息回退
-        rabbitTemplate.setMandatory(true);
-        rabbitTemplate.setReturnsCallback((returned) -> {
-            log.warn("消息:{}被服务器退回，退回原因:{}, 交换机是:{}, 路由 key:{}",returned.getMessage().toString(), returned.getReplyText(), returned.getExchange(), returned.getRoutingKey());
-        });
+//        //配置消息回退
+//        rabbitTemplate.setMandatory(true);
+//        rabbitTemplate.setReturnsCallback((returned) -> {
+//            log.warn("消息:{}被服务器退回，退回原因:{}, 交换机是:{}, 路由 key:{}",returned.getMessage().toString(), returned.getReplyText(), returned.getExchange(), returned.getRoutingKey());
+//        });
         //配置编码
         rabbitTemplate.setEncoding("UTF-8");
         //配置序列化和反序列化

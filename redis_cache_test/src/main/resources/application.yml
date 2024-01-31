@@ -116,3 +116,5 @@ mybatis-plus:
 mq:
   exchange-name: ex1
   routing-key: oder
+  ttl-exchange-name: tex
+  ttl-routing-key: ttl

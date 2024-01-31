@@ -89,4 +89,15 @@ public class MQConsumer {
             throw new RuntimeException(e);
         }
     }
+
+    @RabbitListener(queues = "${mq.ttl-queue-name}")
+    private void ttlConsume(String sendMessage, Channel channel, Message message) {
+        log.info("TTL消费者消费：{}", sendMessage);
+        //手动签收
+        try {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
