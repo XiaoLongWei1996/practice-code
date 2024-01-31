@@ -58,7 +58,7 @@ public class CacheAop {
             }
         }
         String cacheName = getCacheKey(cache.prefix(), key, proceedingJoinPoint);
-//        log.info("缓存名称：{}", cacheName);
+        log.info("缓存名称：{}", cacheName);
         //查询缓存
         Object o = redisUtil.get(cacheName);
         if (ObjectUtil.isNotNull(o)) {

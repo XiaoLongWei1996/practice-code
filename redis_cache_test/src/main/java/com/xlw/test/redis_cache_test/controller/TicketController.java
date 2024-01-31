@@ -3,6 +3,7 @@ package com.xlw.test.redis_cache_test.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.xlw.test.redis_cache_test.config.ratelimiter.RateLimiter;
 import com.xlw.test.redis_cache_test.entity.Result;
 import com.xlw.test.redis_cache_test.entity.Ticket;
 import com.xlw.test.redis_cache_test.entity.UserTicket;
@@ -35,6 +36,7 @@ public class TicketController {
         return Result.succeed(ticketService.flashSale(ut));
     }
 
+    @RateLimiter(name = "flashSale", limit = 50, timeout = 1000)
     @PostMapping("flashSale2")
     public Result<Boolean> flashSale2(UserTicket ut) {
         return Result.succeed(ticketService.flashSale2(ut));

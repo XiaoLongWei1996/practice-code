@@ -47,6 +47,10 @@ public class RedisUtil {
         return redisTemplate.keys(pattern);
     }
 
+    public void unlink(String key) {
+        redisTemplate.unlink(key);
+    }
+
     /*---------------------------------------------------String操作--------------------------------------------------------------*/
 
     public void set(String key, Object value) {

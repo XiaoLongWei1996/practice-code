@@ -21,6 +21,9 @@ server:
   port: 9099
 
 spring:
+  devtools:
+    livereload:
+      port: 35732
   datasource:
     druid:
       driver-class-name: com.mysql.jdbc.Driver

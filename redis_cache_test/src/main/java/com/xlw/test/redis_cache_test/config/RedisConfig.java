@@ -1,5 +1,8 @@
 package com.xlw.test.redis_cache_test.config;
 
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -34,4 +37,20 @@ public class RedisConfig {
         redisTemplate.setHashValueSerializer(jsonRedisSerializer);
         return redisTemplate;
     }
+
+    @Bean
+    public RedissonClient redissonClient() {
+        Config config = new Config();
+        config
+                .useSingleServer()
+                .setAddress("redis://192.168.86.128:6379")
+                .setDatabase(0)
+                .setPassword("123456")
+                .setConnectionPoolSize(4)
+                .setConnectionMinimumIdleSize(2)
+                .setConnectTimeout(5000);
+        return Redisson.create(config);
+    }
+
+
 }

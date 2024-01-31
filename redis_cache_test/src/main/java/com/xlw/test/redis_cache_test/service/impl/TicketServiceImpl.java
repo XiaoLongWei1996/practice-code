@@ -13,6 +13,8 @@ import com.xlw.test.redis_cache_test.service.TicketService;
 import com.xlw.test.redis_cache_test.service.UserTicketService;
 import com.xlw.test.redis_cache_test.util.RabbitMQUtil;
 import com.xlw.test.redis_cache_test.util.RedisUtil;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,13 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, Ticket> impleme
 
     @Resource
     private RabbitMQUtil rabbitMQUtil;
+
+    @Resource
+    private RedissonClient redissonClient;
+
+    /**
+     * 锁池
+     */
     private final Interner<String> pool = Interners.newWeakInterner();
 
     /**
@@ -93,15 +102,27 @@ public class TicketServiceImpl extends ServiceImpl<TicketMapper, Ticket> impleme
 
     @Override
     public String flashSale2(UserTicket ut) {
-        //1.调用秒杀lua脚本
-        Long result = redisUtil.execute(Long.class, LUA_PATH, CollectionUtil.toList(TICKET_PREFIX + ut.getTicketId(), USER_TICKET_PREFIX + ut.getTicketId()), ut.getTicketId(), ut.getUserId());
-        if (result.intValue() != 0) {
-            //下单失败
-            return result.intValue() == 1 ? "库存不足" : "用户已下单";
+        RLock lock = redissonClient.getLock("lock:" + ut.getUserId());
+        boolean b = false;
+        try {
+            b = lock.tryLock();
+            if (!b) {
+                return "不允许重复操作";
+            }
+            //1.调用秒杀lua脚本
+            Long result = redisUtil.execute(Long.class, LUA_PATH, CollectionUtil.toList(TICKET_PREFIX + ut.getTicketId(), USER_TICKET_PREFIX + ut.getTicketId()), ut.getTicketId(), ut.getUserId());
+            if (result.intValue() != 0) {
+                //下单失败
+                return result.intValue() == 1 ? "库存不足" : "用户已下单";
+            }
+            //下单成功，通过MQ完成下单和库存扣减
+            rabbitMQUtil.safeSend(ut);
+            return "下单成功";
+        } finally {
+            if (b) {
+                lock.unlock();
+            }
         }
-        //下单成功，通过MQ完成下单和库存扣减
-        rabbitMQUtil.safeSend(ut);
-        return "下单成功";
     }
 
     @Transactional(rollbackFor = Exception.class)
