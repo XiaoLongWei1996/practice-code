@@ -1,5 +1,6 @@
 package com.xlw.test.redis_cache_test.config;
 
+import com.xlw.test.redis_cache_test.config.listener.RedisKeyExpireListener;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -7,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
@@ -36,6 +39,18 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(jsonRedisSerializer);
         redisTemplate.setHashValueSerializer(jsonRedisSerializer);
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisMessageListenerContainer listenerContainer(RedisConnectionFactory redisConnectionFactory) {
+        RedisMessageListenerContainer listenerContainer = new RedisMessageListenerContainer();
+        listenerContainer.setConnectionFactory(redisConnectionFactory);
+        return listenerContainer;
+    }
+
+    @Bean
+    public KeyExpirationEventMessageListener redisKeyExpirationListener(RedisMessageListenerContainer listenerContainer) {
+        return new RedisKeyExpireListener(listenerContainer);
     }
 
     @Bean
