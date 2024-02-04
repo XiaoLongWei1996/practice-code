@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 用户表(User)表实体类
@@ -48,12 +48,14 @@ public class User {
     @TableField(value = "password")
     private String password;
     
-    //创建时间    
+    //创建时间
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @TableField(value = "create_dt")
-    private Date createDt;
+    private LocalDateTime createDt;
     
     //修改时间    
     @TableField(value = "update_dt")
-    private Date updateDt;
+    private LocalDateTime updateDt;
 
 }
