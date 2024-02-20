@@ -54,7 +54,7 @@ public class Test {
             Iterator<Node> iterator = children.iterator();
             while (iterator.hasNext()) {
                 Node child = iterator.next();
-                if (String.valueOf(child.getKey()).contains(String.valueOf(p.getKey()))) {
+                if (String.valueOf(child.getKey()).startsWith(String.valueOf(p.getKey()))) {
                     //添加子类
                     p.getChildren().add(child);
                     //移除已被添加的子类
