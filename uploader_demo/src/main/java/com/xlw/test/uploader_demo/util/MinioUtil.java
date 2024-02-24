@@ -1,13 +1,18 @@
 package com.xlw.test.uploader_demo.util;
 
 import cn.hutool.core.io.IoUtil;
+import cn.hutool.core.util.StrUtil;
 import com.xlw.test.uploader_demo.config.MinioProperties;
+import com.xlw.test.uploader_demo.config.PearlMinioClient;
 import io.minio.*;
+import io.minio.http.Method;
 import io.minio.messages.Bucket;
 import io.minio.messages.DeleteObject;
+import io.minio.messages.Part;
 import io.minio.messages.Retention;
 import lombok.SneakyThrows;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +43,8 @@ public class MinioUtil {
 
     private MinioClient minioClient;
 
+    private PearlMinioClient pearlMinioClient;
+
     @Resource
     private MinioProperties minioProperties;
 
@@ -46,10 +53,16 @@ public class MinioUtil {
 
     @PostConstruct
     public void init() {
+        //普通客户端
         minioClient = MinioClient.builder()
                 .endpoint(minioProperties.getEndpoint())
                 .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
                 .build();
+        //自定义分片上传客户端
+        pearlMinioClient = new PearlMinioClient(MinioAsyncClient.builder()
+                .endpoint(minioProperties.getEndpoint())
+                .credentials(minioProperties.getAccessKey(), minioProperties.getSecretKey())
+                .build());
     }
 
     /**
@@ -152,7 +165,7 @@ public class MinioUtil {
     }
 
     @SneakyThrows(Exception.class)
-    public void deleteFiles(String bucketName, String ...fileName) {
+    public void deleteFiles(String bucketName, String... fileName) {
         List<DeleteObject> collect = Arrays.stream(fileName).map(DeleteObject::new).collect(Collectors.toList());
         minioClient.removeObjects(RemoveObjectsArgs.builder().bucket(bucketName).objects(collect).build());
     }
@@ -162,10 +175,18 @@ public class MinioUtil {
         return minioClient.getObject(GetObjectArgs.builder().bucket(bucketName).object(fileName).build());
     }
 
+    /**
+     * 下载
+     *
+     * @param bucketName  bucket名称
+     * @param fileName    文件名称
+     * @param response    响应
+     * @param contentType 内容类型
+     */
     @SneakyThrows(Exception.class)
-    public void download(String bucketName, String fileName, HttpServletResponse response) {
+    public void download(String bucketName, String fileName, HttpServletResponse response, @Nullable String contentType) {
         StatObjectResponse statObjectResponse = fileMeta(bucketName, fileName);
-        response.setContentType(statObjectResponse.contentType());
+        response.setContentType(StrUtil.isBlank(contentType) ? statObjectResponse.contentType() : contentType);
         response.setContentLengthLong(statObjectResponse.size());
         response.setCharacterEncoding("UTF-8");
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(fileName, "UTF-8"));
@@ -190,6 +211,7 @@ public class MinioUtil {
                 .builder()
                 .bucket(bucketName)
                 .object(fileName)
+                .method(Method.GET)
                 .expiry(expireTime, timeUnit)
                 .build());
     }
@@ -202,7 +224,7 @@ public class MinioUtil {
      * @return {@link Map}<{@link String},{@link String}>
      */
     @SneakyThrows(Exception.class)
-    public Map<String,String> getPresignedPostFormData(String bucketName, String fileName, long expireTime) {
+    public Map<String, String> getPresignedPostFormData(String bucketName, String fileName, long expireTime) {
         // 为存储桶创建一个上传策略，过期时间单位为分钟
         PostPolicy postPolicy = new PostPolicy(bucketName, ZonedDateTime.now().plusMinutes(expireTime));
         // 设置一个参数key，值为上传对象的名称
@@ -218,12 +240,12 @@ public class MinioUtil {
     public void copy(String sourceBucketName, String sourceFileName, String targetBucketName, String targetFileName) {
         minioClient.copyObject(CopyObjectArgs.builder()
                 .bucket(targetBucketName)
-                        .object(targetFileName)
-                        .source(CopySource
-                                .builder()
-                                .bucket(sourceBucketName)
-                                .object(sourceFileName)
-                                .build())
+                .object(targetFileName)
+                .source(CopySource
+                        .builder()
+                        .bucket(sourceBucketName)
+                        .object(sourceFileName)
+                        .build())
                 .build());
     }
 
@@ -237,10 +259,10 @@ public class MinioUtil {
     @SneakyThrows(Exception.class)
     public Retention getFileRetention(String bucketName, String fileName) {
         return minioClient.getObjectRetention(
-                        GetObjectRetentionArgs.builder()
-                                .bucket("my-bucketname-in-eu-with-object-lock")
-                                .object("k3s-arm64")
-                                .build());
+                GetObjectRetentionArgs.builder()
+                        .bucket("my-bucketname-in-eu-with-object-lock")
+                        .object("k3s-arm64")
+                        .build());
     }
 
     @SneakyThrows(Exception.class)
@@ -248,6 +270,19 @@ public class MinioUtil {
         return minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build());
     }
 
+    @SneakyThrows(Exception.class)
+    public String createMultipartUploadAsync(String bucketName, String objectName) {
+        return pearlMinioClient.createMultipartUploadAsync(bucketName, objectName).get().result().uploadId();
+    }
+
+    @SneakyThrows(Exception.class)
+    public ObjectWriteResponse completeMultipartUploadAsync(String bucketName, String objectName, String uploadId, Part[] parts) {
+        return pearlMinioClient.completeMultipartUploadAsync(bucketName, objectName, uploadId, parts).get();
+    }
+    @SneakyThrows(Exception.class)
+    public List<Part> listPartsAsync(String bucketName, String objectName, Integer maxParts, String uploadId) {
+        return pearlMinioClient.listPartsAsync(bucketName, objectName, maxParts, 0, uploadId).get().result().partList();
+    }
 
 
 }
