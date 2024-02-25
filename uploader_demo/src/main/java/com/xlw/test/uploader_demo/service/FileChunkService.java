@@ -19,5 +19,6 @@ public interface FileChunkService extends IService<FileChunk> {
      * @return {@link IPage}<{@link FileChunk}>
      */
     IPage<FileChunk> listByPage(IPage<?> page);
+
 }
 

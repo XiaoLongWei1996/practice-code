@@ -2,7 +2,12 @@ package com.xlw.test.uploader_demo.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.xlw.test.uploader_demo.entity.FileChunk;
 import com.xlw.test.uploader_demo.entity.FileStore;
+import io.minio.messages.Part;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * 文件储存表(FileStore)表服务接口
@@ -21,5 +26,19 @@ public interface FileStoreService extends IService<FileStore> {
     IPage<FileStore> listByPage(IPage<?> page);
 
     FileStore createUploader(FileStore fileStore);
+
+    /**
+     * 获取上传url
+     *
+     * @param fileChunk 文件块
+     * @return {@link String}
+     */
+    String getUploadUrl(FileChunk fileChunk);
+
+    List<Part> partList(Integer id);
+
+    FileStore mergeFile(Integer id);
+
+    void partUpload(MultipartFile file, FileChunk fileChunk);
 }
 

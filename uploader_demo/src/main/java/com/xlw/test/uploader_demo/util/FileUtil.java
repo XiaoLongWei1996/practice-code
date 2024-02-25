@@ -23,7 +23,7 @@ public class FileUtil {
 
     private static final String FILE_SUFFIX = ".";
 
-    private static final int FILE_SLICE_SIZE = 1024 * 1024 * 10;
+    public static final int FILE_SLICE_SIZE = 1024 * 1024 * 40;
 
     private static final int FILE_CHUNK_THRESHOLD = 1024 * 1024 * 50;
 
@@ -102,13 +102,12 @@ public class FileUtil {
     }
 
     public static void main(String[] args) {
-        File f = new File("E:\\Xlw\\test.mp4");
-        //List<String> l = FileUtil.fileSlice(f);
-        //System.out.println(l);
-        //String[] f = {"E:\\Xlw\\temp\\test.mp4.0", "E:\\Xlw\\temp\\test.mp4.1", "E:\\Xlw\\temp\\test.mp4.2", "E:\\Xlw\\temp\\test.mp4.3", "E:\\Xlw\\temp\\test.mp4.4", "E:\\Xlw\\temp\\test.mp4.5", "E:\\Xlw\\temp\\test.mp4.6", "E:\\Xlw\\temp\\test.mp4.7", "E:\\Xlw\\temp\\test.mp4.8", "E:\\Xlw\\temp\\test.mp4.9"};
-        //FileUtil.fileMerge(Arrays.asList(f), "E:\\Xlw\\test1.mp4");
+        File f = new File("E:\\Xlw\\temp\\nknxbaztfi6.mp4_3");
+        String fileMD5 = getFileMD5(f);
+        System.out.println(fileMD5);
 
-        System.out.println(f.length());
+        //List<String> strings = fileSlice(f);
+        //System.out.println(strings);
     }
 
 }

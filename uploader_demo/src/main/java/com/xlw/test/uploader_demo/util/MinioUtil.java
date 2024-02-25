@@ -6,10 +6,7 @@ import com.xlw.test.uploader_demo.config.MinioProperties;
 import com.xlw.test.uploader_demo.config.PearlMinioClient;
 import io.minio.*;
 import io.minio.http.Method;
-import io.minio.messages.Bucket;
-import io.minio.messages.DeleteObject;
-import io.minio.messages.Part;
-import io.minio.messages.Retention;
+import io.minio.messages.*;
 import lombok.SneakyThrows;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.lang.Nullable;
@@ -265,23 +262,90 @@ public class MinioUtil {
                         .build());
     }
 
+    /**
+     * 文件元数据
+     *
+     * @param bucketName bucket名称
+     * @param fileName   文件名称
+     * @return {@link StatObjectResponse}
+     */
     @SneakyThrows(Exception.class)
     public StatObjectResponse fileMeta(String bucketName, String fileName) {
         return minioClient.statObject(StatObjectArgs.builder().bucket(bucketName).object(fileName).build());
     }
 
+    /*-------------------------------------------------------分片上传---------------------------------------------------------------*/
+
+    /**
+     * 创建分片上传
+     *
+     * @param bucketName bucket名称
+     * @param objectName 对象名称
+     * @return {@link String}
+     */
     @SneakyThrows(Exception.class)
     public String createMultipartUploadAsync(String bucketName, String objectName) {
         return pearlMinioClient.createMultipartUploadAsync(bucketName, objectName).get().result().uploadId();
     }
 
+    /**
+     * 获取分片上传的url，uploadPartAsync二者选其1
+     *
+     * @param bucketName  bucket名称
+     * @param objectName  对象名称
+     * @param queryParams 查询参数
+     * @return {@link String}
+     */
+    public String getMultipartUploadUrl(String bucketName, String objectName, Map<String, String> queryParams) {
+        return pearlMinioClient.getPresignedObjectUrl(bucketName, objectName, queryParams);
+    }
+
+    /**
+     * 合并分片
+     *
+     * @param bucketName bucket名称
+     * @param objectName 对象名称
+     * @param uploadId   上传身份证
+     * @param parts      部分
+     * @return {@link ObjectWriteResponse}
+     */
     @SneakyThrows(Exception.class)
     public ObjectWriteResponse completeMultipartUploadAsync(String bucketName, String objectName, String uploadId, Part[] parts) {
         return pearlMinioClient.completeMultipartUploadAsync(bucketName, objectName, uploadId, parts).get();
     }
+
+    /**
+     * 查询分片数据
+     *
+     * @param bucketName bucket名称
+     * @param objectName 对象名称
+     * @param maxParts   马克斯部分
+     * @param uploadId   上传身份证
+     * @return {@link List}<{@link Part}>
+     */
     @SneakyThrows(Exception.class)
     public List<Part> listPartsAsync(String bucketName, String objectName, Integer maxParts, String uploadId) {
-        return pearlMinioClient.listPartsAsync(bucketName, objectName, maxParts, 0, uploadId).get().result().partList();
+        return pearlMinioClient.listPartsAsync(bucketName, objectName, maxParts, uploadId).get().result().partList();
+    }
+
+    /**
+     * 手动上传分片，getMultipartUploadUrl二者选其1
+     *
+     * @param bucketName  bucket名称
+     * @param objectName  对象名称
+     * @param inputStream 输入流
+     * @param length      长度
+     * @param uploadId    上传身份证
+     * @param partNumber  零件号
+     */
+    @SneakyThrows(Exception.class)
+    public void uploadPartAsync(String bucketName, String objectName, InputStream inputStream, long length, String uploadId, int partNumber) {
+        pearlMinioClient.uploadPartAsync(bucketName, objectName, inputStream, length, uploadId, partNumber);
+    }
+
+    @SneakyThrows(Exception.class)
+    public String buildUrl(String bucketName, String objectName) {
+        return pearlMinioClient.buildUrl(bucketName, objectName).url().toString();
     }
 
 

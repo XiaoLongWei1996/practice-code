@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 文件储存表(FileStore)表实体类
@@ -88,5 +89,8 @@ public class FileStore {
     //创建时间
     @TableField(value = "update_dt", fill = FieldFill.INSERT_UPDATE)
     private Date updateDt;
+
+    @TableField(exist = false)
+    List<FileChunk> fileChunks;
 
 }

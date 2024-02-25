@@ -1,6 +1,7 @@
 package com.xlw.test.uploader_demo.controller;
 
 import com.xlw.test.uploader_demo.config.Result;
+import com.xlw.test.uploader_demo.entity.FileChunk;
 import com.xlw.test.uploader_demo.entity.FileStore;
 import com.xlw.test.uploader_demo.service.FileStoreService;
 import com.xlw.test.uploader_demo.util.FileUtil;
@@ -79,18 +80,38 @@ public class UploadController {
         return Result.succeed(FileUtil.getFileMD5(file));
     }
 
-    @PostMapping("multipartUpload")
-    public Result<String> multipartUpload(String fileName) {
-        return Result.succeed(null);
+    @PostMapping("createMultipartUpload")
+    public Result<FileStore> createMultipartUpload(FileStore fileStore) {
+        return Result.succeed(fileStoreService.createUploader(fileStore));
+    }
+
+    @GetMapping("getUploadUrl")
+    public Result<String> getUploadUrl(FileChunk fileChunk) {
+        return Result.succeed(fileStoreService.getUploadUrl(fileChunk));
+    }
+
+    @GetMapping("partList")
+    public Result<String> partList(Integer id) {
+        return Result.succeed(fileStoreService.partList(id));
     }
 
     @GetMapping("mergeFile")
-    public Result<String> mergeFile(String fileName) {
-        return Result.succeed(null);
+    public Result<FileStore> mergeFile(Integer id) {
+        return Result.succeed(fileStoreService.mergeFile(id));
     }
 
-    @PostMapping("createMultipartUpload")
-    public Result<String> createMultipartUpload(FileStore fileStore) {
-        return Result.succeed(fileStoreService.createUploader(fileStore));
+    /*------------------------------------------------------手动上传分片-------------------------------------------------------------*/
+
+    @PostMapping("partUpload")
+    public Result<String> partUpload(MultipartFile file, FileChunk fileChunk) {
+        fileStoreService.partUpload(file, fileChunk);
+        return Result.succeed("上传成功");
     }
+
+    @GetMapping("getUrl")
+    public Result<String> getUrl(String fileName) {
+        return Result.succeed(minioUtil.buildUrl(bucketName, fileName));
+    }
+
+
 }

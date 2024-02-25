@@ -1,9 +1,6 @@
 package com.xlw.test.uploader_demo.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -49,11 +46,11 @@ public class FileChunk {
     private String md5;
 
     //创建时间
-    @TableField(value = "create_dt")
+    @TableField(value = "create_dt", fill = FieldFill.INSERT)
     private Date createDt;
 
     //修改时间
-    @TableField(value = "update_dt")
+    @TableField(value = "update_dt", fill = FieldFill.INSERT_UPDATE)
     private Date updateDt;
 
 }

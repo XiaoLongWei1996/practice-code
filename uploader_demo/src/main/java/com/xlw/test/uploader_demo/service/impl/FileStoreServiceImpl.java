@@ -5,15 +5,25 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xlw.test.uploader_demo.config.enums.FileType;
 import com.xlw.test.uploader_demo.dao.FileStoreMapper;
+import com.xlw.test.uploader_demo.entity.FileChunk;
 import com.xlw.test.uploader_demo.entity.FileStore;
+import com.xlw.test.uploader_demo.service.FileChunkService;
 import com.xlw.test.uploader_demo.service.FileStoreService;
 import com.xlw.test.uploader_demo.util.FileUtil;
 import com.xlw.test.uploader_demo.util.MinioUtil;
+import io.minio.messages.Part;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 文件储存表(FileStore)表服务实现类
@@ -27,10 +37,11 @@ public class FileStoreServiceImpl extends ServiceImpl<FileStoreMapper, FileStore
     @Resource
     private MinioUtil minioUtil;
 
+    @Resource
+    private FileChunkService fileChunkService;
+
     @Value("${minio.bucket}")
     private String bucketName;
-
-    private static final int FILE_SLICE_SIZE = 1024 * 1024 * 10;
 
     @Override
     public IPage<FileStore> listByPage(IPage<?> page) {
@@ -54,16 +65,90 @@ public class FileStoreServiceImpl extends ServiceImpl<FileStoreMapper, FileStore
             fileStore.setContentType(FileUtil.getMimeType(fileStore.getRealName()));
             //检查是否需要分片
             if (FileUtil.checkIsChunk(fileStore.getSize())) {
-                Long l = fileStore.getSize() / FILE_SLICE_SIZE;
-                if (fileStore.getSize() % FILE_SLICE_SIZE != 0) {
+                Long l = fileStore.getSize() / FileUtil.FILE_SLICE_SIZE;
+                if (fileStore.getSize() % FileUtil.FILE_SLICE_SIZE != 0) {
                     l += 1;
                 }
                 fileStore.setTotalChunk(l.intValue());
+            } else {
+                fileStore.setTotalChunk(0);
             }
-            save(fileStore);
+            if (save(fileStore)) {
+                createChunk(fileStore);
+            }
             fs = this.getOne(wrapper);
         }
+        QueryWrapper<FileChunk> chunkWrapper = new QueryWrapper<>();
+        chunkWrapper.eq("file_id", fs.getId());
+        List<FileChunk> list = fileChunkService.list(chunkWrapper);
+        fs.setFileChunks(list);
         return fs;
+    }
+
+    private boolean createChunk(FileStore fileStore) {
+        if (fileStore.getTotalChunk() > 0) {
+            List<FileChunk> fileChunks = new ArrayList<>(fileStore.getTotalChunk());
+            long size = fileStore.getSize();
+            for (int i = 1; i <= fileStore.getTotalChunk(); i++) {
+                FileChunk fileChunk = new FileChunk();
+                fileChunk.setChunkNumber(i);
+                fileChunk.setChunkName(fileStore.getFileName() + "_" + i);
+                fileChunk.setChunkSize(Math.min(FileUtil.FILE_SLICE_SIZE, size - (i - 1) * FileUtil.FILE_SLICE_SIZE));
+                fileChunk.setFileId(fileStore.getId());
+                fileChunks.add(fileChunk);
+            }
+            return fileChunkService.saveBatch(fileChunks);
+        }
+        return false;
+    }
+
+    @Override
+    public String getUploadUrl(FileChunk fileChunk) {
+        FileStore fs = getById(fileChunk.getFileId());
+        Map<String, String> m = new HashMap<>();
+        m.put("partNumber", String.valueOf(fileChunk.getChunkNumber()));
+        m.put("uploadId", fs.getUploadId());
+        if (fileChunkService.updateById(fileChunk)) {
+            return minioUtil.getMultipartUploadUrl(bucketName, fs.getFileName(), m);
+        }
+        return null;
+    }
+
+    @Override
+    public List<Part> partList(Integer id) {
+        FileStore fs = getById(id);
+        List<Part> parts = minioUtil.listPartsAsync(bucketName, fs.getFileName(), fs.getTotalChunk(), fs.getUploadId());
+        for (Part part : parts) {
+            System.out.println(part.partNumber() + " " + part.etag() + " " + part.partSize() + " " +part.lastModified());
+        }
+        return parts;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public FileStore mergeFile(Integer id) {
+        FileStore fs = getById(id);
+        List<Part> parts = minioUtil.listPartsAsync(bucketName, fs.getFileName(), fs.getTotalChunk(), fs.getUploadId());
+        if (fs.getTotalChunk() != parts.size()) {
+            throw new RuntimeException("分片数量不一致");
+        }
+        Part[] arr = parts.stream().toArray(Part[]::new);
+        minioUtil.completeMultipartUploadAsync(bucketName, fs.getFileName(), fs.getUploadId(), arr);
+        fs.setComplete(1);
+        updateById(fs);
+        return fs;
+    }
+
+    @Override
+    public void partUpload(MultipartFile file, FileChunk fileChunk) {
+        FileStore fs = getById(fileChunk.getFileId());
+        try(InputStream inputStream = file.getInputStream()) {
+            minioUtil.uploadPartAsync(bucketName, fs.getFileName(), inputStream, file.getSize(), fs.getUploadId(), fileChunk.getChunkNumber());
+            fileChunkService.updateById(fileChunk);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
 
