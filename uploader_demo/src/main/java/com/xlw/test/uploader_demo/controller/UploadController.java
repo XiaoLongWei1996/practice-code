@@ -113,5 +113,12 @@ public class UploadController {
         return Result.succeed(minioUtil.buildUrl(bucketName, fileName));
     }
 
+    /*------------------------------------------------------排队下载------------------------------------------------------------*/
 
+
+
+    @GetMapping("delayDown")
+    public void delayDown(String fileName, HttpServletResponse response) {
+        fileStoreService.delayDownload(fileName, response);
+    }
 }

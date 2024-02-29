@@ -7,6 +7,7 @@ import com.xlw.test.uploader_demo.entity.FileStore;
 import io.minio.messages.Part;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -40,5 +41,7 @@ public interface FileStoreService extends IService<FileStore> {
     FileStore mergeFile(Integer id);
 
     void partUpload(MultipartFile file, FileChunk fileChunk);
+
+    void delayDownload(String fileName, HttpServletResponse response);
 }
 

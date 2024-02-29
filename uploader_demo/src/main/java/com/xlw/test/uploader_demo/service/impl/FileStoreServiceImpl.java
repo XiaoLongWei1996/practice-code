@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xlw.test.uploader_demo.config.enums.FileType;
 import com.xlw.test.uploader_demo.dao.FileStoreMapper;
+import com.xlw.test.uploader_demo.entity.DownloadTask;
 import com.xlw.test.uploader_demo.entity.FileChunk;
 import com.xlw.test.uploader_demo.entity.FileStore;
 import com.xlw.test.uploader_demo.service.FileChunkService;
@@ -12,18 +13,23 @@ import com.xlw.test.uploader_demo.service.FileStoreService;
 import com.xlw.test.uploader_demo.util.FileUtil;
 import com.xlw.test.uploader_demo.util.MinioUtil;
 import io.minio.messages.Part;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * 文件储存表(FileStore)表服务实现类
@@ -42,6 +48,21 @@ public class FileStoreServiceImpl extends ServiceImpl<FileStoreMapper, FileStore
 
     @Value("${minio.bucket}")
     private String bucketName;
+
+    private ThreadPoolExecutor executor;
+
+    private LinkedBlockingQueue<DownloadTask> blockingQueue = new LinkedBlockingQueue(5);
+
+    @PostConstruct
+    public void init() {
+        executor = new ThreadPoolExecutor(2,
+                2,
+                60,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(5),
+                Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+    }
 
     @Override
     public IPage<FileStore> listByPage(IPage<?> page) {
@@ -149,6 +170,35 @@ public class FileStoreServiceImpl extends ServiceImpl<FileStoreMapper, FileStore
             throw new RuntimeException(e);
         }
 
+    }
+
+    @SneakyThrows(Exception.class)
+    @Override
+    public void delayDownload(String fileName, HttpServletResponse response) {
+        //线程池方式实现
+        Future<Boolean> submit = executor.submit(() -> {
+            minioUtil.download(bucketName, fileName, response, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            return true;
+        });
+        submit.get();
+
+        //自定义队列方式实现
+        //DownloadTask downloadTask = new DownloadTask(fileName, response);
+        ////阻塞入队列，入队列成功的才能执行，否则等待
+        //boolean b = blockingQueue.offer(downloadTask, 2, TimeUnit.SECONDS);
+        //System.out.println(blockingQueue);
+        //if (!b) {
+        //    throw new RuntimeException("队列已满");
+        //}
+        //try {
+        //    minioUtil.download(bucketName, fileName, response, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        //} catch (Exception e) {
+        //    //异常删除数据
+        //    blockingQueue.remove(downloadTask);
+        //    throw new RuntimeException(e);
+        //}
+        ////处理完任务删除元素
+        //blockingQueue.remove(downloadTask);
     }
 }
 

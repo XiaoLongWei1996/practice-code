@@ -348,5 +348,7 @@ public class MinioUtil {
         return pearlMinioClient.buildUrl(bucketName, objectName).url().toString();
     }
 
+    /*-------------------------------------------------------------------------------------------------------------------*/
+
 
 }
