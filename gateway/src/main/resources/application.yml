@@ -10,7 +10,7 @@ spring:
       #当ReactorLoadBalancer无法找到服务实例时，将返回503。您可以通过设置将网关配置为返回404
       loadbalancer:
         use404: true
-      #服务发现配置
+      #服务动态发现，无需编写配置类或yaml内的配置，访问路由时,需要带上Nacos里注册的名称/uri即可访问
       discovery:
         locator:
           enabled: true #开启从注册中心动态创建路由的功能，利用微服务名进行路由
