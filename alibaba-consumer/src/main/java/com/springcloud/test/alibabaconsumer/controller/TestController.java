@@ -93,6 +93,7 @@ public class TestController {
         flowRule.setGrade(RuleConstant.FLOW_GRADE_QPS);
         flowRule.setStrategy(RuleConstant.STRATEGY_DIRECT);
         flowRule.setCount(5);
+        flowRule.setControlBehavior(RuleConstant.CONTROL_BEHAVIOR_DEFAULT);
         rules1.add(flowRule);
         //关联控流,当关联资源(write)达到指定阈值,则该资源(read)被限流
         flowRule = new FlowRule();
