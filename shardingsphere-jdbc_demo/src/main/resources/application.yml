@@ -1,0 +1,128 @@
+server:
+  port: 8088
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  autoconfigure:
+    exclude: com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure
+  #配置shardingsphere分库分表
+  shardingsphere:
+    datasource:
+      #配置数据源名称
+      names: ds_0,ds_1
+      #配置数据源1
+      ds_0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://192.168.86.128:3306/test?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8
+        username: admin
+        password: 123456
+        #初始化连接数量，最大最小连接数
+        initialSize: 5
+        maxActive: 10
+        minIdle: 3
+        #获取连接等待超时的时间
+        maxWait: 600000
+        #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 600000
+        #配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 1000000 #300000
+        #用来检测连接是否有效的sql，要求是一个查询语句
+        validationQuery: SELECT 1
+        #申请连接的时候检测
+        testWhileIdle: true
+        #申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+        testOnBorrow: false
+        #归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+        testOnReturn: false
+        #打开PSCache，并且指定每个连接上PSCache的大小
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 50
+      #配置数据源2
+      ds_1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://192.168.86.128:3306/test01?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8
+        username: admin
+        password: 123456
+        #初始化连接数量，最大最小连接数
+        initialSize: 5
+        maxActive: 10
+        minIdle: 3
+        #获取连接等待超时的时间
+        maxWait: 600000
+        #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 600000
+        #配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 1000000 #300000
+        #用来检测连接是否有效的sql，要求是一个查询语句
+        validationQuery: SELECT 1
+        #申请连接的时候检测
+        testWhileIdle: true
+        #申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+        testOnBorrow: false
+        #归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+        testOnReturn: false
+        #打开PSCache，并且指定每个连接上PSCache的大小
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 50
+    rules:
+      #设置sql解析
+      sql-parser:
+        sql-comment-parse-enabled: true
+        sql-statement-cache:
+          initial-capacity: 10
+          maximum-size: 50
+        parse-tree-cache:
+          initial-capacity: 10
+          maximum-size: 50
+      sharding:
+        tables:
+          #逻辑表
+          dept:
+            actual-data-nodes: ds_$->{0..1}.dept_$->{0..1}
+            database-strategy:
+              standard:
+                sharding-algorithm-name: dabase_algorithms
+                sharding-column: user_id
+            table-strategy:
+              standard:
+                sharding-algorithm-name: table_algorithms
+                sharding-column: id
+            key-generate-strategy:
+              key-generator-name: key_algorithms
+              column: id
+        sharding-algorithms:
+          dabase_algorithms:
+            type: INLINE
+            props:
+              algorithm-expression: ds_$->{user_id % 2}
+          table_algorithms:
+            type: INLINE
+            props:
+              algorithm-expression: dept_$->{id % 2}
+        key-generators:
+          key_algorithms:
+            type: SNOWFLAKE
+            props:
+              max-vibration-offset: 3
+    props:
+      sql-show: true
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.xlw.test.shardingspherejdbc_demo.entity
+  configuration:
+    default-fetch-size: 100
+    map-underscore-to-camel-case: true
+    default-statement-timeout: 1000
+    call-setters-on-nulls: true
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: delete
+      logic-delete-value: 1
+      logic-not-delete-value: 0
