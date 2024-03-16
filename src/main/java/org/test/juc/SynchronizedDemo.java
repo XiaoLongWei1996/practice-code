@@ -8,7 +8,7 @@ package org.test.juc;
  */
 public class SynchronizedDemo {
 
-    private int count = 0;
+    private Integer count = 0;
 
     private static int c1 = 0;
 
