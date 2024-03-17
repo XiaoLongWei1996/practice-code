@@ -12,5 +12,7 @@ import xlw.test.dynamicthreadpoll_demo.entity.ThreadPool;
 public interface ThreadPoolService extends IService<ThreadPool> {
 
     void register(ThreadPool threadPool);
+
+    Boolean updateThreadPool(ThreadPool threadPool);
 }
 

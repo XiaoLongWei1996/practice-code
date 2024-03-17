@@ -3,9 +3,12 @@ package xlw.test.dynamicthreadpoll_demo.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import xlw.test.dynamicthreadpoll_demo.config.DynamicThreadPool;
+import xlw.test.dynamicthreadpoll_demo.config.Result;
+import xlw.test.dynamicthreadpoll_demo.entity.ThreadPool;
 import xlw.test.dynamicthreadpoll_demo.service.ThreadPoolService;
 
 import javax.annotation.Resource;
@@ -37,6 +40,21 @@ public class ThreadPoolController {
             });
         }
         return "test";
+    }
+
+    @GetMapping("queryAll")
+    public Result<ThreadPool> queryAll() {
+        return Result.succeed(threadPoolService.list());
+    }
+
+    @GetMapping("queryById")
+    public Result<ThreadPool> queryById(Integer id) {
+        return Result.succeed(threadPoolService.getById(id));
+    }
+
+    @PostMapping("update")
+    public Result<Boolean> update(ThreadPool threadPool) {
+        return Result.succeed(threadPoolService.updateThreadPool(threadPool));
     }
 	
 }

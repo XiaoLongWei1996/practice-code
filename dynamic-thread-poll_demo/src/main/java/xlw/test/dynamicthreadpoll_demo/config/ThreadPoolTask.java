@@ -12,7 +12,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @description:
@@ -48,10 +47,10 @@ public class ThreadPoolTask implements ApplicationContextAware {
                     .id(dynamicThreadPool.getId())
                     //.applicationName(dynamicThreadPool.getApplicationName())
                     //.threadPoolName(name)
-                    .coreSize(dynamicThreadPool.getCorePoolSize())
-                    .maxSize(dynamicThreadPool.getMaximumPoolSize())
-                    .keepAliveTime(dynamicThreadPool.getKeepAliveTime(TimeUnit.MILLISECONDS))
-                    .queueSize(dynamicThreadPool.getQueueSize())
+                    //.coreSize(dynamicThreadPool.getCorePoolSize())
+                    //.maxSize(dynamicThreadPool.getMaximumPoolSize())
+                    //.keepAliveTime(dynamicThreadPool.getKeepAliveTime(TimeUnit.MILLISECONDS))
+                    //.queueSize(dynamicThreadPool.getQueueSize())
                     .queueElementsCount(queue.size())
                     .queueRemainingCapacity(queue.remainingCapacity())
                     .activeCount(dynamicThreadPool.getActiveCount())
