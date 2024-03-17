@@ -196,6 +196,7 @@ public class MyServerSocket {
                 poll.execute(() -> {
                     handler(s);
                 });
+                System.out.println("连接客户端:" + s.getInetAddress().getCanonicalHostName());
             }
 
         } catch (IOException e) {
