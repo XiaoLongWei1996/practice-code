@@ -20,6 +20,7 @@ import xlw.test.satoken.service.UserService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -60,7 +61,7 @@ public class AuthController {
         StpUtil.login(userName);
         AuthDTO authDTO = new AuthDTO();
         BeanUtil.copyProperties(user, authDTO, false);
-        StpUtil.getSession().set("info", authDTO);
+        StpUtil.getSession().set("info", authDTO).set("permission", Arrays.asList("a1", "b1"));
         return Result.success("登录成功");
     }
 
