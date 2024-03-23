@@ -2,10 +2,10 @@ server:
   port: 9991
 
 spring:
-#  config:
-#    import: optional:configserver:http://localhost:9995 #配置中心的地址(如果配置客户端没有在bootstrap.yml配置配置服务则,需要此配置)
-#  profiles:
-#    active: dev  #使用那种环境变量
+  #  config:
+  #    import: optional:configserver:http://localhost:9995 #配置中心的地址(如果配置客户端没有在bootstrap.yml配置配置服务则,需要此配置)
+  #  profiles:
+  #    active: dev  #使用那种环境变量
   application:
     name: system  #应用名称
   mvc:
