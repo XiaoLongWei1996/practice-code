@@ -1,16 +1,18 @@
-package com.xlw.test.redis_cache_test.controller;
+package xlw.test.satoken.controller;
 
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.xlw.test.redis_cache_test.entity.Result;
-import com.xlw.test.redis_cache_test.entity.User;
-import com.xlw.test.redis_cache_test.service.UserService;
-import com.xlw.test.redis_cache_test.util.RabbitMQUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import xlw.test.common.dto.AuthDTO;
+import xlw.test.satoken.entity.User;
+import xlw.test.satoken.config.Result;
+import xlw.test.satoken.service.UserService;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -19,8 +21,9 @@ import java.util.List;
  * 用户表(User)表控制层
  *
  * @author xlw
- * @since 2023-12-23 19:43:50
+ * @since 2024-03-23 15:25:17
  */
+@Api(tags = "用户表控制层")
 @Slf4j
 @RestController
 @RequestMapping("user")
@@ -31,17 +34,15 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Resource
-    private RabbitMQUtil rabbitMQUtil;
-
     /**
      * 查询所有数据
      *
      * @return 所有数据
      */
+    @ApiOperation("查询所有数据")
     @GetMapping("selectAll")
     public Result<List<User>> selectAll() {
-        return Result.succeed(userService.list());
+        return Result.success(userService.list());
     }
     
     /**
@@ -51,10 +52,15 @@ public class UserController {
      * @param pageSize    页面大小
      * @return {@link Result}<{@link IPage}<{@link User}>>
      */
+    @ApiOperation("分页查询所有数据")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "currentPage", value = "当前页", required = true, paramType = "query", dataType = "Integer"),
+            @ApiImplicitParam(name = "pageSize", value = "页大小", required = true, paramType = "query", dataType = "Integer"),
+    })
     @GetMapping("selectAllByPage")
     public Result<IPage<User>> selectAllByPage(Integer currentPage, Integer pageSize) {
         IPage page = Page.of(currentPage, pageSize);
-        return Result.succeed(userService.listByPage(page));
+        return Result.success(userService.listByPage(page));
     }
 
     /**
@@ -63,9 +69,12 @@ public class UserController {
      * @param id 主键
      * @return 单条数据
      */
+    @ApiOperation("查询单条数据")
+    @ApiImplicitParam(name = "id", value = "id", required = true, paramType = "path", dataType = "Integer")
     @GetMapping("selectOne/{id}")
     public Result<User> selectOne(@PathVariable Integer id) {
-        return Result.succeed(userService.selectOne(id));
+        System.out.println(StpUtil.getPermissionList());
+        return Result.success(userService.getById(id));
     }
 
     /**
@@ -74,9 +83,10 @@ public class UserController {
      * @param user 实体对象
      * @return 新增结果
      */
+    @ApiOperation("保存数据")
     @PostMapping("save")
     public Result<Boolean> insert(User user) {
-        return Result.succeed(userService.save(user));
+        return Result.success(userService.save(user));
     }
 
     /**
@@ -85,34 +95,24 @@ public class UserController {
      * @param user 实体对象
      * @return 修改结果
      */
+	@ApiOperation("修改数据")
     @PutMapping("update")
     public Result<Boolean> update(User user) {
-        return Result.succeed(userService.update(user));
+        return Result.success(userService.updateById(user));
     }
 
     /**
      * 删除数据
      *
-     * @param id 主键
+     * @param idList 主键结合
      * @return 删除结果
      */
+    @ApiOperation("删除数据")
     @DeleteMapping("delete")
-    public Result<Boolean> delete(Integer id) {
-        return Result.succeed(userService.delete(id));
+    public Result<Boolean> delete(List<Integer> idList) {
+        return Result.success(userService.removeByIds(idList));
     }
 
-    @GetMapping("/send/{msg}")
-    public Result<String> send(@PathVariable("msg") String msg) {
-        rabbitMQUtil.ttlSend(msg, 10000);
-        return Result.succeed("发送成功");
-    }
 
-    @GetMapping("/test")
-    public Result<AuthDTO> send() {
-        System.out.println(StpUtil.isLogin());
-        System.out.println(StpUtil.getPermissionList());
-        AuthDTO info = (AuthDTO) StpUtil.getSession().get("info");
-        return Result.succeed(info);
-    }
 }
 

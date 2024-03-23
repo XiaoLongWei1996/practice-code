@@ -1,26 +1,29 @@
 server:
-    port: 8090
-    tomcat:
-      #设置uri编码
-      uri-encoding: UTF-8
-      #设置等待队列的最大长度
-      accept-count: 1000
-      #设置最大链接数
-      max-connections: 10000
-      #链接建立超时时间
-      connection-timeout: 1m
-      #设置最大http表单提交大小
-      max-http-form-post-size: 50MB
-      #连接最大支持的请求数
-      max-keep-alive-requests: 100
-      #线程设置
-      threads:
-        #最大线程的数
-        max: 500
-        #最小的线程数
-        min-spare: 50
+  port: 8080
+  tomcat:
+    #设置uri编码
+    uri-encoding: UTF-8
+    #设置等待队列的最大长度
+    accept-count: 1000
+    #设置最大链接数
+    max-connections: 10000
+    #链接建立超时时间
+    connection-timeout: 1m
+    #设置最大http表单提交大小
+    max-http-form-post-size: 50MB
+    #连接最大支持的请求数
+    max-keep-alive-requests: 100
+    #线程设置
+    threads:
+      #最大线程的数
+      max: 500
+      #最小的线程数
+      min-spare: 50
 
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   datasource:
     druid:
       driver-class-name: com.mysql.jdbc.Driver
@@ -65,8 +68,8 @@ spring:
     jedis:
       pool:
         enabled: true
-        max-active:  8
-        max-idle:  8
+        max-active: 8
+        max-idle: 8
         min-idle: 0
     host: 192.168.86.128
     password: 123456
@@ -76,34 +79,10 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
-  rabbitmq:
-    #端口号
-    port: 5672
-    #用户名
-    username: admin
-    #密码
-    password: x123456
-    #主机号
-    host: www.xiaolongwei.cn
-    #虚拟主机
-    virtual-host: /
-    #缓存配置
-    cache:
-      #配置管道缓存
-      channel:
-        checkout-timeout: 5m
-        size: 10
-    #开启发布确认
-    publisher-confirm-type: correlated
-    #开启消息回退，交换机在收到生产者消息时候，发现没用匹配的路由，则会将消息发回生产者
-    template:
-      mandatory: true
-    #开启消息回退
-    publisher-returns: true
 
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.test.springboot.domain
+  type-aliases-package: xlw.test.satoken.entity
   configuration:
     default-fetch-size: 100
     map-underscore-to-camel-case: true
@@ -112,12 +91,6 @@ mybatis-plus:
     lazy-loading-enabled: true
     aggressive-lazy-loading: false
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-
-mq:
-  exchange-name: ex1
-  routing-key: oder
-  ttl-exchange-name: tex
-  ttl-routing-key: ttl
 
 sa-token:
   # token 名称（同时也是 cookie 名称）
@@ -134,3 +107,24 @@ sa-token:
   token-style: random-128
   # 是否输出操作日志
   is-log: true
+
+knife4j:
+  enable: true
+  cors: true
+  basic:
+    enable: true
+    username: admin
+    password: 123456
+  openapi:
+    concat: xlw
+    email: 704926476@qq.com
+    title: sa-token api文档
+    version: v1.0
+    group:
+      test1:
+        group-name: g1
+        api-rule: package
+        api-rule-resources:
+          - xlw.test.satoken.controller
+  setting:
+    enable-dynamic-parameter: true
