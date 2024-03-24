@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="warn" monitorInterval="5">
     <properties>
+        <springProfile name="dev">
+            <property name="LOG_PATTERN">dev %d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
+        </springProfile>
+
+        <springProfile name="test">
+            <property name="LOG_PATTERN">test %d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
+        </springProfile>
         <property name="LOG_DIR">log</property>
-        <property name="LOG_PATTERN">%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
+<!--        <property name="LOG_PATTERN">%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L -&#45;&#45; %m%n</property>-->
     </properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -10,7 +17,8 @@
             <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
         </Console>
 
-        <RollingFile name="infoRollingFile" fileName="${LOG_DIR}/application_info.log" filePattern="${LOG_DIR}/info_%d{yyyyMMdd}_%i.log">
+        <RollingFile name="infoRollingFile" fileName="${LOG_DIR}/application_info.log"
+                     filePattern="${LOG_DIR}/info_%d{yyyyMMdd}_%i.log">
             <!-- 只打印info日志 -->
             <Filters>
                 <ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
@@ -19,20 +27,21 @@
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="10MB"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <DefaultRolloverStrategy max="30"/>
         </RollingFile>
 
-        <RollingFile name="errorRollingFile" fileName="${LOG_DIR}/application_error.log" filePattern="${LOG_DIR}/error_%d{yyyyMMdd}_%i.log">
+        <RollingFile name="errorRollingFile" fileName="${LOG_DIR}/application_error.log"
+                     filePattern="${LOG_DIR}/error_%d{yyyyMMdd}_%i.log">
             <!-- 只打印error日志 -->
             <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
 
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="10MB"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <DefaultRolloverStrategy max="30"/>
