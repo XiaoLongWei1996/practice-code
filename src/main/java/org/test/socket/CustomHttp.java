@@ -54,7 +54,7 @@ public class CustomHttp {
                 //查询是否有事件
                 int select = selector.select(2000);
                 if (select == 0) {
-                    System.out.println("暂无可执行的事件通道");
+                    //System.out.println("暂无可执行的事件通道");
                     continue;
                 }
                 System.out.println("有可执行的事件通道");
@@ -65,51 +65,49 @@ public class CustomHttp {
                 while (iterator.hasNext()) {
                     //获取具体的SelectionKey
                     SelectionKey sk = iterator.next();
-                    Thread thread = new Thread(() -> {
-                        //判断事件,执行代码
-                        if (sk.isAcceptable()) {
-                            //连接事件
-                            //获取客户端socket
-                            SocketChannel clientSocket;
-                            try {
-                                clientSocket = server.accept();
-                                //设置非阻塞
-                                clientSocket.configureBlocking(false);
-                                //注册读事件
-                                clientSocket.register(selector, SelectionKey.OP_READ);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
+                    if (sk.isAcceptable()) {
+                        //连接事件
+                        //获取客户端socket
+                        SocketChannel clientSocket;
+                        try {
+                            clientSocket = server.accept();
+                            if (clientSocket == null) {
+                                return;
                             }
+                            //设置非阻塞
+                            clientSocket.configureBlocking(false);
+                            //注册读事件
+                            clientSocket.register(selector, SelectionKey.OP_READ);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
+                    } else if (sk.isReadable()) {
                         //读事件
-                        if (sk.isReadable()) {
-                            //从SelectionKey获取客户端的socket
-                            SocketChannel clientSocket = (SocketChannel) sk.channel();
-                            ByteBuffer buffer = ByteBuffer.allocate(2048);
-                            try {
-                                clientSocket.read(buffer);
-                                //将缓冲区切换读模式
-                                buffer.flip();
-                                //读取客户端的消息
-                                String receive = Charset.forName(charSet).newDecoder().decode(buffer).toString();
-                                System.out.println(receive);
-                                String[] requestMessage = receive.split("\r\n");
-                                //响应客户端
-                                response(clientSocket, buffer, requestMessage);
-                                //关闭客户端
-                                clientSocket.close();
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
+                        //从SelectionKey获取客户端的socket
+                        SocketChannel clientSocket = (SocketChannel) sk.channel();
+                        ByteBuffer buffer = ByteBuffer.allocate(2048);
+                        try {
+                            clientSocket.read(buffer);
+                            //将缓冲区切换读模式
+                            buffer.flip();
+                            //读取客户端的消息
+                            String receive = Charset.forName(charSet).newDecoder().decode(buffer).toString();
+                            System.out.println(receive);
+                            String[] requestMessage = receive.split("\r\n");
+                            //响应客户端
+                            response(clientSocket, buffer, requestMessage);
+                            //关闭客户端
+                            clientSocket.close();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
                         }
-                    });
-                    thread.start();
+                    }
                     //移除处理完的客户端socket
                     iterator.remove();
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
