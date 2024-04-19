@@ -98,6 +98,8 @@ public class CustomHttp {
                             response(clientSocket, buffer, requestMessage);
                             //关闭客户端
                             clientSocket.close();
+                            //取消注册
+                            sk.cancel();
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -127,7 +129,6 @@ public class CustomHttp {
         buffer.clear();
         buffer = ByteBuffer.wrap(sendStr.toString().getBytes(charSet));
         clientSocket.write(buffer);
-        clientSocket.finishConnect();
     }
 
     public static void main(String[] args) {
