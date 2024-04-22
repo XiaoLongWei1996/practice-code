@@ -4,8 +4,11 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 
 import java.util.concurrent.TimeUnit;
@@ -28,57 +31,87 @@ public class NettyServer {
     //服务端启动对象
     private static ServerBootstrap serverBootstrap;
 
-    static {
 
+    /**
+     * 单NioEventLoopGroup，一个NioEventLoopGroup里面可以有多个NioEventLoop;每个NioEventLoop都有一个Selector,NioEventLoop死循环监听Selector上绑定的事件(连接/读/写)
+     * <p>
+     * 创建服务器
+     */
+    public static void createServer() {
+        ServerBootstrap server = new ServerBootstrap();
+        //创建nio的事件组,指定为两个线程,也就是拥有两个NioEventLoop
+        NioEventLoopGroup group = new NioEventLoopGroup(2);
+        server
+                .group(group)  //设置事件组
+                .channel(NioServerSocketChannel.class)  //设置管道类型
+                .handler(new LoggingHandler(LogLevel.INFO))  //设置服务的NioServerSocketChannel处理器
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        //pipeline管道,就是对NioSocketChannel的数据进行一系列的处理
+                        //SocketChannel的处理器，使用StringDecoder解码，ByteBuf=>String
+                        ch.pipeline().addLast(new StringDecoder());
+                        //添加读请求处理
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+                                System.out.println("服务端收到消息:" + msg);
+                            }
+                        });
+                    }
+                })   //设置客户端连接的NioSocketChannel处理器
+                .bind(8888); //设置端口号
     }
 
     public static void main(String[] args) {
 
-        try {
-            //创建bossGroup
-            bossGroup = new NioEventLoopGroup(1);
-            //创建workerGroup
-            workerGroup = new NioEventLoopGroup(2);
-            //创建服务端启动对象
-            serverBootstrap = new ServerBootstrap();
-            serverBootstrap
-                    .group(bossGroup, workerGroup)          //设置两个线程对象
-                    .channel(NioServerSocketChannel.class)  //设置管道对象，用来数据传输的
-                    .option(ChannelOption.SO_BACKLOG, 128) //设置线程队列等待时间
-                    .childOption(ChannelOption.SO_KEEPALIVE, true) //设置保持活动连接状态
-                    .childHandler(new ChannelInitializer<SocketChannel>() { //创建一个通道初始化对象
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            //给管道设置处理器
-                            ch.pipeline().addLast(new NettyServerHandler());
-                        }
-                    });
-            System.out.println(".....服务器 is ready...");
+        createServer();
 
-            //绑定一个端口并且同步生成了一个 ChannelFuture 对象（也就是立马返回这样一个对象）
-            //启动服务器(并绑定端口)
-            ChannelFuture cf = serverBootstrap.bind(6668).sync();
-            //给cf 注册监听器，监控我们关心的事件
-            cf.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (cf.isSuccess()) {
-                        System.out.println("监听端口 6668 成功");
-                    } else {
-                        System.out.println("监听端口 6668 失败");
-                    }
-                }
-            });
-
-            //对关闭通道事件  进行监听
-            cf.channel().closeFuture().sync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            //关闭线程
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-        }
+        //try {
+        //    //创建bossGroup
+        //    bossGroup = new NioEventLoopGroup(1);
+        //    //创建workerGroup
+        //    workerGroup = new NioEventLoopGroup(2);
+        //    //创建服务端启动对象
+        //    serverBootstrap = new ServerBootstrap();
+        //    serverBootstrap
+        //            .group(bossGroup, workerGroup)          //设置两个线程对象
+        //            .channel(NioServerSocketChannel.class)  //设置管道对象，用来数据传输的
+        //            .option(ChannelOption.SO_BACKLOG, 128) //设置线程队列等待时间
+        //            .childOption(ChannelOption.SO_KEEPALIVE, true) //设置保持活动连接状态
+        //            .childHandler(new ChannelInitializer<SocketChannel>() { //创建一个通道初始化对象
+        //                @Override
+        //                protected void initChannel(SocketChannel ch) throws Exception {
+        //                    //给管道设置处理器
+        //                    ch.pipeline().addLast(new NettyServerHandler());
+        //                }
+        //            });
+        //    System.out.println(".....服务器 is ready...");
+        //
+        //    //绑定一个端口并且同步生成了一个 ChannelFuture 对象（也就是立马返回这样一个对象）
+        //    //启动服务器(并绑定端口)
+        //    ChannelFuture cf = serverBootstrap.bind(6668).sync();
+        //    //给cf 注册监听器，监控我们关心的事件
+        //    cf.addListener(new ChannelFutureListener() {
+        //        @Override
+        //        public void operationComplete(ChannelFuture future) throws Exception {
+        //            if (cf.isSuccess()) {
+        //                System.out.println("监听端口 6668 成功");
+        //            } else {
+        //                System.out.println("监听端口 6668 失败");
+        //            }
+        //        }
+        //    });
+        //
+        //    //对关闭通道事件  进行监听
+        //    cf.channel().closeFuture().sync();
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //} finally {
+        //    //关闭线程
+        //    bossGroup.shutdownGracefully();
+        //    workerGroup.shutdownGracefully();
+        //}
 
     }
 
