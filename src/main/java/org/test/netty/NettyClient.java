@@ -20,13 +20,6 @@ import java.net.InetSocketAddress;
  */
 public class NettyClient {
 
-    //客户端需要一个事件循环组
-    private static EventLoopGroup group;
-
-    static {
-        group = new NioEventLoopGroup();
-    }
-
     /**
      * 客户端只有一个NioEventLoopGroup,死循环监听读事件
      * 创建客户端
@@ -57,9 +50,49 @@ public class NettyClient {
         channel.writeAndFlush("hello world");
     }
 
+    public static void createClient1() {
+        EventLoopGroup group = new NioEventLoopGroup(1);
+        Bootstrap bootstrap = new Bootstrap();
+        ChannelFuture cf = bootstrap.group(group)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        //字符串解码
+                        ch.pipeline().addLast(new StringEncoder());
+
+                        ch.pipeline().addLast(new NettyClientHandler());
+
+                        //ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                        //    @Override
+                        //    protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+                        //        System.out.println("客户端收到消息" + Thread.currentThread().getName() + ":" + msg);
+                        //        ctx.writeAndFlush("thank you");
+                        //    }
+                        //});
+                    }
+                })
+                .connect(new InetSocketAddress("localhost", 8888));
+        cf.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (future.isSuccess()) {
+                    System.out.println("连接成功");
+                } else {
+                    System.out.println("连接失败");
+                }
+            }
+        });
+        //try {
+        //    cf.channel().close().sync();
+        //} catch (InterruptedException e) {
+        //    throw new RuntimeException(e);
+        //}
+    }
+
     public static void main(String[] args) throws InterruptedException {
 
-        createClient();
+        createClient1();
         //创建客户端启动对象
         //注意客户端使用的不是 ServerBootstrap 而是 Bootstrap
         //Bootstrap bootstrap = new Bootstrap();
@@ -92,16 +125,17 @@ public class NettyClient {
         //当通道就绪就会触发该方法
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-            System.out.println("client " + ctx);
             ctx.writeAndFlush(Unpooled.copiedBuffer("hello, server: (>^ω^<)喵", CharsetUtil.UTF_8));
         }
 
         //当通道有读取事件时，会触发
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+            //System.out.println("客户端读");
+            //System.out.println(msg);
             ByteBuf buf = (ByteBuf) msg;
             System.out.println("服务器回复的消息:" + buf.toString(CharsetUtil.UTF_8));
-            System.out.println("服务器的地址： "+ ctx.channel().remoteAddress());
+            //System.out.println("服务器的地址： " + ctx.channel().remoteAddress());
         }
 
         //通道异常时，触发该方法

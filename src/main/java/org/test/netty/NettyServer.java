@@ -11,8 +11,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * @description: netty服务端
  * @Title: NettyServer
@@ -21,16 +19,6 @@ import java.util.concurrent.TimeUnit;
  * @Date 2023/9/27 16:38
  */
 public class NettyServer {
-
-    //bossGroup线程专门处理客户端连接，客户端的业务处理交给workerGroup线程
-    private static EventLoopGroup bossGroup;
-
-    //workerGroup线程用来处理客户端的业务
-    private static EventLoopGroup workerGroup;
-
-    //服务端启动对象
-    private static ServerBootstrap serverBootstrap;
-
 
     /**
      * 单NioEventLoopGroup，一个NioEventLoopGroup里面可以有多个NioEventLoop;每个NioEventLoop都有一个Selector,NioEventLoop死循环监听Selector上绑定的事件(连接/读/写)
@@ -63,9 +51,42 @@ public class NettyServer {
                 .bind(8888); //设置端口号
     }
 
+    /**
+     * 服务端两个NioEventLoopGroup,Boss NioEventLoopGroup专门用来处理接受事件,work NioEventLoopGroup专门用来处理读/写事件
+     * 创建server1
+     */
+    public static void createServer1() {
+        //bossGroup线程专门处理客户端连接，客户端的业务处理交给workerGroup线程
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        //workerGroup线程用来处理客户端的业务
+        EventLoopGroup workerGroup = new NioEventLoopGroup(2);
+        //服务端启动对象
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
+        serverBootstrap
+                .group(bossGroup, workerGroup) //设置bossGroup和workerGroup组
+                .channel(NioServerSocketChannel.class) //设置服务端管道类型
+                .handler(new LoggingHandler(LogLevel.INFO))
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        //pipeline管道,就是对NioSocketChannel的数据进行一系列的处理
+                        //SocketChannel的处理器，使用StringDecoder解码，ByteBuf=>String
+                        ch.pipeline().addLast(new StringDecoder());
+                        //添加读请求处理
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, String msg) {
+                                System.out.println("服务端收到消息" + Thread.currentThread().getName() + ":" + msg);
+                                ctx.writeAndFlush(Unpooled.copiedBuffer("hello, client: (>^ω^<)喵", CharsetUtil.UTF_8));
+                            }
+                        });
+                    }
+                }).bind(8888);
+    }
+
     public static void main(String[] args) {
 
-        createServer();
+        createServer1();
 
         //try {
         //    //创建bossGroup
@@ -134,14 +155,16 @@ public class NettyServer {
             // 比如这里我们有一个非常耗时长的业务-> 异步执行 -> 提交该channel 对应的
             // NIOEventLoop 的 taskQueue中,
 
-            // 解决方案1 异步发送
-            ctx.channel().eventLoop().execute(() -> {
-                ctx.writeAndFlush(Unpooled.copiedBuffer("你好", CharsetUtil.UTF_8));
-            });
-            //延迟发送
-            ctx.channel().eventLoop().schedule(() -> {
-                ctx.writeAndFlush(Unpooled.copiedBuffer("你好", CharsetUtil.UTF_8));
-            }, 3, TimeUnit.SECONDS);
+            System.out.println(msg);
+
+            //// 解决方案1 异步发送
+            //ctx.channel().eventLoop().execute(() -> {
+            //    ctx.writeAndFlush(Unpooled.copiedBuffer("你好", CharsetUtil.UTF_8));
+            //});
+            ////延迟发送
+            //ctx.channel().eventLoop().schedule(() -> {
+            //    ctx.writeAndFlush(Unpooled.copiedBuffer("你好", CharsetUtil.UTF_8));
+            //}, 3, TimeUnit.SECONDS);
 //            ByteBuf buf = (ByteBuf) msg;
 //            System.out.println("服务器回复的消息:" + buf.toString(CharsetUtil.UTF_8));
 //            System.out.println("服务器的地址： "+ ctx.channel().remoteAddress());
