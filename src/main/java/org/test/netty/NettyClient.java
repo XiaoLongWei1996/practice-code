@@ -11,6 +11,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @description: netty客户端
@@ -142,9 +143,14 @@ public class NettyClient {
                             @Override
                             public void channelActive(ChannelHandlerContext ctx) throws Exception {
                                 // 每次发送16个字节的数据，共发送10次
+                                //for (int i = 0; i < 10; i++) {
+                                //    ByteBuf buffer = ctx.alloc().buffer();
+                                //    buffer.writeBytes("sidiot.".getBytes());
+                                //    ctx.writeAndFlush(buffer);
+                                //}
                                 for (int i = 0; i < 10; i++) {
                                     ByteBuf buffer = ctx.alloc().buffer();
-                                    buffer.writeBytes("sidiot.".getBytes());
+                                    send(buffer, "hello.");
                                     ctx.writeAndFlush(buffer);
                                 }
                                 //解决方式:使用短连接,每次发送完毕就断开连接
@@ -169,6 +175,21 @@ public class NettyClient {
         //        }
         //    }
         //});
+    }
+
+    private static void send(ByteBuf buf, String msg) {
+        // 得到数据的长度
+        int length = msg.length();
+        byte[] bytes = msg.getBytes(StandardCharsets.UTF_8);
+        // 将数据信息写入buf
+        // 写入长度标识前的其他信息
+        buf.writeByte(0xCA);
+        // 写入数据长度标识
+        buf.writeInt(length);
+        // 写入长度标识后的其他信息
+        buf.writeByte(0xFE);
+        // 写入具体的数据
+        buf.writeBytes(bytes);
     }
 
     /**
