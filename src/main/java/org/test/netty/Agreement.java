@@ -15,6 +15,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 /**
  * @description: TCP/IP 中消息传输基于流的方式，没有边界;协议的目的就是划定消息的边界，制定通信双方要共同遵守的通信规则,常见的协议：http、ssh等
@@ -145,7 +146,7 @@ public class Agreement {
     }
 
     public static void main(String[] args) {
-        httpServer();
+        System.out.println(new Date());
     }
 
 }
