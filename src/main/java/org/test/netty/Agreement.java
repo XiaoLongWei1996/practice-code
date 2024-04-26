@@ -1,12 +1,20 @@
 package org.test.netty;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * @description: TCP/IP 中消息传输基于流的方式，没有边界;协议的目的就是划定消息的边界，制定通信双方要共同遵守的通信规则,常见的协议：http、ssh等
@@ -100,8 +108,44 @@ public class Agreement {
         }
     }
 
+    public static void httpServer() {
+        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
+        EventLoopGroup workGroup = new NioEventLoopGroup(2);
+        ServerBootstrap bootstrap = new ServerBootstrap();
+        bootstrap
+                .group(bossGroup, workGroup)
+                .channel(NioServerSocketChannel.class)
+                .handler(new LoggingHandler(LogLevel.INFO))
+                .childHandler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        // 作为服务器，使用 HttpServerCodec 作为编码器与解码器
+                        ch.pipeline().addLast(new HttpServerCodec());
+                        // 服务器只处理HTTPRequest
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<HttpRequest>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, HttpRequest msg) throws Exception {
+                                System.out.println("请求链接:" + msg.uri());
+                                //设置响应内容
+                                DefaultFullHttpResponse response = new DefaultFullHttpResponse(msg.protocolVersion(), HttpResponseStatus.OK);
+                                // 设置响应内容
+                                byte[] bytes = "<h1>Hello, World!</h1>".getBytes(StandardCharsets.UTF_8);
+                                // 设置响应体长度，避免浏览器一直接收响应内容
+                                response.headers().setInt("CONTENT_LENGTH", bytes.length);
+                                // 设置响应体
+                                response.content().writeBytes(bytes);
+                                // 写回响应
+                                ctx.writeAndFlush(response);
+                                ctx.channel().close();
+                            }
+                        });
+                    }
+                })
+                .bind(8888);
+    }
+
     public static void main(String[] args) {
-        requestRedis();
+        httpServer();
     }
 
 }
