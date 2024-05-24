@@ -6,6 +6,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 
@@ -64,7 +65,41 @@ public class NettyClient1 {
         });
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        createClient2();
+    public static void createClient3() throws InterruptedException, UnsupportedEncodingException {
+        NioEventLoopGroup work = new NioEventLoopGroup(1);
+        Bootstrap client = new Bootstrap();
+        ChannelFuture cf = client
+                .group(work)
+                .channel(NioSocketChannel.class)
+                .handler(new ChannelInitializer<NioSocketChannel>() {
+                    @Override
+                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                        //设置编码解码器
+                        ch.pipeline().addLast(Agreement.MY_MESSAGE_CODEC);
+                        //设置入站
+                        ch.pipeline().addLast(new SimpleChannelInboundHandler<Agreement.MessageProtocol>() {
+                            @Override
+                            protected void channelRead0(ChannelHandlerContext ctx, Agreement.MessageProtocol msg) throws Exception {
+                                System.out.println("客户端收到消息:" + new String(msg.getContent(), "UTF-8"));
+                            }
+                        });
+                    }
+                })
+                .connect(new InetSocketAddress("localhost", 8888)).sync();
+        Agreement.MessageProtocol messageProtocol = new Agreement.MessageProtocol();
+        messageProtocol.setType((byte) 'b');
+
+        messageProtocol.setContent("hello world".getBytes("UTF-8"));
+        for (int i = 0; i < 10; i++) {
+            messageProtocol.setSequenceId(i);
+            cf.channel().writeAndFlush(messageProtocol);
+        }
+
+        //cf.channel().close();
+        //work.shutdownGracefully();
+    }
+
+    public static void main(String[] args) throws Exception {
+        createClient3();
     }
 }
