@@ -1,5 +1,6 @@
 package org.test.util;
 
+import cn.hutool.core.util.RandomUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpStatus;
@@ -137,7 +138,7 @@ public class DigestUtil {
                 }
             }
             String nc = "00000001";
-            String cnonce = DigestUtil.generateSalt2(8);
+            String cnonce = RandomUtil.randomString(8); //DigestUtil.generateSalt2(8);
             String response = DigestUtil.getResponse(userName, realm, password, nonce, nc, cnonce, qop, method, uri);
             String authorization = DigestUtil.getAuthorization(userName, realm, nonce, uri, qop, nc, cnonce, response, opaque);
             System.out.println(authorization);
