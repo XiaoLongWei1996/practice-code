@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import org.test.util.BuildTreeUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -111,18 +113,7 @@ public class Test {
     }
 
     public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException {
-        List<MyNode> list = new ArrayList<>();
-        list.add(MyNode.builder().id(1).parentId(0).value("A").build());
-        list.add(MyNode.builder().id(2).parentId(0).value("B").build());
-        list.add(MyNode.builder().id(3).parentId(0).value("C").build());
-        list.add(MyNode.builder().id(4).parentId(1).value("A-1").build());
-        list.add(MyNode.builder().id(5).parentId(2).value("B-1").build());
-        list.add(MyNode.builder().id(6).parentId(4).value("A-1-1").build());
-        list.add(MyNode.builder().id(7).parentId(6).value("A-1-1-1").build());
-        list.add(MyNode.builder().id(8).parentId(3).value("C-1").build());
-        list.add(MyNode.builder().id(9).parentId(4).value("A-2").build());
-        list = BuildTreeUtil.builder().setId("id").setParentId("parentId").setChildrenName("children").setNodeList(list).build();
-        System.out.println(list);
+
     }
 
 
