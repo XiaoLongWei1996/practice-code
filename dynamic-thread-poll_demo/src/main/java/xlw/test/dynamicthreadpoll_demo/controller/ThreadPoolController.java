@@ -42,16 +42,33 @@ public class ThreadPoolController {
         return "test";
     }
 
+    /**
+     * 查询全部
+     *
+     * @return {@link Result }<{@link ThreadPool }>
+     */
     @GetMapping("queryAll")
     public Result<ThreadPool> queryAll() {
         return Result.succeed(threadPoolService.list());
     }
 
+    /**
+     * 按 ID 查询
+     *
+     * @param id ID
+     * @return {@link Result }<{@link ThreadPool }>
+     */
     @GetMapping("queryById")
     public Result<ThreadPool> queryById(Integer id) {
         return Result.succeed(threadPoolService.getById(id));
     }
 
+    /**
+     * 更新
+     *
+     * @param threadPool 线程池
+     * @return {@link Result }<{@link Boolean }>
+     */
     @PostMapping("update")
     public Result<Boolean> update(ThreadPool threadPool) {
         return Result.succeed(threadPoolService.updateThreadPool(threadPool));

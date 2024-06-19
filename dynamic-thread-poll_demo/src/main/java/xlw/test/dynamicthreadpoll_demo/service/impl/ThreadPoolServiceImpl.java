@@ -32,6 +32,7 @@ public class ThreadPoolServiceImpl extends ServiceImpl<ThreadPoolMapper, ThreadP
     public Boolean updateThreadPool(ThreadPool threadPool) {
         boolean b = updateById(threadPool);
         if (b) {
+            //更新容器内的线程池
             DynamicThreadPool tp = applicationContext.getBean(threadPool.getThreadPoolName(), DynamicThreadPool.class);
             tp.setCorePoolSize(threadPool.getCoreSize());
             tp.setMaximumPoolSize(threadPool.getMaxSize());

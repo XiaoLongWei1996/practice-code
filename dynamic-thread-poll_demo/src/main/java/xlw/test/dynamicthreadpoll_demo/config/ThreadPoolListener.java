@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @description: 线程池监听器
+ * @description: 线程池监听器，初始化线程池并记录线程池参数
  * @Title: ThreadPoolListener
  * @Author xlw
  * @Package xlw.test.dynamicthreadpoll_demo.config

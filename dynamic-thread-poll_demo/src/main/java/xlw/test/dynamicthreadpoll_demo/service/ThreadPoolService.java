@@ -11,8 +11,19 @@ import xlw.test.dynamicthreadpoll_demo.entity.ThreadPool;
  */
 public interface ThreadPoolService extends IService<ThreadPool> {
 
+    /**
+     * 注册
+     *
+     * @param threadPool
+     */
     void register(ThreadPool threadPool);
 
+    /**
+     * 更新线程池
+     *
+     * @param threadPool 线程池
+     * @return {@link Boolean }
+     */
     Boolean updateThreadPool(ThreadPool threadPool);
 }
 
