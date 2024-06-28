@@ -14,16 +14,16 @@ public class IntByteConverterUtil {
     // 将int转换为byte数组,一个int占4个byte
     public static byte[] intToByteArray(int value) {
         return new byte[]{
-                (byte)(value >>> 24),
-                (byte)(value >>> 16),
-                (byte)(value >>> 8),
-                (byte)value
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) value
         };
     }
 
     // 将byte数组转换回int
     public static int byteArrayToInt(byte[] bytes) {
-        if(bytes == null || bytes.length != 4) {
+        if (bytes == null || bytes.length != 4) {
             throw new IllegalArgumentException("The byte array must be non-null and have a length of 4");
         }
         return (bytes[0] << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
