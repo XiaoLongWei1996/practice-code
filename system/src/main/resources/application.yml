@@ -223,15 +223,23 @@ resilience4j:
         eventConsumerBufferSize: 10
 
 mybatis-plus:
+  #配置mapper.xml文件路径
   mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: com.springcloud.test.system.entity
+  #实体类别名扫描路径
+  type-aliases-package: com.sxkj.pay.entity
   configuration:
-    default-fetch-size: 100
+    #设置查询返回值数量
+    default-fetch-size: 1000
+    #开启驼峰命名
     map-underscore-to-camel-case: true
-    default-statement-timeout: 1000
+    #语句执行超时10秒
+    default-statement-timeout: 10
+    #设置为空的字段
     call-setters-on-nulls: true
+    #开启懒加载
     lazy-loading-enabled: true
     aggressive-lazy-loading: false
+    #日志输出方式
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
