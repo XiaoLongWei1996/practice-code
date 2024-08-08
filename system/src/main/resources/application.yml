@@ -118,6 +118,7 @@ feign:
         readTimeout: 5000
         #日志级别
         loggerLevel: full
+  #使用okhttp请求池
   okhttp:
     enabled: true
   #配置压缩
