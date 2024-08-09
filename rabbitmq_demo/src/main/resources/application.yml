@@ -26,7 +26,7 @@ spring:
       port: 35732
   datasource:
     druid:
-      driver-class-name: com.mysql.jdbc.Driver
+      driver-class-name: com.mysql.cj.jdbc.Driver
       url: jdbc:mysql://192.168.86.128:3306/test?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8
       username: admin
       password: 123456
