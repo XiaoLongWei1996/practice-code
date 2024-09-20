@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.xlw.test</groupId>
-    <artifactId>xxl_job_test</artifactId>
+    <artifactId>xxl_job_demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>xxl_job_test</name>
     <description>xxl_job_test</description>
