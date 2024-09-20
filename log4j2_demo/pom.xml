@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.xlw.test</groupId>
-    <artifactId>log4j2_test</artifactId>
+    <artifactId>log4j2_demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>log4j2_test</name>
     <description>log4j2_test</description>
