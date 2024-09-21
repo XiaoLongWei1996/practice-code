@@ -1,9 +1,11 @@
 package com.xlw.test.spring_security_demo.config;
 
+import cn.hutool.core.collection.ListUtil;
 import com.xlw.test.spring_security_demo.entity.User;
 import com.xlw.test.spring_security_demo.entity.UserInfo;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,6 +21,10 @@ public class Cache {
 
     public static final ConcurrentHashMap<String, User> DATABASE = new ConcurrentHashMap<>();
 
+    public static final ConcurrentHashMap<String, List<String>> USER_ROLE_DATABASE = new ConcurrentHashMap<>();
+
+    public static final ConcurrentHashMap<String, List<String>> USER_PERMISSIONS_DATABASE = new ConcurrentHashMap<>();
+
     public static final ConcurrentHashMap<String, String> SMS_CACHE = new ConcurrentHashMap<>();
 
     /**
@@ -30,5 +36,9 @@ public class Cache {
 
     static {
         DATABASE.put("xlw", new User("xlw", "e10adc3949ba59abbe56e057f20f883e", "小明", 18, true, true, true, true));
+
+        USER_ROLE_DATABASE.put("xlw", ListUtil.of("ROLE_ADMIN"));
+
+        USER_PERMISSIONS_DATABASE.put("xlw", ListUtil.of("sys:test"));
     }
 }

@@ -8,6 +8,9 @@ import com.xlw.test.spring_security_demo.config.MultiAuthenticationToken;
 import com.xlw.test.spring_security_demo.entity.Result;
 import com.xlw.test.spring_security_demo.entity.LoginUser;
 import com.xlw.test.spring_security_demo.entity.UserInfo;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -51,18 +54,22 @@ public class SysController {
 
     @PostMapping("logout")
     public Result<Boolean> logout(HttpServletRequest request) {
+        //判断是否有token
         String authToken = request.getHeader("AuthToken");
         if (StrUtil.isBlank(authToken)) {
             throw new RuntimeException("AuthToken为空");
         }
+        //获取当前用户
         MultiAuthenticationToken authentication = (MultiAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return Result.result(-1, false, "未登录");
         }
+        //删除token缓存
         Cache.TOKEN_CACHE.remove(authToken);
         return Result.success(true);
     }
 
+    @PostAuthorize("hasRole('ADMIN')")
     @GetMapping("test")
     public Result<String> test() {
         return Result.success("ok");

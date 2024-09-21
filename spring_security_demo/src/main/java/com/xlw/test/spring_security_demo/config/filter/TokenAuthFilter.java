@@ -35,12 +35,12 @@ public class TokenAuthFilter extends OncePerRequestFilter {
         String authToken = request.getHeader("AuthToken");
         if (StrUtil.isNotBlank(authToken)) {
             UserInfo userInfo = Cache.TOKEN_CACHE.get(authToken);
-            if (userInfo == null) {
-                throw new AuthException("token过期");
+            if (userInfo != null) {
+                //设置权限
+                MultiAuthenticationToken authenticationToken = new MultiAuthenticationToken(userInfo.getUsername(), userInfo.getAuthorities());
+                //认证,相当于保存到ThreadLocal中供后续的拦截器使用，没有这一步说明认证失败
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-            MultiAuthenticationToken authenticationToken = new MultiAuthenticationToken(userInfo.getUsername(), Collections.emptySet());
-            //认证
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
         //放行，交给后面的过滤器处理
         filterChain.doFilter(request, response);
