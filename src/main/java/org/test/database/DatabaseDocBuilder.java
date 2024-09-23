@@ -45,7 +45,7 @@ public class DatabaseDocBuilder {
         Statement statement = null;
         ResultSet result = null;
         try {
-            DriverManager.registerDriver(new Driver());
+            //DriverManager.registerDriver();
             connection = DriverManager.getConnection(url, userName, password);
             statement = connection.createStatement();
             //查询所有的表
@@ -230,10 +230,10 @@ public class DatabaseDocBuilder {
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://xlw.asia:3306/study?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
-        String userName = "xlw";
-        String password = "xlw1996XLW.";
-        String outPath = "E:\\temp\\test.xlsx";
-        DatabaseDocBuilder.build(url, userName, password, "p_", outPath);
+        String url = "jdbc:mysql://192.168.100.66:3306/piaoshui-saas?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
+        String userName = "piaoshui";
+        String password = "xW123456!";
+        String outPath = "D:\\tmp\\test.xlsx";
+        DatabaseDocBuilder.build(url, userName, password, "lqyq_", outPath);
     }
 }
