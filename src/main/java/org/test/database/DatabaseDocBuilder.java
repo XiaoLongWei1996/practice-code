@@ -1,5 +1,6 @@
 package org.test.database;
 
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.lang.Opt;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
@@ -17,6 +18,7 @@ import org.test.util.excel.strategy.MergeStrategy;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +44,8 @@ public class DatabaseDocBuilder {
      * @param outPath     出路径
      */
     public static void build(String url, String userName, String password, String outPath, String tablePrefix) {
+        StopWatch watch = StopWatch.create("数据库设计文档");
+        watch.start("生成数据库设计文档");
         System.out.println("生成数据库设计文档......");
         Connection connection = null;
         Statement statement = null;
@@ -93,7 +97,8 @@ public class DatabaseDocBuilder {
                 }
             }
         }
-        System.out.println("生成数据库设计文档完成。");
+        watch.stop();
+        System.out.println("生成数据库设计文档完成用时:" + watch.getLastTaskTimeMillis() + "毫秒");
     }
 
     /**
