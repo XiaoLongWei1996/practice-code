@@ -33,6 +33,9 @@ public class Info {
     @ExcelProperty("类型")
     private String fieldType;
 
+    @ExcelProperty("非空")
+    private Boolean notNull;
+
     @ExcelProperty("注释")
     private String comment;
 

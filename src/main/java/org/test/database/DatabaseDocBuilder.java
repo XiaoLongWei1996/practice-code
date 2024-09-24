@@ -1,5 +1,7 @@
 package org.test.database;
 
+import cn.hutool.core.lang.Opt;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.metadata.data.HyperlinkData;
@@ -39,7 +41,7 @@ public class DatabaseDocBuilder {
      * @param tablePrefix 表前缀
      * @param outPath     出路径
      */
-    public static void build(String url, String userName, String password, String tablePrefix, String outPath) {
+    public static void build(String url, String userName, String password, String outPath, String tablePrefix) {
         System.out.println("生成数据库设计文档......");
         Connection connection = null;
         Statement statement = null;
@@ -60,7 +62,7 @@ public class DatabaseDocBuilder {
                 }
                 tableList.add(tableName);
             }
-            result.close();
+            System.out.println("所有表：" + tableList);
             //处理数据，并写入excel
             handle(tableList, statement, outPath);
         } catch (SQLException e) {
@@ -145,18 +147,28 @@ public class DatabaseDocBuilder {
         head.setTable(tableName);
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(tableInfo);
+        String comment = tableName;
         while (matcher.find()) {
-            String comment = matcher.group(1);
-            comment = comment.replaceAll(FIELD_COMMENT_REGEX, " ");
-            //设置超链接
-            WriteCellData<String> hyperlink = new WriteCellData<>(comment);
-            HyperlinkData hyperlinkData = new HyperlinkData();
-            hyperlinkData.setAddress("#'" + comment + "'!A1");
-            hyperlinkData.setHyperlinkType(HyperlinkData.HyperlinkType.DOCUMENT);
-            hyperlink.setHyperlinkData(hyperlinkData);
-            head.setTableComment(hyperlink);
+            comment = matcher.group(1);
+            comment = correctSheetName(comment);
         }
+        //设置超链接
+        WriteCellData<String> hyperlink = new WriteCellData<>(comment);
+        HyperlinkData hyperlinkData = new HyperlinkData();
+        hyperlinkData.setAddress("#'" + comment + "'!A1");
+        hyperlinkData.setHyperlinkType(HyperlinkData.HyperlinkType.DOCUMENT);
+        hyperlink.setHyperlinkData(hyperlinkData);
+        head.setTableComment(hyperlink);
         return head;
+    }
+
+    public static String correctSheetName(String sheetName) {
+        // 替换不合法字符
+        String correctedSheetName = sheetName
+                .replaceAll("[\\\\r\\\\n]", "") //移除/r/n
+                .replaceAll("[:/\\?\\*\\[\\]<>：]", "_")  // 替换不合法字符为下划线
+                .replaceAll("^\\s+|\\s+$", "");     // 移除开头和结尾的空格
+        return correctedSheetName;
     }
 
     /**
@@ -183,17 +195,22 @@ public class DatabaseDocBuilder {
             info.setFieldType(segments[1]);
             //设置注释
             boolean b = false;
+            boolean notNull = false;
             StringJoiner joiner = new StringJoiner(" ");
             for (int i = 2; i < segments.length; i++) {
                 String segment = segments[i];
                 if (b) {
                     joiner.add(segment.replaceAll("[',]", ""));
                 }
+                if (segment.equals("NOT")) {
+                    notNull = true;
+                }
                 if (segment.equals("COMMENT")) {
                     b = true;
                 }
             }
-            info.setComment(joiner.toString());
+            info.setNotNull(notNull);
+            info.setComment(joiner.toString().trim());
             data.add(info);
         }
         return data;
@@ -216,9 +233,10 @@ public class DatabaseDocBuilder {
             headHyperlinkHandler.addColumnHyperlink(6, "#'目录'!A1");
             for (int i = 0; i < datas.size(); i++) {
                 Head head = datas.get(i);
+                int sheetIdx = i + 1;
                 List<Info> infos = infoMap.get(head.getTable());
                 WriteSheet otherSheet = EasyExcel
-                        .writerSheet(i + 1, head.getTableComment().getStringValue())
+                        .writerSheet(sheetIdx, Objects.isNull(head.getTableComment()) ? "sheet" + sheetIdx : head.getTableComment().getStringValue().trim())
                         .head(Info.class)
                         .registerWriteHandler(new MergeStrategy(infos.size(), 0))
                         .registerWriteHandler(headHyperlinkHandler)
@@ -234,6 +252,6 @@ public class DatabaseDocBuilder {
         String userName = "piaoshui";
         String password = "xW123456!";
         String outPath = "D:\\tmp\\test.xlsx";
-        DatabaseDocBuilder.build(url, userName, password, "lqyq_", outPath);
+        DatabaseDocBuilder.build(url, userName, password, outPath,"lqyq_");
     }
 }
