@@ -1,0 +1,80 @@
+server:
+  port: 8080
+
+spring:
+  devtools:
+    livereload:
+      port: 35732
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://47.96.12.138:23307/test?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8
+      username: root
+      password: 4ca31850774c707a58a77163a04905efQW
+      #初始化连接数量，最大最小连接数
+      initial-size: 5
+      max-active: 10
+      min-idle: 3
+      #获取连接等待超时的时间
+      max-wait: 600000
+      #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 600000
+      #配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 1000000 #300000
+      #用来检测连接是否有效的sql，要求是一个查询语句
+      validation-query: SELECT 1
+      #申请连接的时候检测
+      test-while-idle: true
+      #申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+      test-on-borrow: false
+      #归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+      test-on-return: false
+      #打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 50
+      #属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有：
+      #监控统计用的filter:stat 日志用的filter:log4j 防御SQL注入的filter:wall
+      filters: stat
+      stat-view-servlet:
+        #allow: '*'
+        #deny: 172.16.0.117
+        login-username: druid
+        login-password: druidzzlc123
+        reset-enable: false
+        url-pattern: '/druid/*'
+      web-stat-filter:
+        url-pattern: '/*'
+        exclusions: '*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*'
+  #  redis:
+  #    jedis:
+  #      pool:
+  #        enabled: true
+  #        max-active:  8
+  #        max-idle:  8
+  #        min-idle: 0
+  #    host: 192.168.86.128
+  #    password: 123456
+  #    database: 0
+  #    port: 6379
+  #    connect-timeout: 18000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.xlw.test.rabbitmq_demo.entity
+  configuration:
+    default-fetch-size: 100
+    map-underscore-to-camel-case: true
+    default-statement-timeout: 1000
+    call-setters-on-nulls: true
+    lazy-loading-enabled: true
+    aggressive-lazy-loading: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+flowable:
+  # 关闭异步，不关闭历史数据的插入就是异步的，会在同一个事物里面，无法回滚
+  # 开发可开启会提高些效率，上线需要关闭
+  async-executor-activate: false
