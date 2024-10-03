@@ -1,16 +1,16 @@
 server:
-  port: 8080
+  port: 8088
 
 spring:
   devtools:
     livereload:
       port: 35732
   datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://47.96.12.138:23307/test?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8
+    username: root
+    password: 4ca31850774c707a58a77163a04905efQW
     druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://47.96.12.138:23307/test?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8
-      username: root
-      password: 4ca31850774c707a58a77163a04905efQW
       #初始化连接数量，最大最小连接数
       initial-size: 5
       max-active: 10

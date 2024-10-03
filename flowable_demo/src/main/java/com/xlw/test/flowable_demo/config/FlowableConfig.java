@@ -25,16 +25,22 @@ public class FlowableConfig {
      *
      * @return {@link ProcessEngine }
      */
-    //@Bean
-    //public ProcessEngine processEngine() {
-    //    ProcessEngineConfiguration config = ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
-    //    //设置数据源，默认使用springboot配置的数据源。(创建流程引擎需要的表，默认创建的)
-    //    config
-    //            .setJdbcUrl("jdbc:mysql://47.96.12.138:23307/test?useUnicode=true&characterEncoding=utf8&rewriteBatchedStatements=true&useConfigs=maxPerformance&useSSL=false&useTimezone=true&serverTimezone=GMT%2B8")
-    //            .setJdbcDriver("com.mysql.cj.jdbc.Driver")
-    //            .setJdbcUsername("root")
-    //            .setJdbcPassword("4ca31850774c707a58a77163a04905efQW")
-    //            .setJdbcPingEnabled(true);
-    //    return null;
-    //}
+    @Bean
+    public ProcessEngine processEngine() {
+        ProcessEngineConfiguration config = ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
+        //设置数据源，默认使用springboot配置的数据源。(创建流程引擎需要的表，默认创建的)
+        config
+                .setJdbcUrl(dataSourceProperties.getUrl())
+                .setJdbcDriver(dataSourceProperties.getDriverClassName())
+                .setJdbcUsername(dataSourceProperties.getUsername())
+                .setJdbcPassword(dataSourceProperties.getPassword())
+                .setJdbcPingEnabled(true)
+                // 初始化基础表，不需要的可以改为 DB_SCHEMA_UPDATE_FALSE
+                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_FALSE)
+                //设置字体
+                .setActivityFontName("宋体")
+                .setLabelFontName("宋体")
+                .setAnnotationFontName("宋体");
+        return config.buildProcessEngine();
+    }
 }
