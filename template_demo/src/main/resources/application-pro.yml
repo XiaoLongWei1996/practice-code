@@ -1,0 +1,21 @@
+
+
+
+knife4j:
+  enable: true
+  openapi:
+    title: 支付接口文档
+    description: 支付接口文档
+    email:
+    concat: xlw
+    url: https://docs.xiaominfo.com
+    version: v1.0
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      api:
+        group-name: 分组名称
+        api-rule: package
+        api-rule-resources:
+          - com.knife4j.demo.new3

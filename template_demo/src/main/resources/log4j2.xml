@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" monitorInterval="5">
+    <properties>
+        <property name="LOG_DIR">log</property>
+        <property name="LOG_PATTERN">[%d{yyyy/MM/dd HH:mm:ss.SSS}] [traceId:%X{traceId}] [%t] [%level] %c{36}:%L --- %m%n</property>
+    </properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <RollingFile name="infoRollingFile" fileName="${LOG_DIR}/info.log" filePattern="${LOG_DIR}/info_%d{yyyyMMdd}_%i.log.gz">
+            <!-- 只打印info日志 -->
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+
+        <RollingFile name="errorRollingFile" fileName="${LOG_DIR}/error.log" filePattern="${LOG_DIR}/error_%d{yyyyMMdd}_%i.log.gz">
+            <!-- 只打印error日志 -->
+            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <AsyncRoot level="info" includeLocation="true">
+            <AppenderRef ref="Console"/>
+        </AsyncRoot>
+
+        <AsyncLogger name="com.sxkj.pay" level="info"
+                     includeLocation="true" additivity="false">
+            <AppenderRef ref="infoRollingFile"/>d
+            <AppenderRef ref="errorRollingFile"/>
+            <AppenderRef ref="Console"/>
+        </AsyncLogger>
+    </Loggers>
+</Configuration>

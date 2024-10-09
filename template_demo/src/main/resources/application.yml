@@ -1,0 +1,40 @@
+server:
+  port: 8900
+
+spring:
+  application:
+    name: pay
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+  mvc:
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+
+feign:
+  #配置客户端
+  client:
+    config:
+      default:
+        #连接超时
+        connectTimeout: 5000
+        #读超时
+        readTimeout: 5000
+        #日志级别
+        loggerLevel: full
+  #使用okhttp请求池
+  okhttp:
+    enabled: true
+  #配置压缩
+  compression:
+    request:
+      #开启请求压缩
+      enabled: true
+      #压缩文件类型
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    #开启响应压缩
+    response:
+      enabled: true
