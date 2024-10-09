@@ -16,6 +16,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -34,6 +36,27 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Configuration
 public class BaseConfig {
+
+    @Bean
+    public WebMvcConfigurer webMvcConfigurer() {
+        return new WebMvcConfigurer() {
+            /**
+             * 添加 CORS 映射
+             *
+             * @param registry 注册表
+             */
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedOrigins("*") // 允许所有源访问，可以指定具体的源
+                        .allowedMethods("GET", "POST", "PUT", "DELETE") // 允许的请求方法
+                        .allowedHeaders("*") // 允许所有请求头
+                        .allowCredentials(true) // 是否允许发送Cookie
+                        .maxAge(3600); // 预检请求的有效期，单位为秒
+            }
+        };
+    }
 
     /**
      * springboot自带线程池配置
