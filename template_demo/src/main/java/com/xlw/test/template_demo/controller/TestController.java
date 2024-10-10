@@ -25,11 +25,24 @@ public class TestController {
         return params.toString();
     }
 
+    /**
+     * T2
+     *
+     * @param a 一个
+     * @param b b
+     * @return {@link BigDecimal }
+     */
     @GetMapping("t2")
     public BigDecimal t2(BigDecimal a, BigDecimal b) {
         return a.add(b);
     }
 
+    /**
+     * T3
+     *
+     * @param a 一个
+     * @return {@link LocalDateTime }
+     */
     @GetMapping("t3")
     public LocalDateTime t3(LocalDateTime a) {
         return a;
