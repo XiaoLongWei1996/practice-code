@@ -1,25 +1,34 @@
 package com.xlw.test.flowable_demo;
 
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
+import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.FlowElement;
+import org.flowable.bpmn.model.Process;
 import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.HistoryService;
 import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
+import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
+import org.flowable.variable.api.history.HistoricVariableInstance;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 @SpringBootTest
 class FlowableDemoApplicationTests {
@@ -117,6 +126,15 @@ class FlowableDemoApplicationTests {
         }
     }
 
+    @Test
+    void queryProcessInstance() {
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                .processInstanceId("70001")
+                .singleResult();
+        System.out.println(processInstance.getId() + ":" + processInstance.getName() + ":" + processInstance.getBusinessKey()
+                + ":" + processInstance.getBusinessStatus());
+    }
+
     /**
      * handle 任务
      */
@@ -145,6 +163,22 @@ class FlowableDemoApplicationTests {
         }
     }
 
+    @Test
+    void queryTask() {
+        //查询变量
+        List<HistoricVariableInstance> variableList = historyService.createHistoricVariableInstanceQuery().processInstanceId("70001").list();
+
+        //查询流程
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceBusinessKey("f606ad4be4aa4c6990c40be90e7efe03").singleResult();
+        List<Process> processes = repositoryService.getBpmnModel(processInstance.getProcessDefinitionId()).getProcesses();
+        for (Process process : processes) {
+            Collection<FlowElement> flowElements = process.getFlowElements();
+            for (FlowElement flowElement : flowElements) {
+                System.out.println(flowElement.getName() + ":" + flowElement.getId());
+            }
+        }
+    }
+
     /**
      * 查询历史任务
      */
@@ -165,5 +199,55 @@ class FlowableDemoApplicationTests {
         for (HistoricProcessInstance historicProcessInstance : list) {
             System.out.println(JSONUtil.toJsonStr(historicProcessInstance));
         }
+    }
+
+    /**
+     * 查看流程进度图
+     *
+     * @throws IOException io异常
+     */
+    @Test
+    void processImg() throws IOException {
+        String processInstanceId = "70001";
+        String procDefId;
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .singleResult();
+        if (processInstance == null) {
+            HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+            procDefId = historicProcessInstance.getProcessDefinitionId();
+        } else {
+            procDefId = processInstance.getProcessDefinitionId();
+        }
+
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(procDefId);
+        DefaultProcessDiagramGenerator defaultProcessDiagramGenerator = new DefaultProcessDiagramGenerator(); // 创建默认的流程图生成器
+        String imageType = "png"; // 生成图片的类型
+        List<String> highLightedActivities = new ArrayList<>(); // 高亮节点集合
+        List<String> highLightedFlows = new ArrayList<>(); // 高亮连线集合
+        List<HistoricActivityInstance> hisActInsList = historyService.createHistoricActivityInstanceQuery()
+                .processInstanceId(processInstanceId)
+                .list(); // 查询所有历史节点信息
+        hisActInsList.forEach(historicActivityInstance -> { // 遍历
+            if ("sequenceFlow".equals(historicActivityInstance.getActivityType())) {
+                // 添加高亮连线
+                highLightedFlows.add(historicActivityInstance.getActivityId());
+            } else {
+                // 添加高亮节点
+                highLightedActivities.add(historicActivityInstance.getActivityId());
+            }
+        });
+        String activityFontName = "宋体"; // 节点字体
+        String labelFontName = "微软雅黑"; // 连线标签字体
+        String annotationFontName = "宋体"; // 连线标签字体
+        ClassLoader customClassLoader = null; // 类加载器
+        double scaleFactor = 1.0d; // 比例因子，默认即可
+        boolean drawSequenceFlowNameWithNoLabelDI = true; // 不设置连线标签不会画
+        // 生成图片
+        InputStream inputStream = defaultProcessDiagramGenerator.generateDiagram(bpmnModel, imageType, highLightedActivities
+                , highLightedFlows, activityFontName, labelFontName, annotationFontName, customClassLoader,
+                scaleFactor, drawSequenceFlowNameWithNoLabelDI); // 获取输入流
+        ImageIO.write(ImageIO.read(inputStream), "png", new File("D:\\p1.png"));
+        IoUtil.close(inputStream);
     }
 }
