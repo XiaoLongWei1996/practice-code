@@ -36,7 +36,7 @@ public class HeadHyperlinkHandler implements CellWriteHandler {
     }
 
     /**
-     * 列添加超链接
+     * 标题添加超链接
      *
      * @param column    列
      * @param hyperlink 超链接

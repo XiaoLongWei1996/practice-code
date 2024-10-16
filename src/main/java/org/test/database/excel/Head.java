@@ -31,7 +31,7 @@ public class Head {
     /**
      * 超链接
      */
-    @ContentFontStyle(underline = Font.U_SINGLE, color = 12)
+    @ContentFontStyle(underline = Font.U_NONE, color = 12)
     @ExcelProperty("数据表名+详情跳转")
     private WriteCellData<String> tableComment;
 

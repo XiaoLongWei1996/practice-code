@@ -235,7 +235,7 @@ public class DatabaseDocBuilder {
             writer.write(datas, oneSheet);
             //写下具体文档
             HeadHyperlinkHandler headHyperlinkHandler = new HeadHyperlinkHandler(HyperlinkType.DOCUMENT);
-            headHyperlinkHandler.addColumnHyperlink(6, "#'目录'!A1");
+            headHyperlinkHandler.addColumnHyperlink(7, "#'目录'!A1");
             for (int i = 0; i < datas.size(); i++) {
                 Head head = datas.get(i);
                 int sheetIdx = i + 1;
@@ -253,10 +253,10 @@ public class DatabaseDocBuilder {
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://192.168.100.66:3306/piaoshui-saas?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
-        String userName = "piaoshui";
-        String password = "xW123456!";
+        String url = "jdbc:mysql://47.96.12.138:23307/tcc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
+        String userName = "root";
+        String password = "4ca31850774c707a58a77163a04905efQW";
         String outPath = "D:\\tmp\\test.xlsx";
-        DatabaseDocBuilder.build(url, userName, password, outPath,"lqyq_");
+        DatabaseDocBuilder.build(url, userName, password, outPath,"ncp_");
     }
 }

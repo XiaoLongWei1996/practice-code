@@ -7,6 +7,7 @@ import com.alibaba.excel.enums.poi.BorderStyleEnum;
 import com.alibaba.excel.enums.poi.FillPatternTypeEnum;
 import com.alibaba.excel.enums.poi.HorizontalAlignmentEnum;
 import com.alibaba.excel.enums.poi.VerticalAlignmentEnum;
+import com.alibaba.excel.metadata.data.WriteCellData;
 import lombok.Data;
 
 
@@ -48,5 +49,5 @@ public class Info {
 //    @HeadStyle(fillForegroundColor = 1, borderTop = BorderStyleEnum.NONE, borderLeft = BorderStyleEnum.NONE, borderRight = BorderStyleEnum.NONE, borderBottom = BorderStyleEnum.NONE)
 //    @HeadFontStyle(bold = BooleanEnum.FALSE, underline = Font.U_SINGLE, color = 20, fontHeightInPoints = 11, fontName = "等线")
     @ExcelProperty("返回目录")
-    private String returnHead;
+    private WriteCellData<String> returnHead;
 }
