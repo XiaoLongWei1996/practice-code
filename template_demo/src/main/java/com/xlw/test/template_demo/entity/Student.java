@@ -2,6 +2,7 @@ package com.xlw.test.template_demo.entity;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @Data
 public class Student {
 
+    @NotBlank
     private String name;
 
     private LocalDateTime birthday;
