@@ -224,7 +224,7 @@ public class NettyClient {
 
     public static void main(String[] args) throws InterruptedException {
 
-        createClient3();
+        createClient4();
 
     }
 

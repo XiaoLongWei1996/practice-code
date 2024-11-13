@@ -78,6 +78,20 @@ public class NettyServer {
                         //pipeline管道,就是对NioSocketChannel的数据进行一系列的处理
                         //SocketChannel的处理器，使用StringDecoder解码，ByteBuf=>String
                         ch.pipeline().addLast(new StringDecoder());
+                        ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+
+                            /**
+                             * 通道断开
+                             *
+                             * @param ctx CTX
+                             * @throws Exception 例外
+                             */
+                            @Override
+                            public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+                                System.out.println(ctx.channel() + "断开连接");
+                                super.channelInactive(ctx);
+                            }
+                        });
                         //添加读请求处理
                         ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                             @Override
@@ -380,7 +394,7 @@ public class NettyServer {
 
 
     public static void main(String[] args) throws InterruptedException {
-        createServer4();
+        createServer1();
     }
 
     private static class NettyServerHandler extends ChannelInboundHandlerAdapter {

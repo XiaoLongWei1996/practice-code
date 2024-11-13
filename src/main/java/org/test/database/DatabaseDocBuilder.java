@@ -253,10 +253,10 @@ public class DatabaseDocBuilder {
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://47.96.12.138:23307/tcc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
+        String url = "jdbc:mysql://47.96.12.138:23307/zfjkp_lhyg?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
         String userName = "root";
         String password = "4ca31850774c707a58a77163a04905efQW";
         String outPath = "D:\\tmp\\test.xlsx";
-        DatabaseDocBuilder.build(url, userName, password, outPath,"ncp_");
+        DatabaseDocBuilder.build(url, userName, password, outPath,"lhyg_invoice_");
     }
 }

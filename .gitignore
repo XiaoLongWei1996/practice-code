@@ -26,3 +26,5 @@ hs_err_pid*
 HELP.md
 test-springboot.iml
 *.iml
+.fastRequest
+log
