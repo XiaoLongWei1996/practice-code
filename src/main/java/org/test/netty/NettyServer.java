@@ -13,6 +13,7 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 
 import java.nio.charset.Charset;
@@ -88,8 +89,13 @@ public class NettyServer {
                              */
                             @Override
                             public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-                                System.out.println(ctx.channel() + "断开连接");
+                                System.out.println(ctx.channel().attr(AttributeKey.valueOf("userId")).get() + "断开连接");
                                 super.channelInactive(ctx);
+                            }
+
+                            @Override
+                            public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+                                System.out.println(ctx.channel().attr(AttributeKey.valueOf("userId")).get() + "连接");
                             }
                         });
                         //添加读请求处理
@@ -391,10 +397,8 @@ public class NettyServer {
         });
     }
 
-
-
     public static void main(String[] args) throws InterruptedException {
-        createServer1();
+        createServer3();
     }
 
     private static class NettyServerHandler extends ChannelInboundHandlerAdapter {

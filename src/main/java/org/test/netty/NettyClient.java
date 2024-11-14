@@ -8,6 +8,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 
 import java.net.InetSocketAddress;
@@ -206,12 +208,22 @@ public class NettyClient {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
                         ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
+
+                            @Override
+                            public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+                                AttributeKey<Object> ak = AttributeKey.newInstance("userId");
+                                Attribute<Object> attr = ctx.channel().attr(ak);
+                                attr.set("123456");
+                            }
+
                             @Override
                             public void channelActive(ChannelHandlerContext ctx) throws Exception {
                                 ByteBuf buffer = ctx.alloc().buffer();
                                 for (int i = 0; i < 10; i++) {
                                     buffer.writeBytes("sidiot.".getBytes());
                                 }
+                                AttributeKey<Object> ak = AttributeKey.valueOf("userId");
+                                System.out.println(ctx.channel().attr(ak).get());
                                 ctx.writeAndFlush(buffer);
                                 //我们可以获知原先的70字节的数据包被拆分成了两个数据包，其大小分别为14字节和56字节，也都恰好是7的倍数。
                             }
@@ -223,9 +235,7 @@ public class NettyClient {
     }
 
     public static void main(String[] args) throws InterruptedException {
-
-        createClient4();
-
+        createClient3();
     }
 
     private static class NettyClientHandler extends ChannelInboundHandlerAdapter {
