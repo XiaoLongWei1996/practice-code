@@ -6,6 +6,7 @@ import com.xlw.test.jsr303_demo.config.ValidGroup;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
 
@@ -32,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("t3")
-    public User t3(@Validated(ValidGroup.Update.class) @RequestBody User user) {
+    public User t3(@Valid @RequestBody User user) {
         return user;
     }
 
