@@ -34,7 +34,7 @@ public class IdempotentUtil {
     /**
      * 幂等时间,1分钟
      */
-    private static final int IDEMPOTENT_TIME = 1000;
+    public static final long IDEMPOTENT_TIME = 60000;
 
     static {
         SYSTEM_TIMER.start();
@@ -49,13 +49,23 @@ public class IdempotentUtil {
      */
     public static void verify(String qysh, String zrrmc, BigDecimal jshj) {
         String key = qysh + zrrmc + jshj.multiply(NumberUtil.toBigDecimal(100)).intValue();
+        verify(key, IDEMPOTENT_TIME);
+    }
+
+    /**
+     * 幂等性验证
+     *
+     * @param key            key
+     * @param idempotentTime 幂等时间,单位毫秒
+     */
+    public static void verify(String key, long idempotentTime) {
         if (IDEMPOTENT_SET.contains(key)) {
-            throw new RuntimeException("请勿重复提交订单");
+            throw new RuntimeException("请勿重复提交请求，一分钟后再试");
         }
         boolean b = IDEMPOTENT_SET.add(key);
         if (b) {
             log.info("添加幂等key: {}", key);
-            SYSTEM_TIMER.addTask(new TimerTask(() -> IDEMPOTENT_SET.remove(key), IDEMPOTENT_TIME));
+            SYSTEM_TIMER.addTask(new TimerTask(() -> IDEMPOTENT_SET.remove(key), idempotentTime));
         }
     }
 
