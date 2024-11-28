@@ -1,10 +1,15 @@
 package com.xlw.test.template_demo.controller;
 
+import cn.hutool.http.server.HttpServerRequest;
 import cn.hutool.json.JSONObject;
+import com.sun.net.httpserver.Headers;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * @description:
@@ -18,18 +23,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotifyController {
 
     @PostMapping("kpjg")
-    public String kpjg(@RequestBody String msg) {
+    public String kpjg(@RequestBody String msg, HttpServletRequest request) {
         System.out.println(msg);
-        JSONObject object = new JSONObject();
-        object.put("code", "0");
-        object.put("success", true);
-        return object.toString();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            System.out.println(name + ":" + value);
+        }
+        return "SUCCESS";
     }
 
 
     @PostMapping("jyjg")
-    public String jyjg(@RequestBody String msg) {
+    public String jyjg(@RequestBody String msg, HttpServletRequest request) {
         System.out.println(msg);
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            System.out.println(name + ":" + value);
+        }
         return "SUCCESS";
     }
 }
