@@ -48,6 +48,10 @@ spring:
     lettuce:
       pool:
         max-active: 300
+  task:
+    scheduling:
+      pool:
+        size: 8
 
 mybatis-plus:
   #配置mapper.xml文件路径
