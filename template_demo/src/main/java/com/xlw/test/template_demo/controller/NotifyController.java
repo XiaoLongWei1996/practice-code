@@ -46,4 +46,16 @@ public class NotifyController {
         }
         return "SUCCESS";
     }
+
+    @PostMapping("pldd")
+    public String pldd(@RequestBody String msg, HttpServletRequest request) {
+        System.out.println(msg);
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String name = headerNames.nextElement();
+            String value = request.getHeader(name);
+            System.out.println(name + ":" + value);
+        }
+        return "SUCCESS";
+    }
 }
