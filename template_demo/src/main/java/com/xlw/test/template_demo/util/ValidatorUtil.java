@@ -1,17 +1,13 @@
 package com.xlw.test.template_demo.util;
 
-
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * @description:
+ * @description: jsr303数据校验工具类
  * @Title: ValidatorUtil
  * @Author xlw
  * @Package com.invoice.tcc.util
@@ -40,6 +36,19 @@ public class ValidatorUtil {
                 throw new RuntimeException(property + message);
             }
         }
+    }
+
+    public static <T> Set<String> beanValidate(T t, Class<?>... groups) {
+        //初始化检查器
+        Set<String> magSet = new HashSet<>();
+        Set<ConstraintViolation<T>> set = validator.validate(t, groups);
+        if (!set.isEmpty()) {
+            for (ConstraintViolation<T> cv : set) {
+                String message = cv.getMessage();
+                magSet.add(message);
+            }
+        }
+        return magSet;
     }
 
     /**
