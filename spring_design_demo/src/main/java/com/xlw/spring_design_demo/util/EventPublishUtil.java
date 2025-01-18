@@ -5,6 +5,9 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
 /**
  * @description: 事件发布工具类
  * @Title: EventPublishUtil
@@ -12,19 +15,15 @@ import org.springframework.stereotype.Component;
  * @Package com.invoice.tcc.util
  * @Date 2024/8/12 17:47
  */
-@RequiredArgsConstructor
-@Component
 public class EventPublishUtil {
-
-    private final ApplicationEventPublisher applicationEventPublisher;
 
     /**
      * 发布事件
      *
      * @param event 事件
      */
-    public void publishEvent(ApplicationEvent event) {
-        applicationEventPublisher.publishEvent(event);
+    public static void publishEvent(ApplicationEvent event) {
+        SpringContextHelper.publishEvent(event);
     }
 
 }
