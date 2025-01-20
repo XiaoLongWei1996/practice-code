@@ -23,8 +23,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
+import java.awt.image.Kernel;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -71,5 +73,14 @@ class SpringDesignDemoApplicationTests {
         invoice.setState(InvoiceStateEnum.WAIT_KP);
         StateMachineUtil.sendEvent(InvoiceEventEnum.KP, invoice, invoiceStateMachine);
         System.out.println(invoice);
+    }
+
+    @Test
+    void test() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put("a", 1);
+        map.put("b", 2);
+        map.replaceAll((k, v) -> v + 1);
+        System.out.println(map);
     }
 }

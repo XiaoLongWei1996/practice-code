@@ -2,6 +2,7 @@ package com.xlw.spring_design_demo.sse;
 
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,8 +10,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @module:
@@ -44,7 +48,7 @@ public class SseController {
     }
 
     @GetMapping(path = "createEmitter")
-    public ResponseBodyEmitter createEmitter() {
+    public ResponseEntity<ResponseBodyEmitter> createEmitter() {
         // 创建一个ResponseBodyEmitter，-1代表不超时
         ResponseBodyEmitter emitter = new ResponseBodyEmitter();
         emitter.onCompletion(() -> {
@@ -59,7 +63,7 @@ public class SseController {
         new Thread(() -> {
             try {
                 for (int i = 0; i < 100; i++) {
-                    emitter.send("Progress: " + i + "%\n", MediaType.TEXT_PLAIN);
+                    emitter.send("Progress: " + i + "%\r\n", MediaType.TEXT_HTML);
                     Thread.sleep(100);
                     System.out.println("发送：" + i);
                 }
@@ -69,6 +73,27 @@ public class SseController {
                 emitter.completeWithError(e);
             }
         }).start();
-        return emitter;
+        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(emitter);
+    }
+
+    @GetMapping(path = "createStreamingResponseBody")
+    public ResponseEntity<StreamingResponseBody> createStreamingResponseBody() {
+        StreamingResponseBody responseBody = new StreamingResponseBody() {
+            @Override
+            public void writeTo(OutputStream outputStream) throws IOException {
+                for (int i = 0; i < 100; i++) {
+                    outputStream.write(("Progress: " + i + "%\r\n").getBytes());
+                    try {
+                        Thread.sleep(100);
+                        outputStream.flush();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("发送：" + i);
+                }
+                outputStream.close();
+            }
+        };
+        return ResponseEntity.ok().contentType(MediaType.TEXT_HTML).body(responseBody);
     }
 }
