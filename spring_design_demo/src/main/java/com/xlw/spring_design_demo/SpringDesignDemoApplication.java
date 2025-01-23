@@ -3,6 +3,7 @@ package com.xlw.spring_design_demo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.statemachine.config.EnableStateMachine;
+import org.springframework.util.StreamUtils;
 
 @EnableStateMachine
 @SpringBootApplication

@@ -41,13 +41,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- 状态机设计模式 -->
-        <dependency>
-            <groupId>org.springframework.statemachine</groupId>
-            <artifactId>spring-statemachine-starter</artifactId>
-            <version>4.0.0</version>
-        </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -57,13 +50,14 @@
         <!-- 状态机设计模式 -->
         <dependency>
             <groupId>org.springframework.statemachine</groupId>
-            <artifactId>spring-statemachine-starter</artifactId>
+            <artifactId>spring-statemachine-core</artifactId>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.8.27</version>
+            <version>5.8.16</version>
         </dependency>
     </dependencies>
 
