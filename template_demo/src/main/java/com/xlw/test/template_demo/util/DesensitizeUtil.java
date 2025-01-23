@@ -74,6 +74,11 @@ public class DesensitizeUtil {
         }
     }
 
+    public static <T> void mapDesensitize(Map<?, T> map) {
+        Collection<T> values = map.values();
+        collectionDesensitize(values);
+    }
+
     private static String desensitize(String str, DesensitizeType desensitizeType, int startInclude, int endExclude) {
         switch (desensitizeType) {
             case PHONE:
@@ -91,7 +96,7 @@ public class DesensitizeUtil {
             case PASSWORD:
                 return DesensitizedUtil.password(str);
             case CUSTOMIZE:
-                return StrUtil.hide(str, startInclude, str.length() - endExclude);
+                return StrUtil.hide(str, startInclude, str.length() >= endExclude ? str.length() - endExclude : str.length());
             default:
                 return str;
         }
@@ -162,18 +167,13 @@ public class DesensitizeUtil {
     }
 
     public static void main(String[] args) {
-        List<Student> list = new ArrayList<>();
+        Map<String, Student> map = new HashMap<>();
         Student student = new Student();
-        student.setName("肖龙威");
+        student.setName("张伟");
         student.setBirthday(LocalDateTime.now());
         student.setIdcard("42028119960923501X");
-        list.add(student);
-        Student student1 = new Student();
-        student1.setName("肖龙威");
-        student1.setBirthday(LocalDateTime.now());
-        student1.setIdcard("42028119960923501X");
-        list.add(student1);
-        collectionDesensitize(list);
-        System.out.println(list);
+        map.put("1", student);
+        mapDesensitize(map);
+        System.out.println(map);
     }
 }
