@@ -23,6 +23,11 @@ import java.util.*;
  */
 public class DesensitizeUtil {
 
+    /**
+     * 对象脱敏
+     *
+     * @param t
+     */
     public static <T> void objectDesensitize(T t) {
         Assert.notNull(t, "t must not be null");
         Class<?> clazz = t.getClass();
@@ -49,6 +54,11 @@ public class DesensitizeUtil {
         }
     }
 
+    /**
+     * 集合脱敏
+     *
+     * @param collection 收集
+     */
     public static <T> void collectionDesensitize(Collection<T> collection) {
         Assert.notEmpty(collection, "collection must not be null");
         try {
@@ -74,11 +84,25 @@ public class DesensitizeUtil {
         }
     }
 
+    /**
+     * map脱敏
+     *
+     * @param map 地图
+     */
     public static <T> void mapDesensitize(Map<?, T> map) {
         Collection<T> values = map.values();
         collectionDesensitize(values);
     }
 
+    /**
+     * 脱 敏
+     *
+     * @param str             str
+     * @param desensitizeType Desensitize 类型
+     * @param startInclude    开始包含
+     * @param endExclude      结束排除
+     * @return {@link String }
+     */
     private static String desensitize(String str, DesensitizeType desensitizeType, int startInclude, int endExclude) {
         switch (desensitizeType) {
             case PHONE:
