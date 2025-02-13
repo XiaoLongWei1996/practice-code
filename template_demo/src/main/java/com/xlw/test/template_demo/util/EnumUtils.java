@@ -76,7 +76,19 @@ public class EnumUtils {
         return null;
     }
 
-    public static void main(String[] args) {
+    public static int i = 1;
 
+    static {
+        System.out.println(i);
+        i = 2;
+    }
+
+    static  {
+        System.out.println(i);
+        i = 3;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(i);
     }
 }
