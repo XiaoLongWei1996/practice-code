@@ -1,11 +1,10 @@
 package com.xlw.test.template_demo;
 
 import com.xlw.test.template_demo.exception.BusinessException;
-import com.xlw.test.template_demo.retry.RetryTask;
+import com.xlw.test.template_demo.extend.retry.RetryTask;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 

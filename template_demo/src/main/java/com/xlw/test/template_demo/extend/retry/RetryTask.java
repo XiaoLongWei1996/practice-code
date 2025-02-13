@@ -1,14 +1,11 @@
-package com.xlw.test.template_demo.retry;
+package com.xlw.test.template_demo.extend.retry;
 
 import com.xlw.test.template_demo.exception.BusinessException;
-import com.xlw.test.template_demo.exception.ServiceException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
