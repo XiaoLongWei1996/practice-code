@@ -27,29 +27,6 @@ class TemplateDemoApplicationTests {
 
     @Test
     public void test() throws InterruptedException {
-        executor.execute(() -> {
-            retryTask.retryTask1(() -> {
-                System.out.println("执行1");
-                try {
-                    throw new Exception();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });
-
-        executor.execute(() -> {
-            retryTask.retryTask2(() -> {
-                System.out.println("执行2");
-                try {
-                    throw new Exception();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });
-
-        Thread.sleep(100000);
     }
 
 }
