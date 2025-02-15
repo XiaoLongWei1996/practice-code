@@ -39,13 +39,24 @@ public class IdUtils {
         LocalDateTime now = LocalDateTime.now();
         String timestamp = now.format(DateTimeFormatter.ofPattern(DatePattern.PURE_DATETIME_MS_PATTERN));
         id.append(timestamp);
+        String serialNumber = redisSerialNumber(timestamp);
+        id.append(serialNumber);
+        return id.toString();
+    }
+
+    /**
+     * Redis 序列号
+     *
+     * @param key key
+     * @return {@link String }
+     */
+    private static String redisSerialNumber(String key) {
         //通过当前时间戳获取redis自增
         DefaultRedisScript script = new DefaultRedisScript();
         script.setResultType(String.class);
         script.setLocation(ApplicationContextUtil.getApplicationContext().getResource("classpath:script/id_increase.lua"));
-        String increase = (String) redisTemplate().execute(script, ListUtil.toList(ID_PREFIX + timestamp));
-        id.append(increase);
-        return id.toString();
+        String serialNumber = (String) redisTemplate().execute(script, ListUtil.toList(ID_PREFIX + key));
+        return serialNumber;
     }
 
 }
