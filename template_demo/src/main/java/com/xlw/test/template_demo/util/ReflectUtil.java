@@ -3,6 +3,7 @@ package com.xlw.test.template_demo.util;
 
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
+import java.io.IOException;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -64,5 +65,50 @@ public class ReflectUtil {
             throw new RuntimeException(e);
         }
         return field;
+    }
+
+    /**
+     * ASM获取字段名称
+     * @param args
+     * @throws IOException
+     */
+    //public static List<String> getFieldName(byte[] classBytes) {
+    //    List<String> fields = new ArrayList<>();
+    //    ClassReader reader = new ClassReader(classBytes);
+    //    ClassVisitor visitor = new ClassVisitor(Opcodes.ASM9) {
+    //        @Override
+    //        public FieldVisitor visitField(
+    //                int access,      // 访问修饰符（如public/private）
+    //                String name,    // 字段名
+    //                String descriptor, // 字段类型描述符（如"I"表示int）
+    //                String signature,  // 泛型信息（可为null）
+    //                Object value      // 初始值（常量字段）
+    //        ) {
+    //            // 将字段信息转换为可读字符串
+    //            String fieldInfo = String.format(
+    //                    "字段名: %s, 类型: %s, 修饰符: %s",
+    //                    name, descriptor, access
+    //            );
+    //            fields.add(fieldInfo);
+    //            return super.visitField(access, name, descriptor, signature, value);
+    //        }
+    //    };
+    //    reader.accept(visitor, ClassReader.SKIP_DEBUG);
+    //    return fields;
+    //}
+
+    public static void main(String[] args) throws IOException {
+        //Student student = new Student();
+        //InputStream inputStream = Student.class.getClassLoader().getResourceAsStream(Student.class.getName().replace(".", "/") + ".class");
+        //
+        //ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        //byte[] buffer = new byte[1024];
+        //int bytesRead;
+        //while ((bytesRead = inputStream.read(buffer)) != -1) {
+        //    baos.write(buffer, 0, bytesRead);
+        //}
+        //byte[] classBytes = baos.toByteArray();
+        //List<String> field = getField(classBytes);
+        //System.out.println(field);
     }
 }
