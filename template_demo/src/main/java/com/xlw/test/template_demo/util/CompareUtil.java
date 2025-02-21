@@ -4,7 +4,9 @@ package com.xlw.test.template_demo.util;
 import cn.hutool.core.lang.Assert;
 import com.xlw.test.template_demo.entity.Student;
 import com.xlw.test.template_demo.entity.User;
+import lombok.NonNull;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -19,8 +21,26 @@ public class CompareUtil {
 
     private static final String DEFAULT_ERROR_MSG = "ERROR";
 
-    public static <T1, T2> FieldEqualsBuilder<T1, T2> fieldComparatorBuild(T1 t1, T2 t2) {
-        return new FieldEqualsBuilder<>(t1, t2);
+    /**
+     * 字段比较器构建
+     *
+     * @param bean1 豆 1
+     * @param bean2 豆 2
+     * @return {@link FieldEqualsBuilder }<{@link T1 }, {@link T2 }>
+     */
+    public static <T1, T2> FieldEqualsBuilder<T1, T2> fieldComparatorBuild(@NonNull T1 bean1, @NonNull T2 bean2) {
+        return new FieldEqualsBuilder<T1, T2>(bean1, bean2);
+    }
+
+    /**
+     * 等于
+     *
+     * @param o1 o1
+     * @param o2 O2
+     * @return boolean
+     */
+    public static <T1, T2> boolean isEquals(@NonNull T1 o1, @NonNull T2 o2) {
+        return o1 == null || o2 == null ? false : !o1.getClass().equals(o2.getClass()) ? false : Objects.equals(o1, o2);
     }
 
     private static class FieldEqualsBuilder<T1, T2> {
@@ -103,11 +123,12 @@ public class CompareUtil {
     public static void main(String[] args) {
         Student student = new Student();
         student.setName("张伟");
+        student.setBirthday(LocalDateTime.now());
         User user = new User();
         user.setName("张1伟");
         Set<String> msg = CompareUtil.fieldComparatorBuild(student, user)
                 .append(Student::getName, User::getName)
-                .append(Student::getIdcard, User::getName, "姓名不一致")
+                .append(Student::getBirthday, User::getName, "姓名不一致")
                 .isEqualsReturnMsg();
         System.out.println(msg);
     }
