@@ -3,7 +3,6 @@ package com.xlw.test.template_demo.entity;
 import com.xlw.test.template_demo.util.DesensitizeUtil;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 /**
@@ -23,4 +22,6 @@ public class Student {
 
     @DesensitizeUtil.Desensitize(DesensitizeUtil.DesensitizeType.ID_CARD)
     private String idcard;
+
+
 }
