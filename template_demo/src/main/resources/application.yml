@@ -1,5 +1,9 @@
 server:
   port: 8900
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript,application/x-www-form-urlencoded
+    min-response-size: 1024
 
 spring:
   application:
