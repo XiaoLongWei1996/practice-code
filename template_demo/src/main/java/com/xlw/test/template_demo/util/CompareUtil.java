@@ -91,6 +91,9 @@ public class CompareUtil {
         }
 
         public boolean equals() {
+            if (o1 == null && o2 == null) {
+                return true;
+            }
             return o1 == null || o2 == null ? false : !o1.getClass().equals(o2.getClass()) ? false : Objects.equals(o1, o2);
         }
 
