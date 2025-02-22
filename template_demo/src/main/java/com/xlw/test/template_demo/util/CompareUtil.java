@@ -43,6 +43,12 @@ public class CompareUtil {
         return o1 == null || o2 == null ? false : !o1.getClass().equals(o2.getClass()) ? false : Objects.equals(o1, o2);
     }
 
+    /**
+     * 字段等于生成器
+     *
+     * @author xlw
+     * @date 2025/02/22
+     */
     private static class FieldEqualsBuilder<T1, T2> {
 
         private T1 t1;
@@ -56,13 +62,13 @@ public class CompareUtil {
             this.t2 = t2;
         }
 
-        public final FieldEqualsBuilder<T1, T2> append(Function<T1, ?> filedFn1, Function<T2, ?> filedFn2, String errorMsg) {
+        public final FieldEqualsBuilder<T1, T2> fieldGroup(Function<T1, ?> filedFn1, Function<T2, ?> filedFn2, String errorMsg) {
             eqs.add(new EqualsObject(filedFn1.apply(t1), filedFn2.apply(t2), errorMsg));
             return this;
         }
 
-        public final FieldEqualsBuilder<T1, T2> append(Function<T1, ?> filedFn1, Function<T2, ?> filedFn2) {
-            return append(filedFn1, filedFn2,DEFAULT_ERROR_MSG);
+        public final FieldEqualsBuilder<T1, T2> fieldGroup(Function<T1, ?> filedFn1, Function<T2, ?> filedFn2) {
+            return fieldGroup(filedFn1, filedFn2,DEFAULT_ERROR_MSG);
         }
 
         public boolean isEquals() {
@@ -94,6 +100,12 @@ public class CompareUtil {
 
     }
 
+    /**
+     * equals 对象
+     *
+     * @author xlw
+     * @date 2025/02/22
+     */
     private static class EqualsObject {
 
         private Object o1;
@@ -125,10 +137,10 @@ public class CompareUtil {
         student.setName("张伟");
         student.setBirthday(LocalDateTime.now());
         User user = new User();
-        user.setName("张1伟");
+        user.setName("张伟");
         Set<String> msg = CompareUtil.fieldComparatorBuild(student, user)
-                .append(Student::getName, User::getName)
-                .append(Student::getBirthday, User::getName, "姓名不一致")
+                .fieldGroup(Student::getName, User::getName)
+                .fieldGroup(Student::getBirthday, User::getName, "姓名不一致")
                 .isEqualsReturnMsg();
         System.out.println(msg);
     }
