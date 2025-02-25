@@ -1,7 +1,5 @@
 package com.xlw.test.template_demo.config;
 
-import com.xlw.test.template_demo.util.RedisLockUtil;
-import com.xlw.test.template_demo.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -59,13 +57,4 @@ public class RedisConfig {
         return Redisson.create(config);
     }
 
-    @Bean
-    public RedisUtil redisUtil(RedisTemplate redisTemplate) {
-        return new RedisUtil(redisTemplate);
-    }
-
-    @Bean
-    public RedisLockUtil redisLockUtil(RedissonClient redissonClient) {
-        return new RedisLockUtil(redissonClient);
-    }
 }

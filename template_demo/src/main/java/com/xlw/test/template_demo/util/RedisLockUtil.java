@@ -4,10 +4,10 @@ package com.xlw.test.template_demo.util;
 import com.xlw.test.template_demo.cons.TaskNotReturn;
 import com.xlw.test.template_demo.cons.TaskReturn;
 import com.xlw.test.template_demo.exception.BusinessException;
-import lombok.AllArgsConstructor;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,13 +17,19 @@ import java.util.concurrent.TimeUnit;
  * @Package com.sxkj.pay.util
  * @Date 2024/8/8 14:32
  */
-@AllArgsConstructor
 public class RedisLockUtil {
 
-    private final RedissonClient redissonClient;
+    private static RedissonClient redissonClient;
 
-    public void withLockExecute(String lockKey, long timeout, TaskNotReturn task) {
-        RLock lock = redissonClient.getLock(lockKey);
+    private static RedissonClient getRedissonClient() {
+        if (Objects.isNull(redissonClient)) {
+            redissonClient = ApplicationContextUtil.getBean(RedissonClient.class);
+        }
+        return redissonClient;
+    }
+
+    public static void withLockExecute(String lockKey, long timeout, TaskNotReturn task) {
+        RLock lock = getRedissonClient().getLock(lockKey);
         boolean b = false;
         try {
             b = lock.tryLock(timeout, TimeUnit.SECONDS);
@@ -40,8 +46,8 @@ public class RedisLockUtil {
         }
     }
 
-    public <R> R withLockExecute(String lockKey, long timeout, TaskReturn<R> task) {
-        RLock lock = redissonClient.getLock(lockKey);
+    public static <R> R withLockExecute(String lockKey, long timeout, TaskReturn<R> task) {
+        RLock lock = getRedissonClient().getLock(lockKey);
         boolean b = false;
         try {
             b = lock.tryLock(timeout, TimeUnit.SECONDS);

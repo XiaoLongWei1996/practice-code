@@ -44,7 +44,7 @@ public class ApplicationContextUtil implements ApplicationContextAware {
      * @param clazz 克拉兹
      * @return {@link T }
      */
-    public static <T> T getBean(Class<T> clazz) {
+    public synchronized static <T> T getBean(Class<T> clazz) {
         try {
             T bean = applicationContext.getBean(clazz);
             return bean;
@@ -59,7 +59,7 @@ public class ApplicationContextUtil implements ApplicationContextAware {
      * @param name 名字
      * @return {@link Object }
      */
-    public static Object getBean(String name) {
+    public synchronized static Object getBean(String name) {
         try {
             return applicationContext.getBean(name);
         } catch (NoSuchBeanDefinitionException e) {
@@ -73,7 +73,7 @@ public class ApplicationContextUtil implements ApplicationContextAware {
      * @param clazz 克拉兹
      * @return {@link Map }<{@link String }, {@link T }>
      */
-    public static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
+    public synchronized static <T> Map<String, T> getBeansOfType(Class<T> clazz) {
         try {
             return applicationContext.getBeansOfType(clazz);
         } catch (NoSuchBeanDefinitionException e) {

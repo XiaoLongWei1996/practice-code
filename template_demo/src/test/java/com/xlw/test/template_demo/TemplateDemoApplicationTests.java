@@ -2,10 +2,9 @@ package com.xlw.test.template_demo;
 
 import com.xlw.test.template_demo.exception.BusinessException;
 import com.xlw.test.template_demo.extend.retry.RetryTask;
-import com.xlw.test.template_demo.util.TransactionUtil;
+import com.xlw.test.template_demo.util.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -15,9 +14,6 @@ class TemplateDemoApplicationTests {
 
     @Resource
     private RetryTask retryTask;
-
-    @Resource
-    private ThreadPoolTaskExecutor executor;
 
 
     @Test
@@ -30,7 +26,8 @@ class TemplateDemoApplicationTests {
 
     @Test
     public void test() throws InterruptedException, IOException {
-        TransactionUtil.execute(() -> {});
+        Object hello = RedisUtil.get("hello");
+        System.out.println(hello);
     }
 
 }

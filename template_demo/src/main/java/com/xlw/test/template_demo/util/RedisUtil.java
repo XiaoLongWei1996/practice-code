@@ -26,9 +26,21 @@ public class RedisUtil {
     /**
      * redis模板
      */
-    private RedisTemplate<String, Object> redisTemplate;
+    private static RedisTemplate<String, Object> redisTemplate;
 
     /*-------------------------------------------------------key操作-------------------------------------------------------------*/
+
+    /**
+     * 获取 Redis 模板
+     *
+     * @return {@link RedisTemplate }<{@link String }, {@link Object }>
+     */
+    private static RedisTemplate<String, Object> getRedisTemplate() {
+        if (Objects.isNull(redisTemplate)) {
+            redisTemplate = (RedisTemplate<String, Object>) ApplicationContextUtil.getBean("redisTemplate");
+        }
+        return redisTemplate;
+    }
 
     /**
      * 有关键
@@ -36,8 +48,8 @@ public class RedisUtil {
      * @param key 关键
      * @return boolean
      */
-    public boolean hasKey(String key) {
-        return redisTemplate.hasKey(key);
+    public static boolean hasKey(String key) {
+        return getRedisTemplate().hasKey(key);
     }
 
     /**
@@ -45,8 +57,8 @@ public class RedisUtil {
      *
      * @param key 关键
      */
-    public void delete(String... key) {
-        redisTemplate.delete(Arrays.asList(key));
+    public static void delete(String... key) {
+        getRedisTemplate().delete(Arrays.asList(key));
     }
 
     /**
@@ -55,8 +67,8 @@ public class RedisUtil {
      * @param key 关键
      * @return long
      */
-    public long ttl(String key) {
-        return redisTemplate.getExpire(key);
+    public static long ttl(String key) {
+        return getRedisTemplate().getExpire(key);
     }
 
     /**
@@ -64,23 +76,23 @@ public class RedisUtil {
      * @param timeout
      * @param timeUnit
      */
-    public void expire(String key, long timeout, TimeUnit timeUnit) {
-        redisTemplate.expire(key, timeout, timeUnit);
+    public static void expire(String key, long timeout, TimeUnit timeUnit) {
+        getRedisTemplate().expire(key, timeout, timeUnit);
     }
 
     /**
      * @param pattern
      * @return {@link Set}<{@link String}>
      */
-    public Set<String> keys(String pattern) {
-        return redisTemplate.keys(pattern);
+    public static Set<String> keys(String pattern) {
+        return getRedisTemplate().keys(pattern);
     }
 
     /**
      * @param key 关键
      */
-    public void unlink(String key) {
-        redisTemplate.unlink(key);
+    public static void unlink(String key) {
+        getRedisTemplate().unlink(key);
     }
 
     /*---------------------------------------------------String操作--------------------------------------------------------------*/
@@ -89,8 +101,8 @@ public class RedisUtil {
      * @param key   关键
      * @param value
      */
-    public void set(String key, Object value) {
-        redisTemplate.opsForValue().set(key, value);
+    public static void set(String key, Object value) {
+        getRedisTemplate().opsForValue().set(key, value);
     }
 
     /**
@@ -99,8 +111,8 @@ public class RedisUtil {
      * @param timeout
      * @param timeUnit
      */
-    public void set(String key, Object value, long timeout, TimeUnit timeUnit) {
-        redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
+    public static void set(String key, Object value, long timeout, TimeUnit timeUnit) {
+        getRedisTemplate().opsForValue().set(key, value, timeout, timeUnit);
     }
 
     /**
@@ -109,16 +121,16 @@ public class RedisUtil {
      * @param timeout
      * @param timeUnit
      */
-    public void setNx(String key, Object value, long timeout, TimeUnit timeUnit) {
-        redisTemplate.opsForValue().setIfAbsent(key, value, timeout, timeUnit);
+    public static void setNx(String key, Object value, long timeout, TimeUnit timeUnit) {
+        getRedisTemplate().opsForValue().setIfAbsent(key, value, timeout, timeUnit);
     }
 
     /**
      * @param key 关键
      * @return {@link Object}
      */
-    public Object get(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public static Object get(String key) {
+        return getRedisTemplate().opsForValue().get(key);
     }
 
     /**
@@ -126,24 +138,24 @@ public class RedisUtil {
      * @param value
      * @return {@link Object}
      */
-    public Object getSet(String key, Object value) {
-        return redisTemplate.opsForValue().getAndSet(key, value);
+    public static Object getSet(String key, Object value) {
+        return getRedisTemplate().opsForValue().getAndSet(key, value);
     }
 
     /**
      * @param key 关键
      * @return long
      */
-    public long length(String key) {
-        return redisTemplate.opsForValue().size(key);
+    public static long length(String key) {
+        return getRedisTemplate().opsForValue().size(key);
     }
 
     /**
      * @param key 关键
      * @return long
      */
-    public long incr(String key) {
-        return redisTemplate.opsForValue().increment(key);
+    public static long incr(String key) {
+        return getRedisTemplate().opsForValue().increment(key);
     }
 
     /**
@@ -151,16 +163,16 @@ public class RedisUtil {
      * @param delta
      * @return long
      */
-    public long incr(String key, long delta) {
-        return redisTemplate.opsForValue().increment(key, delta);
+    public static long incr(String key, long delta) {
+        return getRedisTemplate().opsForValue().increment(key, delta);
     }
 
     /**
      * @param key 关键
      * @return long
      */
-    public long decr(String key) {
-        return redisTemplate.opsForValue().increment(key);
+    public static long decr(String key) {
+        return getRedisTemplate().opsForValue().increment(key);
     }
 
     /**
@@ -168,8 +180,8 @@ public class RedisUtil {
      * @param delta
      * @return long
      */
-    public long decr(String key, long delta) {
-        return redisTemplate.opsForValue().increment(key, delta);
+    public static long decr(String key, long delta) {
+        return getRedisTemplate().opsForValue().increment(key, delta);
     }
 
     /*-------------------------------------------------list操作----------------------------------------------------------------*/
@@ -178,16 +190,16 @@ public class RedisUtil {
      * @param key   关键
      * @param value
      */
-    public void leftPush(String key, Object... value) {
-        redisTemplate.opsForList().leftPushAll(key, value);
+    public static void leftPush(String key, Object... value) {
+        getRedisTemplate().opsForList().leftPushAll(key, value);
     }
 
     /**
      * @param key   关键
      * @param value
      */
-    public void rightPush(String key, Object... value) {
-        redisTemplate.opsForList().rightPushAll(key, value);
+    public static void rightPush(String key, Object... value) {
+        getRedisTemplate().opsForList().rightPushAll(key, value);
     }
 
     /**
@@ -195,8 +207,8 @@ public class RedisUtil {
      * @param count
      * @param value 价值
      */
-    public void lRemove(String key, long count, Object value) {
-        redisTemplate.opsForList().remove(key, count, value);
+    public static void lRemove(String key, long count, Object value) {
+        getRedisTemplate().opsForList().remove(key, count, value);
     }
 
     /**
@@ -206,8 +218,8 @@ public class RedisUtil {
      * @param index 指数
      * @param value 价值
      */
-    public void lSet(String key, long index, Object value) {
-        redisTemplate.opsForList().set(key, index, value);
+    public static void lSet(String key, long index, Object value) {
+        getRedisTemplate().opsForList().set(key, index, value);
     }
 
     /**
@@ -216,8 +228,8 @@ public class RedisUtil {
      * @param key 关键
      * @return long
      */
-    public long lLen(String key) {
-        return redisTemplate.opsForList().size(key);
+    public static long lLen(String key) {
+        return getRedisTemplate().opsForList().size(key);
     }
 
     /**
@@ -227,8 +239,8 @@ public class RedisUtil {
      * @param index 指数
      * @return {@link Object}
      */
-    public Object lIndex(String key, long index) {
-        return redisTemplate.opsForList().index(key, index);
+    public static Object lIndex(String key, long index) {
+        return getRedisTemplate().opsForList().index(key, index);
     }
 
     /**
@@ -237,8 +249,8 @@ public class RedisUtil {
      * @param end
      * @return {@link List}<{@link Object}>
      */
-    public List<Object> lRange(String key, long start, long end) {
-        return redisTemplate.opsForList().range(key, start, end);
+    public static List<Object> lRange(String key, long start, long end) {
+        return getRedisTemplate().opsForList().range(key, start, end);
     }
 
     /**
@@ -246,24 +258,24 @@ public class RedisUtil {
      * @param start
      * @param end
      */
-    public void lTrim(String key, long start, long end) {
-        redisTemplate.opsForList().trim(key, start, end);
+    public static void lTrim(String key, long start, long end) {
+        getRedisTemplate().opsForList().trim(key, start, end);
     }
 
     /**
      * @param key 关键
      * @return {@link Object}
      */
-    public Object lPop(String key) {
-        return redisTemplate.opsForList().leftPop(key);
+    public static Object lPop(String key) {
+        return getRedisTemplate().opsForList().leftPop(key);
     }
 
     /**
      * @param key 关键
      * @return {@link Object}
      */
-    public Object rPop(String key) {
-        return redisTemplate.opsForList().rightPop(key);
+    public static Object rPop(String key) {
+        return getRedisTemplate().opsForList().rightPop(key);
     }
 
     /*------------------------------------------------set操作--------------------------------------------------------------*/
@@ -272,24 +284,24 @@ public class RedisUtil {
      * @param key   关键
      * @param value 价值
      */
-    public void sSet(String key, Object... value) {
-        redisTemplate.opsForSet().add(key, value);
+    public static void sSet(String key, Object... value) {
+        getRedisTemplate().opsForSet().add(key, value);
     }
 
     /**
      * @param key   关键
      * @param value 价值
      */
-    public void sRemove(String key, Object... value) {
-        redisTemplate.opsForSet().remove(key, value);
+    public static void sRemove(String key, Object... value) {
+        getRedisTemplate().opsForSet().remove(key, value);
     }
 
     /**
      * @param key 关键
      * @return long
      */
-    public long sSize(String key) {
-        return redisTemplate.opsForSet().size(key);
+    public static long sSize(String key) {
+        return getRedisTemplate().opsForSet().size(key);
     }
 
     /**
@@ -297,24 +309,24 @@ public class RedisUtil {
      * @param value 价值
      * @return boolean
      */
-    public boolean sIsMember(String key, Object value) {
-        return redisTemplate.opsForSet().isMember(key, value);
+    public static boolean sIsMember(String key, Object value) {
+        return getRedisTemplate().opsForSet().isMember(key, value);
     }
 
     /**
      * @param key 关键
      * @return {@link Object}
      */
-    public Object sPop(String key) {
-        return redisTemplate.opsForSet().pop(key);
+    public static Object sPop(String key) {
+        return getRedisTemplate().opsForSet().pop(key);
     }
 
     /**
      * @param key 关键
      * @return {@link Set}<{@link Object}>
      */
-    public Set<Object> sMembers(String key) {
-        return redisTemplate.opsForSet().members(key);
+    public static Set<Object> sMembers(String key) {
+        return getRedisTemplate().opsForSet().members(key);
     }
 
     /**
@@ -323,9 +335,9 @@ public class RedisUtil {
      * @param count
      * @return {@link Cursor}<{@link Object}>
      */
-    public Cursor<Object> sScan(String key, String pattern, long count) {
+    public static Cursor<Object> sScan(String key, String pattern, long count) {
         ScanOptions so = ScanOptions.scanOptions().match(pattern).count(count).build();
-        return redisTemplate.opsForSet().scan(key, so);
+        return getRedisTemplate().opsForSet().scan(key, so);
     }
 
     /**
@@ -333,26 +345,26 @@ public class RedisUtil {
      * @param value 价值
      * @param score
      *//*----------------------------------------------------zset操作-----------------------------------------------------------------*/
-    public void zAdd(String key, Object value, double score) {
-        redisTemplate.opsForZSet().add(key, value, score);
+    public static void zAdd(String key, Object value, double score) {
+        getRedisTemplate().opsForZSet().add(key, value, score);
     }
 
     /**
      * @param key   关键
      * @param value 价值
      */
-    public void zAddAll(String key, ZSetOperations.TypedTuple<Object>... value) {
+    public static void zAddAll(String key, ZSetOperations.TypedTuple<Object>... value) {
         Set<ZSetOperations.TypedTuple<Object>> set = new HashSet<>();
         set.addAll(Arrays.asList(value));
-        redisTemplate.opsForZSet().add(key, set);
+        getRedisTemplate().opsForZSet().add(key, set);
     }
 
     /**
      * @param key   关键
      * @param value 价值
      */
-    public void zRemove(String key, Object... value) {
-        redisTemplate.opsForZSet().remove(key, value);
+    public static void zRemove(String key, Object... value) {
+        getRedisTemplate().opsForZSet().remove(key, value);
     }
 
     /**
@@ -360,8 +372,8 @@ public class RedisUtil {
      * @param start
      * @param end
      */
-    public void zRemoveRange(String key, long start, long end) {
-        redisTemplate.opsForZSet().removeRange(key, start, end);
+    public static void zRemoveRange(String key, long start, long end) {
+        getRedisTemplate().opsForZSet().removeRange(key, start, end);
     }
 
     /**
@@ -369,8 +381,8 @@ public class RedisUtil {
      * @param start
      * @param end
      */
-    public void zRemoveRangeByScore(String key, double start, double end) {
-        redisTemplate.opsForZSet().removeRangeByScore(key, start, end);
+    public static void zRemoveRangeByScore(String key, double start, double end) {
+        getRedisTemplate().opsForZSet().removeRangeByScore(key, start, end);
     }
 
     /**
@@ -378,8 +390,8 @@ public class RedisUtil {
      * @param value 价值
      * @param delta
      */
-    public void zIncr(String key, Object value, double delta) {
-        redisTemplate.opsForZSet().incrementScore(key, value, delta);
+    public static void zIncr(String key, Object value, double delta) {
+        getRedisTemplate().opsForZSet().incrementScore(key, value, delta);
     }
 
     /**
@@ -388,8 +400,8 @@ public class RedisUtil {
      * @param end
      * @return {@link Set}<{@link Object}>
      */
-    public Set<Object> zRange(String key, long start, long end) {
-        return redisTemplate.opsForZSet().range(key, start, end);
+    public static Set<Object> zRange(String key, long start, long end) {
+        return getRedisTemplate().opsForZSet().range(key, start, end);
     }
 
     /**
@@ -398,8 +410,8 @@ public class RedisUtil {
      * @param end
      * @return {@link Set}<{@link Object}>
      */
-    public Set<Object> zRevRange(String key, long start, long end) {
-        return redisTemplate.opsForZSet().reverseRange(key, start, end);
+    public static Set<Object> zRevRange(String key, long start, long end) {
+        return getRedisTemplate().opsForZSet().reverseRange(key, start, end);
     }
 
     /**
@@ -408,8 +420,8 @@ public class RedisUtil {
      * @param end   结束
      * @return {@link Set}<{@link Object}>
      */
-    public Set<Object> zRangeByScore(String key, double start, double end) {
-        return redisTemplate.opsForZSet().rangeByScore(key, start, end);
+    public static Set<Object> zRangeByScore(String key, double start, double end) {
+        return getRedisTemplate().opsForZSet().rangeByScore(key, start, end);
     }
 
     /**
@@ -419,8 +431,8 @@ public class RedisUtil {
      * @param value 价值
      * @return long
      */
-    public long zRank(String key, Object value) {
-        return redisTemplate.opsForZSet().rank(key, value);
+    public static long zRank(String key, Object value) {
+        return getRedisTemplate().opsForZSet().rank(key, value);
     }
 
     /**
@@ -430,8 +442,8 @@ public class RedisUtil {
      * @param value 价值
      * @return long
      */
-    public long zRevRank(String key, Object value) {
-        return redisTemplate.opsForZSet().reverseRank(key, value);
+    public static long zRevRank(String key, Object value) {
+        return getRedisTemplate().opsForZSet().reverseRank(key, value);
     }
 
     /**
@@ -440,8 +452,8 @@ public class RedisUtil {
      * @param key 关键
      * @return long
      */
-    public long zSize(String key) {
-        return redisTemplate.opsForZSet().size(key);
+    public static long zSize(String key) {
+        return getRedisTemplate().opsForZSet().size(key);
     }
 
     /**
@@ -449,8 +461,8 @@ public class RedisUtil {
      * @param value 价值
      * @return double
      */
-    public double zScore(String key, Object value) {
-        return redisTemplate.opsForZSet().score(key, value);
+    public static double zScore(String key, Object value) {
+        return getRedisTemplate().opsForZSet().score(key, value);
     }
 
     /**
@@ -459,8 +471,8 @@ public class RedisUtil {
      * @param max
      * @return long
      */
-    public long zCount(String key, double min, double max) {
-        return redisTemplate.opsForZSet().count(key, min, max);
+    public static long zCount(String key, double min, double max) {
+        return getRedisTemplate().opsForZSet().count(key, min, max);
     }
 
     /*-------------------------------------------------hash操作------------------------------------------------------------*/
@@ -470,16 +482,16 @@ public class RedisUtil {
      * @param hashKey
      * @param value   价值
      */
-    public void hSet(String key, String hashKey, Object value) {
-        redisTemplate.opsForHash().put(key, hashKey, value);
+    public static void hSet(String key, String hashKey, Object value) {
+        getRedisTemplate().opsForHash().put(key, hashKey, value);
     }
 
     /**
      * @param key 关键
      * @param map
      */
-    public void hSetAll(String key, Map<String, Object> map) {
-        redisTemplate.opsForHash().putAll(key, map);
+    public static void hSetAll(String key, Map<String, Object> map) {
+        getRedisTemplate().opsForHash().putAll(key, map);
     }
 
     /**
@@ -487,25 +499,16 @@ public class RedisUtil {
      * @param hashKey
      * @param value   价值
      */
-    public void hSetNx(String key, String hashKey, Object value) {
-        redisTemplate.opsForHash().putIfAbsent(key, hashKey, value);
+    public static void hSetNx(String key, String hashKey, Object value) {
+        getRedisTemplate().opsForHash().putIfAbsent(key, hashKey, value);
     }
 
     /**
      * @param key     关键
      * @param hashKey
      */
-    public void hDelete(String key, String... hashKey) {
-        redisTemplate.opsForHash().delete(key, hashKey);
-    }
-
-    /**
-     * @param key     关键
-     * @param hashKey
-     * @param delta
-     */
-    public void hIncr(String key, String hashKey, long delta) {
-        redisTemplate.opsForHash().increment(key, hashKey, delta);
+    public static void hDelete(String key, String... hashKey) {
+        getRedisTemplate().opsForHash().delete(key, hashKey);
     }
 
     /**
@@ -513,8 +516,17 @@ public class RedisUtil {
      * @param hashKey
      * @param delta
      */
-    public void hIncrByFloat(String key, String hashKey, double delta) {
-        redisTemplate.opsForHash().increment(key, hashKey, delta);
+    public static void hIncr(String key, String hashKey, long delta) {
+        getRedisTemplate().opsForHash().increment(key, hashKey, delta);
+    }
+
+    /**
+     * @param key     关键
+     * @param hashKey
+     * @param delta
+     */
+    public static void hIncrByFloat(String key, String hashKey, double delta) {
+        getRedisTemplate().opsForHash().increment(key, hashKey, delta);
     }
 
     /**
@@ -522,16 +534,16 @@ public class RedisUtil {
      * @param hashKey
      * @return {@link Object}
      */
-    public Object hGet(String key, String hashKey) {
-        return redisTemplate.opsForHash().get(key, hashKey);
+    public static Object hGet(String key, String hashKey) {
+        return getRedisTemplate().opsForHash().get(key, hashKey);
     }
 
     /**
      * @param key 关键
      * @return {@link Map}<{@link Object}, {@link Object}>
      */
-    public Map<Object, Object> hGetAll(String key) {
-        return redisTemplate.opsForHash().entries(key);
+    public static Map<Object, Object> hGetAll(String key) {
+        return getRedisTemplate().opsForHash().entries(key);
     }
 
     /**
@@ -539,16 +551,16 @@ public class RedisUtil {
      * @param hashKey
      * @return boolean
      */
-    public boolean hHasKey(String key, String hashKey) {
-        return redisTemplate.opsForHash().hasKey(key, hashKey);
+    public static boolean hHasKey(String key, String hashKey) {
+        return getRedisTemplate().opsForHash().hasKey(key, hashKey);
     }
 
     /**
      * @param key 关键
      * @return long
      */
-    public long hSize(String key) {
-        return redisTemplate.opsForHash().size(key);
+    public static long hSize(String key) {
+        return getRedisTemplate().opsForHash().size(key);
     }
 
     /**
@@ -556,8 +568,8 @@ public class RedisUtil {
      * @param hashKeys
      * @return {@link List}<{@link Object}>
      */
-    public List<Object> hMultiGet(String key, Collection<Object> hashKeys) {
-        return redisTemplate.opsForHash().multiGet(key, hashKeys);
+    public static List<Object> hMultiGet(String key, Collection<Object> hashKeys) {
+        return getRedisTemplate().opsForHash().multiGet(key, hashKeys);
     }
 
     /**
@@ -565,24 +577,24 @@ public class RedisUtil {
      * @param hashKey
      * @return boolean
      */
-    public boolean hExists(String key, String hashKey) {
-        return redisTemplate.opsForHash().hasKey(key, hashKey);
+    public static boolean hExists(String key, String hashKey) {
+        return getRedisTemplate().opsForHash().hasKey(key, hashKey);
     }
 
     /**
      * @param key 关键
      * @return {@link Set}<{@link Object}>
      */
-    public Set<Object> hKeys(String key) {
-        return redisTemplate.opsForHash().keys(key);
+    public static Set<Object> hKeys(String key) {
+        return getRedisTemplate().opsForHash().keys(key);
     }
 
     /**
      * @param key 关键
      * @return {@link List}<{@link Object}>
      */
-    public List<Object> hValues(String key) {
-        return redisTemplate.opsForHash().values(key);
+    public static List<Object> hValues(String key) {
+        return getRedisTemplate().opsForHash().values(key);
     }
 
     /*--------------------------------------------------------HyperLogLog操作--------------------------------------------------------*/
@@ -591,29 +603,45 @@ public class RedisUtil {
      * @param key   关键
      * @param value 价值
      */
-    public void pfAdd(String key, Object... value) {
-        redisTemplate.opsForHyperLogLog().add(key, value);
+    public static void pfAdd(String key, Object... value) {
+        getRedisTemplate().opsForHyperLogLog().add(key, value);
     }
 
     /**
      * @param key 关键
      * @return long
      */
-    public long pfCount(String key) {
-        return redisTemplate.opsForHyperLogLog().size(key);
+    public static long pfCount(String key) {
+        return getRedisTemplate().opsForHyperLogLog().size(key);
     }
 
     /**
-     * @param resultClass
-     * @param luaPath
+     * @param resultClass 返回类型
+     * @param luaPath     lua文件路径
      * @param keys        键
      * @param args        arg游戏
      * @return {@link R}
      *//*----------------------------------------------------执行lua脚本-----------------------------------------------------------------*/
-    public <R> R execute(Class<R> resultClass, String luaPath, List<String> keys, Object... args) {
+    public static <R> R executeLuaFile(Class<R> resultClass, String luaPath, List<String> keys, Object... args) {
         DefaultRedisScript<R> script = new DefaultRedisScript();
         script.setLocation(new ClassPathResource(luaPath));
         script.setResultType(resultClass);
-        return redisTemplate.execute(script, keys, args);
+        return getRedisTemplate().execute(script, keys, args);
+    }
+
+    /**
+     * 执行 Lua
+     *
+     * @param resultClass 返回类型
+     * @param luaScript   Lua 脚本
+     * @param keys        钥匙
+     * @param args        参数
+     * @return {@link R }
+     */
+    public static <R> R executeLua(Class<R> resultClass, String luaScript, List<String> keys, Object... args) {
+        DefaultRedisScript<R> script = new DefaultRedisScript();
+        script.setScriptText(luaScript);
+        script.setResultType(resultClass);
+        return getRedisTemplate().execute(script, keys, args);
     }
 }
