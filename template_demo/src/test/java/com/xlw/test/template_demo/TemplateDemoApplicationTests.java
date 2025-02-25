@@ -2,7 +2,7 @@ package com.xlw.test.template_demo;
 
 import com.xlw.test.template_demo.exception.BusinessException;
 import com.xlw.test.template_demo.extend.retry.RetryTask;
-import com.xlw.test.template_demo.util.IdUtils;
+import com.xlw.test.template_demo.util.TransactionUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -19,6 +19,7 @@ class TemplateDemoApplicationTests {
     @Resource
     private ThreadPoolTaskExecutor executor;
 
+
     @Test
     void contextLoads() {
         retryTask.retryTask1(() -> {
@@ -29,14 +30,7 @@ class TemplateDemoApplicationTests {
 
     @Test
     public void test() throws InterruptedException, IOException {
-        for (int i = 0; i < 1000; i++) {
-            Thread thread = new Thread(() -> {
-                String s = IdUtils.safeId("3AD5");
-                System.out.println(s);
-            });
-            thread.start();
-        }
-        System.in.read();
+        TransactionUtil.execute(() -> {});
     }
 
 }
