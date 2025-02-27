@@ -1,7 +1,7 @@
 package com.xlw.test.jsr303_demo.annotation;
 
 /**
- * @description: 相对的,两字段不能同时为空或者不为空
+ * @description: 不兼容字段，两字段必须一个为空一个不为空
  * @Title: Relatively
  * @Author xlw
  * @Package com.xlw.test.jsr303_demo.annotation

@@ -1,13 +1,9 @@
 package com.xlw.test.jsr303_demo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.xlw.test.jsr303_demo.annotation.Cascade;
 import com.xlw.test.jsr303_demo.annotation.Related;
 import com.xlw.test.jsr303_demo.annotation.Relatively;
-import com.xlw.test.jsr303_demo.config.ValidGroup;
 import lombok.Data;
 
-import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 /**
@@ -17,8 +13,12 @@ import java.time.LocalDateTime;
  * @Package com.xlw.test.jsr303_demo
  * @Date 2024/2/3 15:56
  */
-@Related(message = "",
-        anyOneNotNullFields = {"id", "name"}
+@Related(
+        //anyOneNotNullFields = {"id", "name"}
+        //cascades = {@Cascade(field1 = "id", field2 = "name")}
+        relativelys = {
+                @Relatively(field1 = "id", field2 = "name")
+        }
 )
 @Data
 public class User {
