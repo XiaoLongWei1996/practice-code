@@ -2,6 +2,9 @@ package com.xlw.test.template_demo.util;
 
 
 import java.util.LinkedList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 
 /**
  * @description: 执行链工具类
@@ -76,17 +79,68 @@ public class ExecuteChainUtil {
                     task.run();
                 }
             } finally {
-                chains.clear();
-                chains = null;
+                clean();
             }
+        }
+
+        /**
+         * 异步执行
+         *
+         * @param pool 池
+         */
+        public void asyncExecute(ExecutorService pool){
+            try {
+                CompletableFuture<?>[] futures = new CompletableFuture[chains.size()];
+                for (int i = 0; i < chains.size(); i++) {
+                    //执行
+                    CompletableFuture<Void> future = CompletableFuture.runAsync(chains.get(i), pool);
+                    futures[i] = future;
+                }
+                CompletableFuture<Void> future = CompletableFuture.allOf(futures);
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            } finally {
+                clean();
+            }
+        }
+
+        public void asyncExecute(){
+            try {
+                CompletableFuture<?>[] futures = new CompletableFuture[chains.size()];
+                for (int i = 0; i < chains.size(); i++) {
+                    //执行
+                    CompletableFuture<Void> future = CompletableFuture.runAsync(chains.get(i));
+                    futures[i] = future;
+                }
+                CompletableFuture<Void> future = CompletableFuture.allOf(futures);
+                future.get();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                clean();
+            }
+        }
+
+
+        private void clean() {
+            chains.clear();
+            chains = null;
         }
     }
 
     public static void main(String[] args) {
         ExecuteChainUtil
                 .createExecuteChain()
-                .chain(() -> System.out.println("1"))
-                .chain(2 > 1, () -> System.out.println("2"))
-                .execute();
+                .chain(() -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println("1");
+                })
+                .chain(true, () -> System.out.println("2"))
+                .asyncExecute();
     }
 }
