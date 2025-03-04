@@ -130,17 +130,6 @@ public class ExecuteChainUtil {
     }
 
     public static void main(String[] args) {
-        ExecuteChainUtil
-                .createExecuteChain()
-                .chain(() -> {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println("1");
-                })
-                .chain(true, () -> System.out.println("2"))
-                .asyncExecute();
+
     }
 }
