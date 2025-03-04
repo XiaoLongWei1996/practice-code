@@ -21,6 +21,12 @@ public class ExecuteChainUtil {
         return new ExecuteChain();
     }
 
+    /**
+     * 执行链
+     *
+     * @author xlw
+     * @date 2025/03/04
+     */
     public static class ExecuteChain {
 
         /**
@@ -28,8 +34,9 @@ public class ExecuteChainUtil {
          */
         private LinkedList<Runnable> chains;
 
-        //private Runnable task;
-
+        /**
+         * 执行链
+         */
         private ExecuteChain() {
             this.chains = new LinkedList<>();
         }
@@ -59,6 +66,9 @@ public class ExecuteChainUtil {
             return this;
         }
 
+        /**
+         * 执行
+         */
         public void execute() {
             try {
                 for (Runnable task : chains) {
@@ -70,15 +80,13 @@ public class ExecuteChainUtil {
                 chains = null;
             }
         }
-
-
     }
 
     public static void main(String[] args) {
         ExecuteChainUtil
                 .createExecuteChain()
                 .chain(() -> System.out.println("1"))
-                .chain(2 > 1,() -> System.out.println("2"))
+                .chain(2 > 1, () -> System.out.println("2"))
                 .execute();
     }
 }
