@@ -1,14 +1,11 @@
 package org.test.database;
 
 import cn.hutool.core.date.StopWatch;
-import cn.hutool.core.lang.Opt;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.metadata.data.HyperlinkData;
 import com.alibaba.excel.metadata.data.WriteCellData;
 import com.alibaba.excel.write.metadata.WriteSheet;
-import com.mysql.jdbc.Driver;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.test.database.excel.Head;
 import org.test.database.excel.HeadHyperlinkHandler;
@@ -18,7 +15,6 @@ import org.test.util.excel.strategy.MergeStrategy;
 
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -253,7 +249,7 @@ public class DatabaseDocBuilder {
     }
 
     public static void main(String[] args) {
-        String url = "jdbc:mysql://47.96.12.138:23307/zfjkp_lhyg?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai";
+        String url = "jdbc:mysql://47.96.12.138:23307/piaoshui_ncp?characterEncoding=utf8&useSSL=false&zeroDateTimeBehavior=convertToNull&tinyInt1isBit=false&serverTimezone=Asia/Shanghai&useAffectedRows=true&rewriteBatchedStatements=true&allowMultiQueries=true";
         String userName = "root";
         String password = "4ca31850774c707a58a77163a04905efQW";
         String outPath = "D:\\tmp\\test.xlsx";
