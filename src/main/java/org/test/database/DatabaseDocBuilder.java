@@ -253,6 +253,6 @@ public class DatabaseDocBuilder {
         String userName = "root";
         String password = "4ca31850774c707a58a77163a04905efQW";
         String outPath = "D:\\tmp\\test.xlsx";
-        DatabaseDocBuilder.build(url, userName, password, outPath,"lhyg_invoice_");
+        DatabaseDocBuilder.build(url, userName, password, outPath,"ncp_");
     }
 }
