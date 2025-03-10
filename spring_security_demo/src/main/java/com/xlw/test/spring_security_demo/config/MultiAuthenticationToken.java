@@ -1,5 +1,6 @@
 package com.xlw.test.spring_security_demo.config;
 
+import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
@@ -19,11 +20,13 @@ public class MultiAuthenticationToken extends AbstractAuthenticationToken {
 
     private String credentials;
 
+    @Getter
     private String smsCode;
 
     /**
      * 登录类型,1:用户名密码登录,2:手机号登录
      */
+    @Getter
     private int loginType;
 
     //认证前调用
@@ -51,14 +54,6 @@ public class MultiAuthenticationToken extends AbstractAuthenticationToken {
     @Override
     public String getPrincipal() {
         return principal;
-    }
-
-    public String getSmsCode() {
-        return smsCode;
-    }
-
-    public int getLoginType() {
-        return loginType;
     }
 
     @Override

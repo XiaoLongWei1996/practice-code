@@ -5,14 +5,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.xlw.test.spring_security_demo.config.Cache;
 import com.xlw.test.spring_security_demo.config.MultiAuthenticationToken;
-import com.xlw.test.spring_security_demo.entity.Result;
 import com.xlw.test.spring_security_demo.entity.LoginUser;
+import com.xlw.test.spring_security_demo.entity.Result;
 import com.xlw.test.spring_security_demo.entity.UserInfo;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -66,6 +63,7 @@ public class SysController {
         }
         //删除token缓存
         Cache.TOKEN_CACHE.remove(authToken);
+        SecurityContextHolder.getContext().setAuthentication(null);
         return Result.success(true);
     }
 

@@ -3,20 +3,17 @@ package com.xlw.test.spring_security_demo.config;
 import com.xlw.test.spring_security_demo.config.filter.TokenAuthFilter;
 import com.xlw.test.spring_security_demo.config.handler.LoginFailHandler;
 import com.xlw.test.spring_security_demo.config.handler.NotAccessHandler;
-import com.xlw.test.spring_security_demo.service.impl.AuthServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 import javax.annotation.Resource;
 
@@ -95,4 +92,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new MD5PasswordEncoder();
     }
+
 }
