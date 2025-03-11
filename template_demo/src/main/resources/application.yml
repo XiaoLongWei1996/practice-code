@@ -16,6 +16,10 @@ spring:
   mvc:
     format:
       date-time: yyyy-MM-dd HH:mm:ss
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
 
 feign:
   #配置客户端
