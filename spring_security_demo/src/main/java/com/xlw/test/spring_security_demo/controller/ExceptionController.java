@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ExceptionController {
 
     @ExceptionHandler(AuthException.class)
-    public Result<Void> handle(AuthException e) {
+    public Result<?> handle(AuthException e) {
         e.printStackTrace();
         return Result.fail(e.getMessage());
     }
