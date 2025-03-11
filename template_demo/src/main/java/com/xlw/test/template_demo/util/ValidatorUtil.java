@@ -1,10 +1,14 @@
 package com.xlw.test.template_demo.util;
 
+import cn.hutool.core.util.RandomUtil;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.groups.Default;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @description: jsr303数据校验工具类
@@ -67,10 +71,9 @@ public class ValidatorUtil {
     }
 
     public static void main(String[] args) {
-        Map<String, Integer> map = new HashMap<>();
-        map.put("a", 0);
-        System.out.println(map);
-        map.computeIfPresent("a", (k, v) -> 1);
-        System.out.println(map);
+        for (int i = 0; i < 100; i++) {
+            String s = RandomUtil.randomNumbers(6);
+            System.out.println(s);
+        }
     }
 }
