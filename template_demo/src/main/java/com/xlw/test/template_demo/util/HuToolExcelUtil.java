@@ -1,6 +1,7 @@
 package com.xlw.test.template_demo.util;
 
 
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.ReflectUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -43,6 +44,8 @@ public class HuToolExcelUtil {
         try (ExcelReader reader = ExcelUtil.getReader(inputStream)) {
             reader.setHeaderAlias(getHeaderAlias(beanType, true));
             return reader.readAll(beanType);
+        } finally {
+            IoUtil.close(inputStream);
         }
     }
 
@@ -51,7 +54,7 @@ public class HuToolExcelUtil {
      *
      * @param filePath 需要写入的Excel 的路径
      * @param list     写入的内容
-     * @return
+     * @param beanType Bean 类型
      */
     public static <T> void writeExcel(String filePath, List<T> list, Class<T> beanType) {
         Map<String, String> headerAlias = getHeaderAlias(beanType, false);
@@ -59,6 +62,17 @@ public class HuToolExcelUtil {
             writer.setHeaderAlias(headerAlias);
             // 写入并刷盘
             writer.write(list).flush();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> void writeExcel(String filePath, List<T> list, int sheetNum, int rowNum, Class<T> beanType) {
+        Map<String, String> headerAlias = getHeaderAlias(beanType, true);
+        try (ExcelWriter writer = ExcelUtil.getWriter(filePath)) {
+            writer.setHeaderAlias(headerAlias);
+            // 写入并刷盘
+            writer.setSheet(sheetNum).setCurrentRow(rowNum).write(list).flush();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
