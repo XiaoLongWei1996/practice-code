@@ -1,7 +1,5 @@
 package com.xlw.test.template_demo.config.annotation;
 
-import com.piaoshui.ncp.annotation.validator.RelatedConstraintValidator;
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
@@ -16,7 +14,7 @@ import java.lang.annotation.*;
 @Documented
 //指定校验器
 @Constraint(
-        validatedBy = {RelatedConstraintValidator.class}
+        validatedBy = {com.xlw.test.template_demo.config.annotation.validator.RelatedConstraintValidator.class}
 )
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
