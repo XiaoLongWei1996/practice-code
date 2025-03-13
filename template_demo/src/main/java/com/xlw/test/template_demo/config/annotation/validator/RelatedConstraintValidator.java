@@ -3,9 +3,6 @@ package com.xlw.test.template_demo.config.annotation.validator;
 
 import cn.hutool.core.bean.DynaBean;
 import cn.hutool.core.util.StrUtil;
-import com.piaoshui.ncp.annotation.Cascade;
-import com.piaoshui.ncp.annotation.Related;
-import com.piaoshui.ncp.annotation.Relatively;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
