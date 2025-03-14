@@ -43,7 +43,7 @@ public class LogAdvice {
         JSONObject obj = JSONUtil.createObj();
         //获取方法签名
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
-        Class declaringType = methodSignature.getDeclaringType();
+        Class<?> declaringType = methodSignature.getDeclaringType();
         //记录class名称
         obj.set("class", declaringType.getName());
         String methodName = methodSignature.getMethod().getName();
