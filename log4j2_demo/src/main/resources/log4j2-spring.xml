@@ -2,11 +2,11 @@
 <Configuration status="warn" monitorInterval="5">
     <properties>
         <springProfile name="dev">
-            <property name="LOG_PATTERN">dev %d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
+            <property name="LOG_PATTERN">[traceId:%X{traceId}] %d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
         </springProfile>
 
         <springProfile name="test">
-            <property name="LOG_PATTERN">test %d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
+            <property name="LOG_PATTERN">[traceId:%X{traceId}] %d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L --- %m%n</property>
         </springProfile>
         <property name="LOG_DIR">log</property>
 <!--        <property name="LOG_PATTERN">%d{yyyy/MM/dd HH:mm:ss.SSS} [%t] [%level] %c{36}:%L -&#45;&#45; %m%n</property>-->
