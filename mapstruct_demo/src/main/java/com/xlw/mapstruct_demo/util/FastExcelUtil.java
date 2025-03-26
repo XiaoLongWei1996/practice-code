@@ -90,4 +90,31 @@ public class FastExcelUtil {
         FastExcel.write(outputStream).sheet(sheetName).doWrite(data);
     }
 
+    /**
+     * 填写 Excel
+     *
+     * @param templateFilePath 模板文件路径
+     * @param filePath         文件路径
+     * @param data             数据
+     */
+    public static <T> void fillExcel(String templateFilePath, String filePath, List<T> data) {
+        FastExcel.write(filePath).withTemplate(templateFilePath).sheet().doFill(data);
+    }
+
+    /**
+     * 填写 Excel
+     *
+     * @param templateFilePath 模板文件路径
+     * @param outputStream     输出
+     * @param data             数据
+     * @param sheetName        工作表名称
+     */
+    public static <T> void fillExcel(String templateFilePath, OutputStream outputStream, List<T> data, String sheetName) {
+        FastExcel.write(outputStream).withTemplate(templateFilePath).sheet(sheetName).doFill(data);
+    }
+
+    public static void main(String[] args) {
+
+    }
+
 }
