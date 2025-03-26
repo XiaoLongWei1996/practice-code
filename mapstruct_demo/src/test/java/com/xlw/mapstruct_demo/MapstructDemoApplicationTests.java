@@ -1,26 +1,28 @@
 package com.xlw.mapstruct_demo;
 
-import com.xlw.mapstruct_demo.entity.Student;
-import com.xlw.mapstruct_demo.mapper.StudentMapper;
-import com.xlw.mapstruct_demo.vo.StudentVO;
+import cn.idev.excel.FastExcel;
+import cn.idev.excel.context.AnalysisContext;
+import cn.idev.excel.read.listener.ReadListener;
+import com.xlw.mapstruct_demo.entity.SaveZhxxBO;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.LocalDateTime;
 
 @SpringBootTest
 class MapstructDemoApplicationTests {
 
     @Test
     void contextLoads() {
-        Student student = new Student();
-        student.setName("小米");
-        student.setAge(12);
-        student.setBirthday(LocalDateTime.now());
-        student.setDesc("描述");
-        StudentVO vo = StudentMapper.INSTANCT.toVO(student);
-        System.out.println(vo);
+        String path = "D:\\qyzh.xlsx";
+        FastExcel.read(path, new ReadListener<SaveZhxxBO>() {
+            @Override
+            public void invoke(SaveZhxxBO data, AnalysisContext context) {
+                System.out.println(data);
+            }
 
+            @Override
+            public void doAfterAllAnalysed(AnalysisContext context) {
+            }
+        }).sheet(0).head(SaveZhxxBO.class).headRowNumber(3).doRead();
     }
 
 }
