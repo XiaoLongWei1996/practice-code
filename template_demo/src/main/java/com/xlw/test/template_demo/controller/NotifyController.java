@@ -37,6 +37,7 @@ public class NotifyController {
         System.out.println(msg);
         Enumeration<String> headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
+            int i = 1 / 0;
             String name = headerNames.nextElement();
             String value = request.getHeader(name);
             System.out.println(name + ":" + value);
