@@ -1,6 +1,8 @@
 package com.xlw.test.template_demo.controller;
 
+import com.xlw.test.template_demo.config.Param;
 import com.xlw.test.template_demo.entity.Student;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -74,6 +76,13 @@ public class TestController {
     @PostMapping("t6")
     public Student t6(@RequestBody Student student) {
         return student;
+    }
+
+    @PostMapping(value = "t7", consumes = "multipart/form-data")
+    public ResponseEntity<String> t7(Param param) {
+        System.out.println(param);
+        System.out.println(param.getFile().getOriginalFilename());
+        return ResponseEntity.ok("ok");
     }
 
 }

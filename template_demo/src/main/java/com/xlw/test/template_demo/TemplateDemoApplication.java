@@ -9,6 +9,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
+/**
+ * @author ABC
+ */
 @ServletComponentScan(basePackages = "com.xlw.test.template_demo.config")
 @EnableScheduling
 @EnableRetry

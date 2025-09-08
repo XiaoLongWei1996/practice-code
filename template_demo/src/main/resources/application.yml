@@ -1,5 +1,33 @@
 server:
   port: 8900
+  # tomcat:
+  #   # 配置最大连接数
+  #   max-connections: 10000
+  #   # 配置等待队列最大长度
+  #   accept-count: 1000
+  #   # 配置连接超时时间
+  #   connection-timeout: 20000
+  #   # 配置线程池
+  #   threads:
+  #     # 最大线程数
+  #     max: 200
+  #     # 初始线程数
+  #     min-spare: 50
+  #   # 保持连接超时时间（以毫秒为单位）
+  #   keep-alive-timeout: 10000
+  #   # 可通过保持连接发送的最大请求
+  #   max-keep-alive-requests: 100
+  undertow:
+    threads:
+      # 设置IO线程数
+      io: 16
+      # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
+      # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
+      worker: 256
+    # 缓冲区大小
+    buffer-size: 1024
+    # 是否分配的直接内存(NIO直接分配的堆外内存)
+    direct-buffers: true
   compression:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript,application/x-www-form-urlencoded
@@ -20,7 +48,35 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
-
+      file-size-threshold: 10KB
+      location: /tmp
+      resolve-lazily: false
+  task:
+    # execution:
+    #   pool:
+    #     allow-core-thread-timeout: true
+    #     core-size: 8
+    #     max-size: 16
+    #     keep-alive: 60s
+    #     queue-capacity: 100
+    #   thread-name-prefix: task-
+    scheduling:
+      pool:
+        size: 8
+      thread-name-prefix: scheduling-
+  web:
+    resources:
+      cache:
+        cachecontrol:
+          max-age: 365d
+          cache-public: true
+      chain:
+        strategy:
+          content:
+            enabled: true
+            paths: /**
+        cache: true
+      static-locations: classpath:/static/
 feign:
   #配置客户端
   client:

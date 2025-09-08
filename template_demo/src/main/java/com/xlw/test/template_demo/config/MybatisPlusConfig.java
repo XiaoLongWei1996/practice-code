@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * @author ABC
+ */
 @RequiredArgsConstructor
 @Configuration
 public class MybatisPlusConfig {

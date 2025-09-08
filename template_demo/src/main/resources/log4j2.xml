@@ -5,6 +5,7 @@
         <property name="LOG_PATTERN">
             [%d{yyyy-MM-dd HH:mm:ss.SSS}] [traceId:%X{traceId}] [%t] [%level] %c{36}:%L --- %m%n
         </property>
+        <property name="LIMIT_SIZE">100MB</property>
     </properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -16,13 +17,13 @@
                      filePattern="${LOG_DIR}/info_%d{yyyy_MM_dd_HH}_%i.log.gz">
             <!-- 只打印info日志 -->
             <Filters>
-                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>
+<!--                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>-->
                 <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <!--                <OnStartupTriggeringPolicy/>-->
-                <SizeBasedTriggeringPolicy size="500MB"/>
+                <SizeBasedTriggeringPolicy size="${LIMIT_SIZE}"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <!-- 指定 %i最大值，也就是每小时最多生成100个文件 -->
@@ -37,21 +38,23 @@
         </RollingFile>
 
         <RollingFile name="errorRollingFile" fileName="${LOG_DIR}/error.log"
-                     filePattern="${LOG_DIR}/error_%d{yyyy_MM_dd_HH}_%i.log.gz">
+                     filePattern="${LOG_DIR}/error_%d{yyyy_MM_dd_HH}_%i.log.zip">
             <!-- 只打印error日志 -->
-            <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
 
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <!--                <OnStartupTriggeringPolicy/>-->
-                <SizeBasedTriggeringPolicy size="500MB"/>
+                <SizeBasedTriggeringPolicy size="${LIMIT_SIZE}"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <!-- 指定 %i最大值，也就是每小时最多生成100个文件 -->
             <DefaultRolloverStrategy max="100">
                 <!-- 保留最近30的日志 -->
                 <Delete basePath="${LOG_DIR}" maxDepth="2">
-                    <IfFileName glob="error_*.log.gz">
+                    <IfFileName glob="error_*.log.zip">
                         <IfLastModified age="30d"/>
                     </IfFileName>
                 </Delete>
@@ -61,6 +64,7 @@
     <Loggers>
         <AsyncRoot level="info" includeLocation="true">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="infoRollingFile"/>
         </AsyncRoot>
 
         <AsyncLogger name="com.xlw.test.template_demo" level="info"
