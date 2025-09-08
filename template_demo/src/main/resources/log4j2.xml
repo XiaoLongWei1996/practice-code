@@ -6,6 +6,7 @@
             [%d{yyyy-MM-dd HH:mm:ss.SSS}] [traceId:%X{traceId}] [%t] [%level] %c{36}:%L --- %m%n
         </property>
         <property name="LIMIT_SIZE">100MB</property>
+        <property name="MAX_FILE_COUNT">500</property>
     </properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
@@ -14,23 +15,23 @@
         </Console>
 
         <RollingFile name="infoRollingFile" fileName="${LOG_DIR}/info.log"
-                     filePattern="${LOG_DIR}/info_%d{yyyy_MM_dd_HH}_%i.log.gz">
+                     filePattern="${LOG_DIR}/info_%d{yyyy_MM_dd_HH}_%i.log.zip">
             <!-- 只打印info日志 -->
             <Filters>
-<!--                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>-->
+                <!--                <ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>-->
                 <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <!--                <OnStartupTriggeringPolicy/>-->
+                <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="${LIMIT_SIZE}"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <!-- 指定 %i最大值，也就是每小时最多生成100个文件 -->
-            <DefaultRolloverStrategy max="100">
+            <DefaultRolloverStrategy max="${MAX_FILE_COUNT}">
                 <!-- 保留最近30的日志 -->
                 <Delete basePath="${LOG_DIR}" maxDepth="2">
-                    <IfFileName glob="info_*.log.gz">
+                    <IfFileName glob="info_*.log.zip">
                         <IfLastModified age="30d"/>
                     </IfFileName>
                 </Delete>
@@ -46,12 +47,12 @@
 
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
-                <!--                <OnStartupTriggeringPolicy/>-->
+                <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="${LIMIT_SIZE}"/>
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
             </Policies>
             <!-- 指定 %i最大值，也就是每小时最多生成100个文件 -->
-            <DefaultRolloverStrategy max="100">
+            <DefaultRolloverStrategy max="${MAX_FILE_COUNT}">
                 <!-- 保留最近30的日志 -->
                 <Delete basePath="${LOG_DIR}" maxDepth="2">
                     <IfFileName glob="error_*.log.zip">
