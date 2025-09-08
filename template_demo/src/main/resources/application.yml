@@ -37,7 +37,7 @@ spring:
   application:
     name: pay
   profiles:
-    active: dev
+    active: @profiles.active@
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
