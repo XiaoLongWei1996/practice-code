@@ -3,7 +3,6 @@ package com.xlw.test.template_demo.util;
 
 import com.xlw.test.template_demo.cons.TaskNotReturn;
 import com.xlw.test.template_demo.cons.TaskReturn;
-import com.xlw.test.template_demo.exception.BusinessException;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
@@ -29,36 +28,50 @@ public class RedisLockUtil {
     }
 
     public static void withLockExecute(String lockKey, long timeout, TaskNotReturn task) {
-        RLock lock = getRedissonClient().getLock(lockKey);
+        RLock lock = redissonClient.getLock(lockKey);
         boolean b = false;
         try {
-            b = lock.tryLock(timeout, TimeUnit.SECONDS);
+            // 区分是否使用看门狗：expireSeconds=-1时，不指定过期时间，由看门狗自动续期（默认30秒续期）
+            if (timeout == -1) {
+                // 立即尝试获取锁，无等待时间，使用看门狗自动续期
+                b = lock.tryLock();
+            } else {
+                // 立即尝试获取锁，指定过期时间（看门狗不生效）
+                b = lock.tryLock(0, timeout, TimeUnit.SECONDS);
+            }
             if (!b) {
-                throw new BusinessException("获取锁失败");
+                return;
             }
             task.execute();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            if (b) {
+            if (lock != null && b && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
     }
 
     public static <R> R withLockExecute(String lockKey, long timeout, TaskReturn<R> task) {
-        RLock lock = getRedissonClient().getLock(lockKey);
+        RLock lock = redissonClient.getLock(lockKey);
         boolean b = false;
         try {
-            b = lock.tryLock(timeout, TimeUnit.SECONDS);
+            // 区分是否使用看门狗：expireSeconds=-1时，不指定过期时间，由看门狗自动续期（默认30秒续期）
+            if (timeout == -1) {
+                // 立即尝试获取锁，无等待时间，使用看门狗自动续期
+                b = lock.tryLock();
+            } else {
+                // 立即尝试获取锁，指定过期时间（看门狗不生效）
+                b = lock.tryLock(0, timeout, TimeUnit.SECONDS);
+            }
             if (!b) {
-                throw new BusinessException("获取锁失败");
+                return null;
             }
             return task.execute();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            if (b) {
+            if (lock != null && b && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
